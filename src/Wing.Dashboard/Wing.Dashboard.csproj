@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\Wing\Wing.csproj" />
+  </ItemGroup>
+
+</Project>

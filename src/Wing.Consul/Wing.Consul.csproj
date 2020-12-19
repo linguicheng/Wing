@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <Compile Remove="Wing.Consul\**" />
+    <EmbeddedResource Remove="Wing.Consul\**" />
+    <None Remove="Wing.Consul\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Wing\Wing.csproj" />
+  </ItemGroup>
+
+</Project>
