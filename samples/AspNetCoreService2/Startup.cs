@@ -27,7 +27,7 @@ namespace AspNetCoreService
         {
             services.AddControllers();
 
-            services.AddWing().AddConsul().AddJwt(context =>
+            services.AddWing().AddJwt(context =>
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 return user == "byron";
@@ -44,8 +44,8 @@ namespace AspNetCoreService
 
             app.UseWing();
             app.UseHttpsRedirection();
-            app.UseAuthentication();
             app.UseRouting();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

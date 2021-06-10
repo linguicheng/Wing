@@ -6,6 +6,7 @@ using AspNetCoreService.EventBus;
 using AspNetCoreService.Policy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Wing.Auth;
 using Wing.EventBus;
 using Wing.HttpTransport;
 
@@ -19,14 +20,16 @@ namespace AspNetCoreService.Controllers
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
-        private readonly IRequest _request;
-        private readonly IEventBus _eventBus;
-        private readonly IProduct _product;
-        public WeatherForecastController(IRequest request, IEventBus eventBus, IProduct product)
+        //private readonly IRequest _request;
+        //private readonly IEventBus _eventBus;
+        //private readonly IProduct _product;
+        private readonly IAuth _auth;
+        public WeatherForecastController( IAuth auth)
         {
-            _request = request;
-            _eventBus = eventBus;
-            _product = product;
+            //_request = request;
+            //_eventBus = eventBus;
+            //_product = product;
+            _auth = auth;
         }
 
         [HttpGet]
@@ -44,35 +47,46 @@ namespace AspNetCoreService.Controllers
             .ToArray();
         }
 
-        [HttpGet("test1")]
-        public async Task<string> Test1()
+        //[HttpGet("test1")]
+        //public async Task<string> Test1()
+        //{
+        //    return await _request.Get<string>("http://192.168.56.99:5002/api/values");
+        //}
+        //[HttpGet("test2")]
+        //public async Task<string> Test2()
+        //{
+        //    return await _request.Get<string>("http://192.168.56.98:5002/api/values");
+        //}
+        //[HttpGet("Hello")]
+        //public async Task<string> Hello(string name)
+        //{
+        //    return await _product.InvokeHello(name);
+        //}
+        [Authorize]
+        [HttpGet("test3")]
+        public string Test3()
         {
-            return await _request.Get<string>("http://192.168.56.99:5002/api/values");
+            return "Hello Wing";
         }
-        [HttpGet("test2")]
-        public async Task<string> Test2()
+        [HttpGet("gettoken")]
+        public string GetToken()
         {
-            return await _request.Get<string>("http://192.168.56.98:5002/api/values");
+            return _auth.GetToken("byron");
         }
-        [HttpGet("Hello")]
-        public async Task<string> Hello(string name)
-        {
-            return await _product.InvokeHello(name);
-        }
-        
-        [HttpGet("Publish")]
-        public void Publish()
-        {
-            _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond }, result =>
-            {
-                if (result)
-                {
 
-                }
-                else
-                {
-                }
-            });
-        }
+        //[HttpGet("Publish")]
+        //public void Publish()
+        //{
+        //    _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond }, result =>
+        //    {
+        //        if (result)
+        //        {
+
+        //        }
+        //        else
+        //        {
+        //        }
+        //    });
+        //}
     }
 }

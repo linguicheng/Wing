@@ -1,13 +1,11 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Wing.Auth;
 using Wing.HttpTransport;
-using Wing.ServiceProvider;
 
 namespace AspNetCoreService.Controllers
 {
@@ -50,6 +48,12 @@ namespace AspNetCoreService.Controllers
         public async Task<string> Test2()
         {
             return await _request.Get<string>("http://192.168.56.98:5002/api/values");
+        }
+        [Authorize]
+        [HttpGet("test3")]
+        public string Test3()
+        {
+            return "Hello Wing";
         }
         [HttpGet("gettoken")]
         public string GetToken()

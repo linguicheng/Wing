@@ -33,17 +33,15 @@ namespace Wing.Auth
 
             wingBuilder.Services.AddAuthorization(options =>
             {
-                if (validatePermission == null)
+                options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
                 {
-                    options.AddPolicy(JwtBearerDefaults.AuthenticationScheme, policy =>
-                    {
-                        policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
-                        policy.RequireClaim(ClaimTypes.Name);
-                    });
-                    return;
+                    policy.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme);
+                    policy.RequireClaim(ClaimTypes.Name);
+                });
+                if (validatePermission != null)
+                {
+                    options.AddPolicy(config.PolicyName, policy => policy.Requirements.Add(new JwtAuthRequirement() { ValidatePermission = validatePermission }));
                 }
-
-                options.AddPolicy(config.PolicyName, policy => policy.Requirements.Add(new JwtAuthRequirement() { ValidatePermission = validatePermission }));
             })
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(x =>
