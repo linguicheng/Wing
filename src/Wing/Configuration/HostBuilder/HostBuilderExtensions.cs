@@ -8,7 +8,7 @@ namespace Wing.Configuration.HostBuilder
     {
         public static IHostBuilder AddWing(this IHostBuilder hostBuilder)
         {
-            return hostBuilder.ConfigureAppConfiguration((hostingContext, config) =>
+            return hostBuilder.UseServiceProviderFactory(new WingServiceProviderFactory()).ConfigureAppConfiguration((hostingContext, config) =>
              {
                  config.AddJsonFile("wing.json", optional: false, reloadOnChange: true);
              }).UseServiceContext();

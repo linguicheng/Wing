@@ -11,7 +11,7 @@ namespace Wing.Redis
         {
             CSRedisClient csredis;
             var connectionString = config.ConnectionString;
-            if (!string.IsNullOrWhiteSpace(connectionString))
+            if (config.Sentinels == null || config.Sentinels.Length == 0)
             {
                 csredis = new CSRedisClient(connectionString);
             }

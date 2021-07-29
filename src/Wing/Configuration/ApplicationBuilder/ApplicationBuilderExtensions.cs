@@ -6,7 +6,6 @@ namespace Wing.Configuration.ApplicationBuilder
     {
          public static IWingApplicationBuilder UseWing(this IApplicationBuilder applicationBuilder)
         {
-            ServiceLocator.ServiceProvider = applicationBuilder.ApplicationServices;
             applicationBuilder.UseHealthChecks("/health");
             return new WingApplicationBuilder(applicationBuilder);
         }
