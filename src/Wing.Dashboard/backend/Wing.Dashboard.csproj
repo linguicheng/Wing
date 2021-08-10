@@ -5,8 +5,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Wing.Consul\Wing.Consul.csproj" />
-    <ProjectReference Include="..\Wing\Wing.csproj" />
+    <ProjectReference Include="..\..\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\Wing\Wing.csproj" />
   </ItemGroup>
 
 </Project>
