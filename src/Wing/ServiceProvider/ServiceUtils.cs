@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Wing.ServiceProvider
 {
-    public class ServiceTool
+    public class ServiceUtils
     {
         public static void GetServiceTagConfig(IEnumerable<string> tags, string startsWith, Action<string> action)
         {
@@ -20,5 +20,7 @@ namespace Wing.ServiceProvider
                 }
             }
         }
+
+        public static IDiscoveryServiceProvider DiscoveryService { get; set; }
     }
 }

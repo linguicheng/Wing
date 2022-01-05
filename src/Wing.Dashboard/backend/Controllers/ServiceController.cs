@@ -12,9 +12,9 @@ namespace Wing.Dashboard.Controllers
 
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
 
-        public ServiceController(IDiscoveryServiceProvider discoveryServiceProvider)
+        public ServiceController()
         {
-            _discoveryServiceProvider = discoveryServiceProvider;
+            _discoveryServiceProvider = ServiceUtils.DiscoveryService;
         }
         public class ServiceModel
         {

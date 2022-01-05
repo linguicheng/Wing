@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Wing.Configuration.HostBuilder;
+using Wing.Consul;
 
 namespace GrpcService
 {
@@ -27,6 +29,6 @@ namespace GrpcService
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                }).AddWing(builder => builder.AddConsul());
     }
 }

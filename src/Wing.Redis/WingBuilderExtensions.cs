@@ -7,17 +7,17 @@ namespace Wing.Redis
 {
     public static class WingBuilderExtensions
     {
-        public static IWingBuilder AddRedis(this IWingBuilder wingBuilder)
+        public static IWingServiceBuilder AddRedis(this IWingServiceBuilder wingBuilder)
         {
             return AddConfig(wingBuilder, wingBuilder.GetConfig<Config>("Redis"));
         }
 
-        public static IWingBuilder AddRedis(this IWingBuilder wingBuilder, Config config)
+        public static IWingServiceBuilder AddRedis(this IWingServiceBuilder wingBuilder, Config config)
         {
             return AddConfig(wingBuilder, config);
         }
 
-        private static IWingBuilder AddConfig(IWingBuilder wingBuilder, Config config)
+        private static IWingServiceBuilder AddConfig(IWingServiceBuilder wingBuilder, Config config)
         {
             if (config == null)
             {

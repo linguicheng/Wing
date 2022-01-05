@@ -5,10 +5,10 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Timeout;
 using Wing.Exceptions;
-using Wing.Logger;
 using Wing.ServiceProvider;
 
 namespace Wing.GateWay.Middleware
@@ -19,9 +19,9 @@ namespace Wing.GateWay.Middleware
         private readonly ServiceRequestDelegate _next;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
-        private readonly IWingLogger<PolicyMiddleware> _logger;
+        private readonly ILogger<PolicyMiddleware> _logger;
 
-        public PolicyMiddleware(ServiceRequestDelegate next, IHttpClientFactory clientFactory, IServiceFactory serviceFactory, IWingLogger<PolicyMiddleware> logger)
+        public PolicyMiddleware(ServiceRequestDelegate next, IHttpClientFactory clientFactory, IServiceFactory serviceFactory, ILogger<PolicyMiddleware> logger)
         {
             _next = next;
             _clientFactory = clientFactory;
@@ -91,7 +91,7 @@ namespace Wing.GateWay.Middleware
                         return Task.FromResult(new HttpResponseMessage(HttpStatusCode.BadGateway));
                     }, (d, cxt) =>
                     {
-                        _logger.Error(d.Exception, "触发异常降级");
+                        _logger.LogError(d.Exception, "触发异常降级");
                         return Task.CompletedTask;
                     });
 

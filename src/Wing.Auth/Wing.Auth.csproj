@@ -5,8 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.8" />
-    <PackageReference Include="NLog.Web.AspNetCore" Version="4.9.0" />
+    <ProjectReference Include="..\Wing\Wing.csproj" />
   </ItemGroup>
 
 </Project>

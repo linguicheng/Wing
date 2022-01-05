@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.Consul;
 using Wing.RabbitMQ;
-using Wing.Redis;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Configuration.ApplicationBuilder;
 using Wing.Auth;
@@ -27,7 +25,7 @@ namespace AspNetCoreService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddWing().AddJwt(context =>
+            services.AddWing().AddRabbitMQ().AddJwt(context =>
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 return user == "byron";

@@ -20,7 +20,7 @@ namespace GrpcService
                 options.MaxSendMessageSize = 1 * 1024 * 1024; // 1 MB
             });
 
-            services.AddWing().AddConsul();
+            services.AddWing();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

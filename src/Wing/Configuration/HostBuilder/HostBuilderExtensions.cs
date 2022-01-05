@@ -1,4 +1,4 @@
-﻿using AspectCore.Extensions.Hosting;
+﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -6,12 +6,12 @@ namespace Wing.Configuration.HostBuilder
 {
     public static class HostBuilderExtensions
     {
-        public static IHostBuilder AddWing(this IHostBuilder hostBuilder)
+        public static IHostBuilder AddWing(this IHostBuilder hostBuilder, Action<IConfigurationBuilder> action = null)
         {
-            return hostBuilder.UseServiceProviderFactory(new WingServiceProviderFactory()).ConfigureAppConfiguration((hostingContext, config) =>
+            return hostBuilder.ConfigureAppConfiguration((hostingContext, config) =>
              {
-                 config.AddJsonFile("wing.json", optional: false, reloadOnChange: true);
-             }).UseServiceContext();
+                 action?.Invoke(config);
+             }).UseServiceProviderFactory(new WingServiceProviderFactory());
         }
     }
 }

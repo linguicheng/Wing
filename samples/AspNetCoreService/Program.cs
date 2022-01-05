@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.HostBuilder;
+using Wing.Consul;
 using Wing.NLog;
 
 namespace AspNetCoreService
@@ -17,6 +18,6 @@ namespace AspNetCoreService
              .ConfigureWebHostDefaults(webBuilder =>
              {
                  webBuilder.UseStartup<Startup>();
-             }).AddWing().AddNLog();
+             }).AddWing(builder=> builder.AddConsul()).AddNLog();
     }
 }

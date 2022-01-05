@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Polly;
-using Wing.Logger;
 
 namespace Wing.Policy
 {
@@ -92,8 +92,8 @@ namespace Wing.Policy
                     {
                         await Task.Run(() =>
                         {
-                            var logger = context.ServiceProvider.GetService<IWingLogger<PolicyAttribute>>();
-                            logger.Error(ex, "触发异常降级，方法为：{0}", $"{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}");
+                            var logger = context.ServiceProvider.GetService<ILogger<PolicyAttribute>>();
+                            logger.LogError(ex, "触发异常降级，方法为：{0}", $"{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}");
                         });
                     });
 

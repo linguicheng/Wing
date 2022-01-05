@@ -1,6 +1,6 @@
 ﻿namespace Wing.Configuration
 {
-    public class ServiceTag
+    public class ServiceDefaults
     {
         public const string GRPC = "Grpc";
         public const string WEIGHT = "Weight";

@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using Wing.Configuration;
 using Wing.Exceptions;
 using Wing.LoadBalancer;
-using Wing.Logger;
 
 namespace Wing.ServiceProvider
 {
     public class ServiceFactory : IServiceFactory
     {
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
-        private readonly IWingLogger<ServiceFactory> _logger;
+        private readonly ILogger<ServiceFactory> _logger;
         private readonly ILoadBalancerCache _loadBalancerCache;
 
-        public ServiceFactory(IDiscoveryServiceProvider discoveryServiceProvider, IWingLogger<ServiceFactory> logger, ILoadBalancerCache loadBalancerCache)
+        public ServiceFactory(ILogger<ServiceFactory> logger, ILoadBalancerCache loadBalancerCache)
         {
-            _discoveryServiceProvider = discoveryServiceProvider;
+            _discoveryServiceProvider = ServiceUtils.DiscoveryService;
             _logger = logger;
             _loadBalancerCache = loadBalancerCache;
         }
@@ -56,7 +56,7 @@ namespace Wing.ServiceProvider
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"服务【{serviceName}】调用异常");
+                _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
                 throw ex;
             }
@@ -76,7 +76,7 @@ namespace Wing.ServiceProvider
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, $"服务【{serviceName}】调用异常");
+                _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
                 throw ex;
             }
@@ -105,7 +105,7 @@ namespace Wing.ServiceProvider
             }
 
             LoadBalancerOptions loadBalancerOptions = LoadBalancerOptions.RoundRobin;
-            ServiceTool.GetServiceTagConfig(services[0].Tags, ServiceTag.LOADBALANCEROPTION, loadBalancerOption => loadBalancerOptions = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), loadBalancerOption));
+            ServiceUtils.GetServiceTagConfig(services[0].Tags, ServiceDefaults.LOADBALANCEROPTION, loadBalancerOption => loadBalancerOptions = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), loadBalancerOption));
             ServiceAddress serviceAddress = null;
             var loadBalancerConfig = _loadBalancerCache.Get(serviceName);
             if (loadBalancerConfig == null || loadBalancerConfig.LoadBalancerOptions != loadBalancerOptions)

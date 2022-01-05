@@ -6,24 +6,23 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Wing.Configuration;
 using Wing.Configuration.ServiceBuilder;
 
 namespace Wing.Auth
 {
     public static class WingBuilderExtensions
     {
-        public static IWingBuilder AddJwt(this IWingBuilder wingBuilder)
+        public static IWingServiceBuilder AddJwt(this IWingServiceBuilder wingBuilder)
         {
             return AddConfig(wingBuilder, null);
         }
 
-        public static IWingBuilder AddJwt(this IWingBuilder wingBuilder, Func<HttpContext, bool> validatePermission)
+        public static IWingServiceBuilder AddJwt(this IWingServiceBuilder wingBuilder, Func<HttpContext, bool> validatePermission)
         {
             return AddConfig(wingBuilder, validatePermission);
         }
 
-        private static IWingBuilder AddConfig(IWingBuilder wingBuilder, Func<HttpContext, bool> validatePermission)
+        private static IWingServiceBuilder AddConfig(IWingServiceBuilder wingBuilder, Func<HttpContext, bool> validatePermission)
         {
             var config = wingBuilder.GetConfig<JwtSetting>("Jwt");
             if (config == null)

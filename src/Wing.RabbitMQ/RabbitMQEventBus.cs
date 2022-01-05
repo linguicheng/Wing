@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using Wing.Convert;
 using Wing.EventBus;
-using Wing.Logger;
 
 namespace Wing.RabbitMQ
 {
@@ -16,9 +16,9 @@ namespace Wing.RabbitMQ
         private readonly IRabbitMQConnection _conSumerConnection;
         private readonly IJson _json;
         private readonly Config _config;
-        private readonly IWingLogger<RabbitMQEventBus> _logger;
+        private readonly ILogger<RabbitMQEventBus> _logger;
 
-        public RabbitMQEventBus(IRabbitMQConnection connection, IRabbitMQConnection conSumerConnection, IJson json, IWingLogger<RabbitMQEventBus> logger, Config config)
+        public RabbitMQEventBus(IRabbitMQConnection connection, IRabbitMQConnection conSumerConnection, IJson json, ILogger<RabbitMQEventBus> logger, Config config)
         {
             _connection = connection;
             _conSumerConnection = conSumerConnection;
@@ -45,7 +45,7 @@ namespace Wing.RabbitMQ
                 props.DeliveryMode = 2;
                 var msg = _json.Serialize(message);
                 var routingKey = message.GetType().FullName;
-                _logger.Debug("消息发布：内容【{0}】，exchange={1}，routingKey={2}", msg, _config.ExchangeName, routingKey);
+                _logger.LogDebug("消息发布：内容【{0}】，exchange={1}，routingKey={2}", msg, _config.ExchangeName, routingKey);
                 var body = Encoding.UTF8.GetBytes(msg);
                 channel.ConfirmSelect();
                 channel.BasicPublish(exchange: _config.ExchangeName, routingKey: routingKey, basicProperties: props, body: body);
@@ -109,10 +109,10 @@ namespace Wing.RabbitMQ
                         }
                         catch (Exception ex)
                         {
-                            _logger.Error(ex, "消息订阅：内容【{0}】，exchange={1}，routingKey={2}", message, exchangeName, routingKey);
+                            _logger.LogError(ex, "消息订阅：内容【{0}】，exchange={1}，routingKey={2}", message, exchangeName, routingKey);
                         }
 
-                        _logger.Debug("消息订阅：内容【{0}】，exchange={1}，routingKey={2}，消息处理结果：{3}", message, exchangeName, routingKey, result ? "Success" : "Fail");
+                        _logger.LogDebug("消息订阅：内容【{0}】，exchange={1}，routingKey={2}，消息处理结果：{3}", message, exchangeName, routingKey, result ? "Success" : "Fail");
                     };
                     channel.BasicConsume(queue: queueName, autoAck: false, consumer: consumer);
                 });

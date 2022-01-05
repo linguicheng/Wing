@@ -15,7 +15,7 @@ namespace Wing.ServiceProvider
             Name = name;
             Tags = tags;
             ServiceAddress = serviceAddress;
-            ServiceTool.GetServiceTagConfig(tags, ServiceTag.WEIGHT, w =>
+            ServiceUtils.GetServiceTagConfig(tags, ServiceDefaults.WEIGHT, w =>
             {
                 int.TryParse(w, out int weight);
                 EffectiveWeight = Weight = weight;

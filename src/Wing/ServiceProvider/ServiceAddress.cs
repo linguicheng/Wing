@@ -7,7 +7,7 @@ namespace Wing.ServiceProvider
     {
         public ServiceAddress(string host, int port, IEnumerable<string> tags)
         {
-            ServiceTool.GetServiceTagConfig(tags, ServiceTag.SCHEME, scheme => Sheme = scheme);
+            ServiceUtils.GetServiceTagConfig(tags, ServiceDefaults.SCHEME, scheme => Sheme = scheme);
             Host = host;
             Port = port;
         }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Wing.Configuration.ServiceBuilder
 {
-    public interface IWingBuilder
+    public interface IWingServiceBuilder
     {
         IServiceCollection Services { get; }
 
