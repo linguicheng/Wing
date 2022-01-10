@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\Wing.NLog\Wing.NLog.csproj" />
     <ProjectReference Include="..\..\Wing\Wing.csproj" />
   </ItemGroup>
 

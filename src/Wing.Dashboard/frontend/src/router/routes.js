@@ -49,6 +49,15 @@ const frameIn = [
         },
         component: _import('demo/page3')
       },
+      {
+        path: 'service',
+        name: 'service',
+        meta: {
+          title: '服务列表',
+          auth: true
+        },
+        component: _import('service')
+      },
       // 系统 前端日志
       {
         path: 'log',

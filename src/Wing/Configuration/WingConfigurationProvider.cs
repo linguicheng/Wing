@@ -10,18 +10,10 @@ namespace Wing.Configuration
     {
         public override void Load()
         {
-            try
-            {
-                ServiceUtils.DiscoveryService.GetKVData(SetData)
+            ServiceUtils.DiscoveryService.GetKVData(SetData)
                         .ConfigureAwait(false)
                         .GetAwaiter()
                         .GetResult();
-            }
-            catch (Exception ex)
-            {
-                ServiceLocator.GetRequiredService<ILogger<WingConfigurationProvider>>()
-                     .LogError(ex, "配置中心获取配置信息异常");
-            }
         }
 
         public void SetData(Dictionary<string, string> configData)

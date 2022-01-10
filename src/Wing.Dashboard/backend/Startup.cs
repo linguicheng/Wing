@@ -38,6 +38,15 @@ namespace Wing.Dashboard
 
             app.UseAuthorization();
 
+            // 设置允许所有来源跨域
+            app.UseCors(options =>
+            {
+                options.AllowAnyHeader()
+                .AllowAnyMethod()
+                .SetIsOriginAllowed(x => true)
+                .AllowCredentials();
+            });
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

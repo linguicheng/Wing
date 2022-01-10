@@ -25,4 +25,9 @@ export default {
 
 <style lang="scss">
 @import '~@/assets/style/public-class.scss';
+
+/* 框架内 table 高度 */
+.table-container {
+  height: calc(100vh - 60px - 21px - 74px - 73px) !important;
+}
 </style>

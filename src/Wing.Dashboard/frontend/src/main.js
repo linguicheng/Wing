@@ -12,8 +12,14 @@ import router from './router'
 import { menuHeader, menuAside } from '@/menu'
 import { frameInRoutes } from '@/router/routes'
 
+// vxe-table
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/index.css'
+
 // 核心插件
 Vue.use(d2Admin)
+Vue.use(VXETable)
 
 new Vue({
   router,

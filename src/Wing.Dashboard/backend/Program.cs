@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.HostBuilder;
 using Wing.Consul;
+using Wing.NLog;
 
 namespace Wing.Dashboard
 {
@@ -17,6 +18,6 @@ namespace Wing.Dashboard
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul());
+                }).AddWing(builder => builder.AddConsul()).AddNLog();
     }
 }
