@@ -1,18 +1,18 @@
 ﻿using System.Collections.Generic;
-using Wing.Configuration;
+using Wing.ServiceProvider.Config;
 
 namespace Wing.ServiceProvider
 {
     public class ServiceAddress
     {
-        public ServiceAddress(string host, int port, IEnumerable<string> tags)
+        public ServiceAddress(string host, int port, string scheme)
         {
-            ServiceUtils.GetServiceTagConfig(tags, ServiceDefaults.SCHEME, scheme => Sheme = scheme);
             Host = host;
             Port = port;
+            Sheme = scheme;
         }
 
-        public string Sheme { get; private set; }
+        public string Sheme { get; }
 
         public string Host { get; }
 

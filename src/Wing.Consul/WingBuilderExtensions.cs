@@ -34,8 +34,13 @@ namespace Wing.Consul
                 }
                 consulProvider.Register(service);
             }
-            ServiceUtils.DiscoveryService = consulProvider;
-            builder.Add(new ConfigurationSource());
+            ServiceLocator.DiscoveryService = consulProvider;
+            var configCenterEnabled = configration["ConfigCenterEnabled"];
+            if (configCenterEnabled!="False")
+            {
+                builder.Add(new ConfigurationSource());
+            }
+            
             return builder;
         }
     }

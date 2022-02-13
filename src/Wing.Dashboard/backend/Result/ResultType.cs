@@ -1,4 +1,4 @@
-﻿namespace Wing.Result
+﻿namespace Wing.Dashboard.Result
 {
     public enum ResultType
     {
@@ -9,6 +9,6 @@
         /// <summary>
         /// 异常
         /// </summary>
-        Exception = 500
+        Exception = 99
     }
 }

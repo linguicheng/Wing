@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Wing.Configuration;
 using Wing.Exceptions;
 using Wing.LoadBalancer;
+using Wing.ServiceProvider.Config;
 
 namespace Wing.ServiceProvider
 {
@@ -16,7 +16,7 @@ namespace Wing.ServiceProvider
 
         public ServiceFactory(ILogger<ServiceFactory> logger, ILoadBalancerCache loadBalancerCache)
         {
-            _discoveryServiceProvider = ServiceUtils.DiscoveryService;
+            _discoveryServiceProvider = ServiceLocator.DiscoveryService;
             _logger = logger;
             _loadBalancerCache = loadBalancerCache;
         }
@@ -87,11 +87,11 @@ namespace Wing.ServiceProvider
             List<Service> services;
             if (serviceOptions == ServiceOptions.Grpc)
             {
-                services = await _discoveryServiceProvider.GetGrpcServices(serviceName);
+                services = await _discoveryServiceProvider.GetGrpcServices(serviceName, HealthStatus.Healthy);
             }
             else
             {
-                services = await _discoveryServiceProvider.GetHttpServices(serviceName);
+                services = await _discoveryServiceProvider.GetHttpServices(serviceName, HealthStatus.Healthy);
             }
 
             if (services.Count == 0)
@@ -105,10 +105,9 @@ namespace Wing.ServiceProvider
             }
 
             LoadBalancerOptions loadBalancerOptions = LoadBalancerOptions.RoundRobin;
-            ServiceUtils.GetServiceTagConfig(services[0].Tags, ServiceDefaults.LOADBALANCEROPTION, loadBalancerOption => loadBalancerOptions = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), loadBalancerOption));
-            ServiceAddress serviceAddress = null;
             var loadBalancerConfig = _loadBalancerCache.Get(serviceName);
-            if (loadBalancerConfig == null || loadBalancerConfig.LoadBalancerOptions != loadBalancerOptions)
+            ServiceAddress serviceAddress;
+            if (loadBalancerConfig == null || loadBalancerConfig.LoadBalancerOptions != services[0].LoadBalancer)
             {
                 loadBalancerConfig = new LoadBalancerConfig
                 {

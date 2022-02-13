@@ -50,10 +50,19 @@ const frameIn = [
         component: _import('demo/page3')
       },
       {
+        path: 'service/detail',
+        name: 'serviceDetail',
+        meta: {
+          title: '服务明细',
+          auth: true
+        },
+        component: _import('service/detail')
+      },
+      {
         path: 'service',
         name: 'service',
         meta: {
-          title: '服务列表',
+          title: '服务汇总',
           auth: true
         },
         component: _import('service')

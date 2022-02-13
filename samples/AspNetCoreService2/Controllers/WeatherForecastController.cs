@@ -20,7 +20,7 @@ namespace AspNetCoreService.Controllers
 
         private readonly IRequest _request;
         private readonly IAuth _auth;
-        public WeatherForecastController(IRequest request,IAuth auth)
+        public WeatherForecastController(IRequest request, IAuth auth)
         {
             _request = request;
             _auth = auth;
@@ -58,7 +58,7 @@ namespace AspNetCoreService.Controllers
         [HttpGet("gettoken")]
         public string GetToken()
         {
-            return  _auth.GetToken("byron");
+            return _auth.GetToken("byron");
         }
 
     }

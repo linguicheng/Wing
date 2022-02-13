@@ -1,38 +1,29 @@
-﻿using System.Collections.Generic;
-using Wing.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Web;
+using Wing.ServiceProvider.Config;
 
 namespace Wing.ServiceProvider
 {
     public class Service
     {
-        public Service(
-            string id,
-            string name,
-            IEnumerable<string> tags,
-            ServiceAddress serviceAddress)
-        {
-            Id = id;
-            Name = name;
-            Tags = tags;
-            ServiceAddress = serviceAddress;
-            ServiceUtils.GetServiceTagConfig(tags, ServiceDefaults.WEIGHT, w =>
-            {
-                int.TryParse(w, out int weight);
-                EffectiveWeight = Weight = weight;
-            });
-        }
+        public string Id { get; set; }
 
-        public string Id { get; }
+        public string Name { get; set; }
 
-        public string Name { get; }
+        public ServiceAddress ServiceAddress { get; set; }
 
-        public IEnumerable<string> Tags { get; }
+        public int Weight { get; set; }
 
-        public ServiceAddress ServiceAddress { get; }
+        public HealthStatus Status { get; set; }
 
-        public int Weight { get; private set; }
+        public ServiceOptions ServiceOptions { get; set; }
 
-        internal int EffectiveWeight { get; set; }
+        public LoadBalancerOptions LoadBalancer { get; set; }
+
+        public string Developer { get; set; }
+
+        public int EffectiveWeight { get; set; }
 
         internal int CurrentWeight { get; set; }
     }

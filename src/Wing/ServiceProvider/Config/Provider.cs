@@ -14,8 +14,6 @@ namespace Wing.ServiceProvider.Config
 
         public string Token { get; set; }
 
-        public string Key { get; set; }
-
         public int WaitTime { get; set; } = 3;
     }
 }

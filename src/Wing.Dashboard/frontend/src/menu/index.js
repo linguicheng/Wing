@@ -33,7 +33,8 @@ export const menuAside = supplementPath([
     title: '服务管理',
     icon: 'folder-o',
     children: [
-      { path: 'service', title: '服务列表' }
+      { path: '/service', title: '服务汇总' },
+      { path: '/service/detail', title: '服务明细' }
     ]
   }
 ])

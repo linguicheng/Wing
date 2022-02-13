@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Wing.Configuration;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
 
@@ -55,12 +54,12 @@ namespace Wing.Consul
 
         public Task<List<Service>> GetGrpcServices(string serviceName)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && s.Tags.Contains(ServiceDefaults.GRPC)).ToList());
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && s.ServiceOptions== ServiceOptions.Grpc).ToList());
         }
 
         public Task<List<Service>> GetHttpServices(string serviceName)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && !s.Tags.Contains(ServiceDefaults.GRPC)).ToList());
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && s.ServiceOptions == ServiceOptions.Http).ToList());
         }
 
         public async Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default)
@@ -71,6 +70,31 @@ namespace Wing.Consul
         public async Task Register(ServiceData service)
         {
             await _discoveryServiceProvider.Register(service);
+        }
+
+        public Task<List<Service>> Get(HealthStatus healthStatus)
+        {
+            return Task.FromResult(_services.Where(s => s.Status == healthStatus).ToList());
+        }
+
+        public Task<List<Service>> Get(string serviceName, HealthStatus healthStatus)
+        {
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+                                    && s.Status == healthStatus).ToList());
+        }
+
+        public Task<List<Service>> GetGrpcServices(string serviceName, HealthStatus healthStatus)
+        {
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+                                    && s.ServiceOptions == ServiceOptions.Grpc
+                                    && s.Status == healthStatus).ToList());
+        }
+
+        public Task<List<Service>> GetHttpServices(string serviceName, HealthStatus healthStatus)
+        {
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+                                    && s.ServiceOptions == ServiceOptions.Http
+                                    && s.Status == healthStatus).ToList());
         }
     }
 }

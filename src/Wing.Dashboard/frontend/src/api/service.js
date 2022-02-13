@@ -3,6 +3,7 @@ import Adapter from 'axios-mock-adapter'
 import { get } from 'lodash'
 import util from '@/libs/util'
 import { errorLog, errorCreate } from './tools'
+import qs from 'qs'
 
 /**
  * @description 创建请求实例
@@ -36,9 +37,9 @@ function createService () {
           case 0:
             // [ 示例 ] code === 0 代表没有错误
             return dataAxios.data
-          case 'xxx':
+          case 99:
             // [ 示例 ] 其它和后台约定的 code
-            errorCreate(`[ code: xxx ] ${dataAxios.msg}: ${response.config.url}`)
+            errorCreate(`[ code: 99 ] ${dataAxios.msg}: ${response.config.url}`)
             break
           default:
             // 不是正确的 code
@@ -82,9 +83,16 @@ function createRequestFunction (service) {
         Authorization: token,
         'Content-Type': get(config, 'headers.Content-Type', 'application/json')
       },
-      timeout: 5000,
+      timeout: 30000,
       baseURL: process.env.VUE_APP_API,
       data: {}
+    }
+    config.paramsSerializer = params => {
+      return qs.stringify(params, {
+        arrayFormat: 'indices',
+        allowDots: true,
+        encode: false
+      })
     }
     return service(Object.assign(configDefault, config))
   }

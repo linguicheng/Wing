@@ -19,5 +19,7 @@ namespace Wing.ServiceProvider.Config
         public LoadBalancer LoadBalancer { get; set; }
 
         public SchemeOptions Scheme { get; set; }
+
+        public string Developer { get; set; }
     }
 }

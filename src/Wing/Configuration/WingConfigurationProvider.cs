@@ -10,7 +10,7 @@ namespace Wing.Configuration
     {
         public override void Load()
         {
-            ServiceUtils.DiscoveryService.GetKVData(SetData)
+            ServiceLocator.DiscoveryService.GetKVData(SetData)
                         .ConfigureAwait(false)
                         .GetAwaiter()
                         .GetResult();

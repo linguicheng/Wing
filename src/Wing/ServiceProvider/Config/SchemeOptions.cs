@@ -1,4 +1,4 @@
-﻿namespace Wing.Configuration
+﻿namespace Wing.ServiceProvider.Config
 {
     public enum SchemeOptions
     {

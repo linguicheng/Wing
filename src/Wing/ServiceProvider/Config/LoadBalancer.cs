@@ -1,6 +1,4 @@
-﻿using Wing.Configuration;
-
-namespace Wing.ServiceProvider.Config
+﻿namespace Wing.ServiceProvider.Config
 {
     public class LoadBalancer
     {

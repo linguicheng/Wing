@@ -26,10 +26,14 @@ namespace Wing.Configuration.ServiceBuilder
             Services.AddSingleton<IRequest, ApiRequest>();
             Services.AddSingleton<ILoadBalancerCache, LoadBalancerCache>();
             Services.AddSingleton<IServiceFactory, ServiceFactory>();
-            Services.AddSingleton<IHostedService, ConfigurationHostedService>();
             GlobalInjection.RegisterCommandService(Services);
             ServiceLocator.ServiceProvider = Services.BuildServiceProvider();
             Configuration = ServiceLocator.GetRequiredService<IConfiguration>();
+            var configCenterEnabled = Configuration["ConfigCenterEnabled"];
+            if (configCenterEnabled != "False")
+            {
+                Services.AddSingleton<IHostedService, ConfigurationHostedService>();
+            }
         }
 
         public T GetConfig<T>(string key)

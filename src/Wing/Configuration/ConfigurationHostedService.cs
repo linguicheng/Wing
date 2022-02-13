@@ -26,7 +26,7 @@ namespace Wing.Configuration
                 {
                     try
                     {
-                        await ServiceUtils.DiscoveryService.GetKVData(ConfigurationSubject.Notify)
+                        await ServiceLocator.DiscoveryService.GetKVData(ConfigurationSubject.Notify)
                         .ConfigureAwait(false);
                     }
                     catch (Exception ex)

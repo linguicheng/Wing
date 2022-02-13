@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Consul;
+using Wing.Dashboard.Filters;
 
 namespace Wing.Dashboard
 {
@@ -20,7 +21,11 @@ namespace Wing.Dashboard
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.Filters.Add(typeof(ApiExceptionFilter));
+                options.Filters.Add(typeof(ApiResultFilter));
+            });
             services.AddWing();
         }
 

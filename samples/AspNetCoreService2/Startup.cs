@@ -1,15 +1,14 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.Consul;
+using Wing.RabbitMQ;
 using Wing.Configuration.ServiceBuilder;
+using Wing.Configuration.ApplicationBuilder;
 using Wing.Auth;
 using System.Linq;
 using System.Security.Claims;
-using Wing.Configuration.ApplicationBuilder;
 
 namespace AspNetCoreService
 {
@@ -26,8 +25,7 @@ namespace AspNetCoreService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-
-            services.AddWing().AddJwt(context =>
+            services.AddWing().AddRabbitMQ().AddJwt(context =>
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 return user == "byron";
@@ -44,8 +42,8 @@ namespace AspNetCoreService
 
             app.UseWing();
             app.UseHttpsRedirection();
-            app.UseRouting();
             app.UseAuthentication();
+            app.UseRouting();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

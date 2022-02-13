@@ -8,8 +8,6 @@
 
         public int? Interval { get; set; }
 
-        public int? RemoveService { get; set; }
-
         public bool? GRPCUseTLS { get; set; }
     }
 }

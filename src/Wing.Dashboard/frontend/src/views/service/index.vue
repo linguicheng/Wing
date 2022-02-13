@@ -2,7 +2,13 @@
   <d2-container>
     <template slot="header">
         <div>
-            <el-button type="primary" icon="el-icon-search"
+            <el-input v-model="pageModel.data"
+                      clearable
+                      @change="search"
+                      placeholder="请输入服务名称"
+                      style="width:200px"
+                      class="search"/>
+            <el-button class="search" type="primary" icon="el-icon-search"
             @click.prevent="search"
             >查询</el-button>
         </div>
@@ -21,31 +27,49 @@
                  keep-source
                  stripe
                  :loading="loading"
-                 :data="services"
+                 :data="services.items"
                  :mouse-config="{ selected: true }">
-        <vxe-table-column field="name"
-                          title="服务名称"
-                          :edit-render="{name: '$input', props: {readonly: true}}" />
-        <vxe-table-column field="serviceAddress"
-                          title="服务地址"
-                          :edit-render="{name: '$input', props: {readonly: true}}" />
-        <vxe-table-column field="serviceType"
-                          title="服务类别"
-                          :edit-render="{name: '$input', props: {readonly: true}}" />
-        <vxe-table-column field="loadBanlancer"
-                          title="负载均衡"
-                          :edit-render="{name: '$input', props: {readonly: true}}" />
+        <vxe-column field="name"
+                    title="服务名称"
+                    sortable/>
+        <vxe-column field="total"
+                    title="服务节点总数"
+                    sortable/>
+        <vxe-column field="healthyTotal"
+                    title="健康节点总数"
+                    sortable/>
+        <vxe-column field="healthyLv"
+                    title="健康率(%)"
+                    sortable/>
+        <vxe-column field="criticalTotal"
+                    title="死亡节点总数"
+                    sortable/>
+        <vxe-column field="criticalLv"
+                    title="死亡率(%)"
+                    sortable/>
+        <vxe-column field="warningTotal"
+                    title="警告节点总数"
+                    sortable/>
+        <vxe-column field="warningLv"
+                    title="警告率(%)"
+                    sortable/>
+        <vxe-column field="maintenanceTotal"
+                    title="维护节点总数"
+                    sortable/>
+        <vxe-column field="maintenanceLv"
+                    title="维护率(%)"
+                    sortable/>
       </vxe-table>
     </div>
-    <!-- <template slot="footer">
-      <el-pagination :current-page="formData.Page"
-                     :page-size="formData.Limit"
+    <template slot="footer">
+      <el-pagination :current-page="pageModel.pageSize"
+                     :page-size="pageModel.pageIndex"
                      :page-sizes="[15, 25, 35, 45]"
                      layout="total, sizes, prev, pager, next, jumper"
-                     :total="totalPage"
-                     @size-change="handleSizeChange"
-                     @current-change="handleCurrentChange" />
-    </template> -->
+                     :total="services.totalCount"
+                     @size-change="sizeChange"
+                     @current-change="currentChange" />
+    </template>
   </d2-container>
 </template>
 
@@ -55,7 +79,12 @@ export default {
   data () {
     return {
       loading: false,
-      services: []
+      services: [],
+      pageModel: {
+        pageSize: 15,
+        pageIndex: 1,
+        data: ''
+      }
     }
   },
   created () {
@@ -64,15 +93,22 @@ export default {
   methods: {
     async search () {
       this.loading = true
-      this.services = await this.$api.SERVICE_LIST()
+      this.services = await this.$api.SERVICE(this.pageModel)
       this.loading = false
     },
-    edit () {
-
+    sizeChange (val) {
+      this.pageModel.pageSize = val
+      this.search()
     },
-    remove () {
-
+    currentChange (val) {
+      this.pageModel.pageIndex = val
+      this.search()
     }
   }
 }
 </script>
+<style lang="scss" scoped>
+.search{
+  margin-left: 10px;
+}
+</style>

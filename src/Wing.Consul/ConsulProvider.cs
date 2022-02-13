@@ -5,10 +5,11 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Consul;
-using Wing.Configuration;
 using Wing.Convert;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
+using wingHealthStatus = Wing.ServiceProvider.HealthStatus;
+using consulHealthStatus = Consul.HealthStatus;
 
 namespace Wing.Consul
 {
@@ -34,53 +35,135 @@ namespace Wing.Consul
 
         public async Task<List<Service>> Get()
         {
-            using var client = Connect();
-            var services = await client.Agent.Services();
-            List<Service> result = new List<Service>();
-            foreach (var s in services.Response.Values)
-            {
-                result.Add(new Service(s.ID, s.Service, s.Tags, new ServiceAddress(s.Address, s.Port, s.Tags)));
-            }
-            return result;
+            return await Get(string.Empty, null, null);
+        }
+
+        public async Task<List<Service>> Get(wingHealthStatus healthStatus)
+        {
+            return await Get(string.Empty, null, healthStatus);
         }
 
         public async Task<List<Service>> Get(string serviceName)
         {
-            using var client = Connect();
-            var services = await client.Agent.Services();
-            List<Service> result = new List<Service>();
-            foreach (var s in services.Response.Values)
-            {
-                if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(new Service(s.ID, s.Service, s.Tags, new ServiceAddress(s.Address, s.Port, s.Tags)));
-                }
-            }
+            return await Get(serviceName, null, null);
+        }
 
-            return result;
+        public async Task<List<Service>> Get(string serviceName, wingHealthStatus healthStatus)
+        {
+            return await Get(serviceName, null, healthStatus);
         }
 
         public async Task<List<Service>> GetGrpcServices(string serviceName)
         {
-            return await Get(serviceName, ServiceOptions.Grpc);
+            return await Get(serviceName, ServiceOptions.Grpc, null);
         }
 
         public async Task<List<Service>> GetHttpServices(string serviceName)
         {
-            return await Get(serviceName, ServiceOptions.Http);
+            return await Get(serviceName, ServiceOptions.Http, null);
         }
 
-        private async Task<List<Service>> Get(string serviceName, ServiceOptions serviceOption)
+        public async Task<List<Service>> GetGrpcServices(string serviceName, wingHealthStatus healthStatus)
+        {
+            return await Get(serviceName, ServiceOptions.Grpc, healthStatus);
+        }
+
+        public async Task<List<Service>> GetHttpServices(string serviceName, wingHealthStatus healthStatus)
+        {
+            return await Get(serviceName, ServiceOptions.Http, healthStatus);
+        }
+
+        private async Task<List<Service>> Get(string serviceName, ServiceOptions? serviceOption, wingHealthStatus? healthStatus)
         {
             using var client = Connect();
+            var checks = await client.Agent.Checks();
+            var checkResult = checks.Response.Values;
             var services = await client.Agent.Services();
             List<Service> result = new List<Service>();
             foreach (var s in services.Response.Values)
             {
-                var tag = s.Tags.Where(u => u == $"{nameof(ServiceOptions)}:{serviceOption}").FirstOrDefault();
-                if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrWhiteSpace(tag))
+                var status = wingHealthStatus.Healthy;
+                var checkService = checkResult.Where(x => x.ServiceID == s.ID).FirstOrDefault();
+                if (checkService != null)
                 {
-                    result.Add(new Service(s.ID, s.Service, s.Tags, new ServiceAddress(s.Address, s.Port, s.Tags)));
+                    if (checkService.Status.Equals(consulHealthStatus.Passing))
+                    {
+                        status = wingHealthStatus.Healthy;
+                    }
+                    else if (checkService.Status.Equals(consulHealthStatus.Maintenance))
+                    {
+                        status = wingHealthStatus.Maintenance;
+                    }
+                    else if (checkService.Status.Equals(consulHealthStatus.Warning))
+                    {
+                        status = wingHealthStatus.Warning;
+                    }
+                    else
+                    {
+                        status = wingHealthStatus.Critical;
+                    }
+                }
+
+                if (healthStatus != null && status != healthStatus)
+                {
+                    continue;
+                }
+                var scheme = string.Empty;
+                ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
+                var service = new Service()
+                {
+                    Id = s.ID,
+                    Name = s.Service,
+                    Status = status,
+                    ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
+                };
+                ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
+                {
+                    int.TryParse(x, out int weight);
+                    service.EffectiveWeight = service.Weight = weight;
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.SERVICEOPTION, x =>
+                {
+                    service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
+                {
+                    service.Developer = x;
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCEROPTION, x =>
+                {
+                    service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
+                });
+                if (serviceOption == null)
+                {
+                    if (string.IsNullOrWhiteSpace(serviceName))
+                    {
+                        result.Add(service);
+                        continue;
+                    }
+
+                    if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        result.Add(service);
+                    }
+                    continue;
+
+                }
+
+                if (service.ServiceOptions != serviceOption)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(serviceName))
+                {
+                    result.Add(service);
+                    continue;
+                }
+
+                if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
+                {
+                    result.Add(service);
                 }
             }
 
@@ -90,7 +173,7 @@ namespace Wing.Consul
         public async Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default)
         {
             using var client = Connect();
-            var result = await client.KV.List(_config.Key, new QueryOptions
+            var result = await client.KV.List(_config.Service.Name, new QueryOptions
             {
                 Token = _config.Token,
                 Datacenter = _config.DataCenter,
@@ -111,7 +194,7 @@ namespace Wing.Consul
                 var data = kvData.Where(kv => !kv.Key.EndsWith("/") && kv.Value != null && kv.Value.Any())
                        .SelectMany(kv => DataConverter.BytesToDictionary(kv.Value).Select(pair =>
                              {
-                                 var key = $"{kv.Key.RemoveStart(_config.Key).TrimEnd('/').Replace('/', ':')}:{pair.Key}"
+                                 var key = $"{kv.Key.RemoveStart(_config.Service.Name).TrimEnd('/').Replace('/', ':')}:{pair.Key}"
                                      .Trim(':');
                                  if (string.IsNullOrEmpty(key))
                                  {
@@ -134,7 +217,6 @@ namespace Wing.Consul
             {
                 _checks.Add(new AgentServiceCheck()
                 {
-                    DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(healthcheck.RemoveService ?? 20),
                     Interval = TimeSpan.FromSeconds(healthcheck.Interval ?? 10),
                     HTTP = healthcheck.Url,
                     Timeout = TimeSpan.FromSeconds(healthcheck.Timeout ?? 10)
@@ -144,7 +226,6 @@ namespace Wing.Consul
             {
                 _checks.Add(new AgentServiceCheck()
                 {
-                    DeregisterCriticalServiceAfter = TimeSpan.FromSeconds(healthcheck.RemoveService ?? 20),
                     Interval = TimeSpan.FromSeconds(healthcheck.Interval ?? 10),
                     GRPC = healthcheck.Url,
                     GRPCUseTLS = healthcheck.GRPCUseTLS.GetValueOrDefault(),
@@ -178,18 +259,35 @@ namespace Wing.Consul
             await client.Agent.ServiceDeregister(serviceId);
         }
 
+        private void ServiceTagSplit(IEnumerable<string> tags, string startsWith, Action<string> action)
+        {
+            foreach (var tag in tags)
+            {
+                if (tag.StartsWith(startsWith))
+                {
+                    var tagArr = tag.Split(":");
+                    if (tagArr.Length == 2)
+                    {
+                        action(tagArr[1]);
+                        break;
+                    }
+                }
+            }
+        }
+
         private List<string> BuildTags(ServiceData service)
         {
             List<string> tags = new List<string>
             {
-                $"{nameof(ServiceOptions)}:{service.Option}",
-                $"{ServiceDefaults.LOADBALANCEROPTION}:{service.LoadBalancer.Option}",
-                $"{ServiceDefaults.SCHEME}:{service.Scheme}"
+                $"{nameof(ServiceTag.SERVICEOPTION)}:{service.Option}",
+                $"{ServiceTag.LOADBALANCEROPTION}:{service.LoadBalancer.Option}",
+                $"{ServiceTag.SCHEME}:{service.Scheme}",
+                $"{ServiceTag.DEVELOPER}:{service.Developer}"
             };
             int weight = service.LoadBalancer.Weight ?? 0;
             if (weight > 0)
             {
-                tags.Add($"{ServiceDefaults.WEIGHT}:{weight}");
+                tags.Add($"{ServiceTag.WEIGHT}:{weight}");
             }
 
             if (!string.IsNullOrWhiteSpace(service.Tag))
