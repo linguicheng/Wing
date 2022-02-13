@@ -18,6 +18,6 @@ namespace AspNetCoreService
              .ConfigureWebHostDefaults(webBuilder =>
              {
                  webBuilder.UseStartup<Startup>();
-             }).AddWing(builder=> builder.AddConsul()).AddNLog();
+             }).AddWing(builder=> builder.AddConsul());
     }
 }
