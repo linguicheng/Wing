@@ -31,7 +31,11 @@
                  :mouse-config="{ selected: true }">
         <vxe-column field="name"
                     title="服务名称"
-                    sortable/>
+                    sortable>
+            <template #default="{ row }">
+              <el-link :underline="false" @click="toDetail(row)">{{row.name}}</el-link>
+           </template>
+        </vxe-column>
         <vxe-column field="total"
                     title="服务节点总数"
                     sortable/>
@@ -91,6 +95,15 @@ export default {
     this.search()
   },
   methods: {
+    toDetail (row) {
+      this.$router.push({
+        path: '/service/detail'
+      })
+      const timer = setTimeout(() => {
+        this.Bus.emit('serviceNameSelected', row.name)
+        clearTimeout(timer)
+      })
+    },
     async search () {
       this.loading = true
       this.services = await this.$api.SERVICE(this.pageModel)

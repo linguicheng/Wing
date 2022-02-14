@@ -253,17 +253,18 @@ namespace Wing.Consul
             await client.Agent.ServiceRegister(registration);
         }
 
-        public async Task Deregister(string serviceId)
+        public async Task<bool> Deregister(string serviceId)
         {
             using var client = Connect();
-            await client.Agent.ServiceDeregister(serviceId);
+            var result = await client.Agent.ServiceDeregister(serviceId);
+            return result.StatusCode == HttpStatusCode.OK;
         }
 
         private void ServiceTagSplit(IEnumerable<string> tags, string startsWith, Action<string> action)
         {
             foreach (var tag in tags)
             {
-                if (tag.StartsWith(startsWith))
+                if (tag.StartsWith($"{startsWith}:"))
                 {
                     var tagArr = tag.Split(":");
                     if (tagArr.Length == 2)
@@ -279,7 +280,7 @@ namespace Wing.Consul
         {
             List<string> tags = new List<string>
             {
-                $"{nameof(ServiceTag.SERVICEOPTION)}:{service.Option}",
+                $"{ServiceTag.SERVICEOPTION}:{service.Option}",
                 $"{ServiceTag.LOADBALANCEROPTION}:{service.LoadBalancer.Option}",
                 $"{ServiceTag.SCHEME}:{service.Scheme}",
                 $"{ServiceTag.DEVELOPER}:{service.Developer}"
@@ -299,6 +300,72 @@ namespace Wing.Consul
                 }
             }
             return tags;
+        }
+
+        public async Task<Service> Detail(string serviceId)
+        {
+            using var client = Connect();
+            var checks = await client.Agent.Checks();
+            var checkResult = checks.Response.Values;
+            var services = await client.Agent.Services();
+            List<Service> result = new List<Service>();
+            foreach (var s in services.Response.Values)
+            {
+                if (s.ID != serviceId)
+                {
+                    continue;
+                }
+                var status = wingHealthStatus.Healthy;
+                var checkService = checkResult.Where(x => x.ServiceID == s.ID).FirstOrDefault();
+                if (checkService != null)
+                {
+                    if (checkService.Status.Equals(consulHealthStatus.Passing))
+                    {
+                        status = wingHealthStatus.Healthy;
+                    }
+                    else if (checkService.Status.Equals(consulHealthStatus.Maintenance))
+                    {
+                        status = wingHealthStatus.Maintenance;
+                    }
+                    else if (checkService.Status.Equals(consulHealthStatus.Warning))
+                    {
+                        status = wingHealthStatus.Warning;
+                    }
+                    else
+                    {
+                        status = wingHealthStatus.Critical;
+                    }
+                }
+
+                var scheme = string.Empty;
+                ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
+                var service = new Service()
+                {
+                    Id = s.ID,
+                    Name = s.Service,
+                    Status = status,
+                    ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
+                };
+                ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
+                {
+                    int.TryParse(x, out int weight);
+                    service.EffectiveWeight = service.Weight = weight;
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.SERVICEOPTION, x =>
+                {
+                    service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
+                {
+                    service.Developer = x;
+                });
+                ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCEROPTION, x =>
+                {
+                    service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
+                });
+                return service;
+            }
+            return null;
         }
     }
 }

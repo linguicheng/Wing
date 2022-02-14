@@ -17,6 +17,9 @@ import XEUtils from 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
 
+import Bus from '@/libs/bus'
+
+Vue.use(Bus)
 // 核心插件
 Vue.use(d2Admin)
 Vue.use(VXETable)

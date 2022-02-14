@@ -71,6 +71,11 @@
                  auto-resize
                  keep-source
                  stripe
+                 :edit-config="{
+                  trigger: 'click',
+                  mode: 'row',
+                  showStatus: true,
+                 }"
                  :loading="loading"
                  :data="services.items"
                  :mouse-config="{ selected: true }">
@@ -104,6 +109,19 @@
         <vxe-column field="developer"
                     title="负责人"
                     sortable/>
+        <vxe-column
+          title="操作"
+          width="180"
+          align="center"
+          fixed="right">
+            <template #default="{ row }">
+              <el-popconfirm
+                  title="确定要删除吗？"
+                  @onConfirm="remove(row)">
+                  <el-button slot="reference" type="danger">删除</el-button>
+              </el-popconfirm>
+            </template>
+          </vxe-column>
       </vxe-table>
     </div>
     <template slot="footer">
@@ -138,11 +156,11 @@ export default {
       serviceOptions: [
         {
           value: 0,
-          label: 'Http'
+          label: 'http'
         },
         {
           value: 1,
-          label: 'Grpc'
+          label: 'grpc'
         }
       ],
       statusOptions: [
@@ -179,14 +197,39 @@ export default {
       ]
     }
   },
+  mounted () {
+    this.Bus.on('serviceNameSelected', val => {
+      this.pageModel.data.name = val
+      this.search()
+    })
+  },
   created () {
     this.search()
+  },
+  beforeDestroy () {
+    this.Bus.off('serviceNameSelected')
   },
   methods: {
     async search () {
       this.loading = true
       this.services = await this.$api.SERVICE_DETAIL(this.pageModel)
       this.loading = false
+    },
+    async remove (row) {
+      if (row.status !== 2) {
+        this.$message.error('仅能删除状态为“已死亡”的服务节点！')
+        return
+      }
+      var result = await this.$api.SERVICE_DELETE({ serviceId: row.id })
+      if (result) {
+        this.$message({
+          type: 'success',
+          message: '删除成功！'
+        })
+      } else {
+        this.$message.error('删除失败，请稍后重试！')
+      }
+      await this.search()
     },
     sizeChange (val) {
       this.pageModel.pageSize = val

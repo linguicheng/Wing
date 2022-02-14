@@ -15,6 +15,8 @@ namespace Wing.ServiceProvider
 
         Task<List<Service>> Get(string serviceName);
 
+        Task<Service> Detail(string serviceId);
+
         Task<List<Service>> Get(string serviceName, HealthStatus healthStatus);
 
         Task<List<Service>> GetGrpcServices(string serviceName);
@@ -27,7 +29,7 @@ namespace Wing.ServiceProvider
 
         Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default);
 
-        Task Deregister(string serviceId);
+        Task<bool> Deregister(string serviceId);
 
         Task Register(ServiceData service);
     }

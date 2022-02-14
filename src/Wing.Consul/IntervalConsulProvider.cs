@@ -32,9 +32,9 @@ namespace Wing.Consul
              }, interval, 0, interval);
         }
 
-        public async Task Deregister(string serviceId)
+        public async Task<bool> Deregister(string serviceId)
         {
-            await _discoveryServiceProvider.Deregister(serviceId);
+            return await _discoveryServiceProvider.Deregister(serviceId);
         }
 
         public void Dispose()
@@ -54,7 +54,7 @@ namespace Wing.Consul
 
         public Task<List<Service>> GetGrpcServices(string serviceName)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && s.ServiceOptions== ServiceOptions.Grpc).ToList());
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) && s.ServiceOptions == ServiceOptions.Grpc).ToList());
         }
 
         public Task<List<Service>> GetHttpServices(string serviceName)
@@ -79,22 +79,26 @@ namespace Wing.Consul
 
         public Task<List<Service>> Get(string serviceName, HealthStatus healthStatus)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)
                                     && s.Status == healthStatus).ToList());
         }
 
         public Task<List<Service>> GetGrpcServices(string serviceName, HealthStatus healthStatus)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)
                                     && s.ServiceOptions == ServiceOptions.Grpc
                                     && s.Status == healthStatus).ToList());
         }
 
         public Task<List<Service>> GetHttpServices(string serviceName, HealthStatus healthStatus)
         {
-            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase) 
+            return Task.FromResult(_services.Where(s => s.Name.Equals(serviceName, StringComparison.OrdinalIgnoreCase)
                                     && s.ServiceOptions == ServiceOptions.Http
                                     && s.Status == healthStatus).ToList());
+        }
+        public async Task<Service> Detail(string serviceId)
+        {
+            return await _discoveryServiceProvider.Detail(serviceId);
         }
     }
 }

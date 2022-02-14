@@ -28,7 +28,7 @@ namespace Wing.Consul
             var service = discoveryConfig.Service;
             if (service != null)
             {
-                if (service.Scheme == SchemeOptions.Http)
+                if (service.Scheme == "http")
                 {
                     AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 }
