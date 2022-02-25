@@ -3,7 +3,7 @@ using Wing.ServiceProvider.Config;
 
 namespace Wing.Dashboard.Model
 {
-    public class ServiceDetailOutputDto
+    public class ServiceDetailDto
     {
         public string Id { get; set; }
 

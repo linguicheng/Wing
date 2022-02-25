@@ -28,7 +28,6 @@ export default ({ request }) => ({
    * @returns
    */
   SERVICE (data = {}) {
-    // 接口请求
     return request({
       method: 'GET',
       url: 'Service/List',

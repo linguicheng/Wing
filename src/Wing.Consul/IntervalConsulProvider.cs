@@ -100,5 +100,20 @@ namespace Wing.Consul
         {
             return await _discoveryServiceProvider.Detail(serviceId);
         }
+
+        public async Task<Dictionary<string, string>> GetKVData(string serviceName, CancellationToken ct = default)
+        {
+            return await _discoveryServiceProvider.GetKVData(serviceName, ct);
+        }
+
+        public async Task<bool> Put(string key, byte[] value, CancellationToken ct = default)
+        {
+            return await _discoveryServiceProvider.Put(key, value, ct);
+        }
+
+        public async Task<bool> Delete(string key, CancellationToken ct = default)
+        {
+            return await _discoveryServiceProvider.Delete(key, ct);
+        }
     }
 }

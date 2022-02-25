@@ -1,6 +1,6 @@
 ﻿namespace Wing.Dashboard.Model
 {
-    public class ServiceOutputDto
+    public class ServiceDto
     {
         public string Name { get; set; }
 

@@ -5,7 +5,7 @@ using Wing.Dashboard.Result;
 
 namespace Wing.Dashboard.Filters
 {
-    public class ApiResultFilter : Attribute, IActionFilter
+    public class ApiResultFilter : IActionFilter
     {
         public void OnActionExecuted(ActionExecutedContext context)
         {
@@ -36,6 +36,19 @@ namespace Wing.Dashboard.Filters
 
         public void OnActionExecuting(ActionExecutingContext context)
         {
+            if (!context.ModelState.IsValid)
+            {
+                string msg = string.Empty;
+                foreach (var item in context.ModelState.Values)
+                {
+                    foreach (var error in item.Errors)
+                    {
+                        msg += error.ErrorMessage + ",";
+                    }
+                }
+                msg = msg.TrimEnd(',');
+                context.Result = new ObjectResult(new ApiResult() { Code = ResultType.Exception, Msg = msg });
+            }
         }
     }
 }

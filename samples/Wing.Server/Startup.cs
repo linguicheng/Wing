@@ -5,7 +5,6 @@ using Microsoft.Extensions.Hosting;
 using Wing.Auth;
 using Wing.Configuration.ApplicationBuilder;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Consul;
 using Wing.GateWay;
 
 namespace Wing.Server

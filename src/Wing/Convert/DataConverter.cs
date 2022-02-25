@@ -8,17 +8,27 @@ namespace Wing.Convert
 {
     public class DataConverter
     {
-        public static string BytesToString(byte[] bytes)
+        public static string BytesToString(byte[] value)
         {
-            return bytes != null && bytes.Length > 0 ? Encoding.UTF8.GetString(bytes) : string.Empty;
+            return value != null && value.Length > 0 ? Encoding.UTF8.GetString(value) : string.Empty;
         }
 
-        public static Dictionary<string, string> BytesToDictionary(byte[] bytes)
+        public static byte[] StringToBytes(string value)
+        {
+            return string.IsNullOrWhiteSpace(value) ? null : Encoding.UTF8.GetBytes(value);
+        }
+
+        public static IConfigurationRoot BuildConfig(byte[] bytes)
         {
             using Stream stream = new MemoryStream(bytes);
             return new ConfigurationBuilder()
                 .AddJsonStream(stream)
-                .Build()
+                .Build();
+        }
+
+        public static Dictionary<string, string> BytesToDictionary(byte[] bytes)
+        {
+            return BuildConfig(bytes)
                 .AsEnumerable()
                 .ToDictionary(p => p.Key, p => p.Value);
         }

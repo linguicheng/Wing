@@ -21,37 +21,9 @@ const frameIn = [
         },
         component: _import('system/index')
       },
-      // 演示页面
-      {
-        path: 'page1',
-        name: 'page1',
-        meta: {
-          title: '页面 1',
-          auth: true
-        },
-        component: _import('demo/page1')
-      },
-      {
-        path: 'page2',
-        name: 'page2',
-        meta: {
-          title: '页面 2',
-          auth: true
-        },
-        component: _import('demo/page2')
-      },
-      {
-        path: 'page3',
-        name: 'page3',
-        meta: {
-          title: '页面 3',
-          auth: true
-        },
-        component: _import('demo/page3')
-      },
       {
         path: 'service/detail',
-        name: 'serviceDetail',
+        name: 'service-detail',
         meta: {
           title: '服务明细',
           auth: true
@@ -66,6 +38,15 @@ const frameIn = [
           auth: true
         },
         component: _import('service')
+      },
+      {
+        path: 'config',
+        name: 'config',
+        meta: {
+          title: '配置中心',
+          auth: true
+        },
+        component: _import('config')
       },
       // 系统 前端日志
       {

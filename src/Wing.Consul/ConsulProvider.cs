@@ -170,6 +170,36 @@ namespace Wing.Consul
             return result;
         }
 
+        public async Task<Dictionary<string, string>> GetKVData(string serviceName, CancellationToken ct = default)
+        {
+            using var client = Connect();
+            var kvResult = await client.KV.List(serviceName, new QueryOptions
+            {
+                Token = _config.Token,
+                Datacenter = _config.DataCenter,
+                WaitIndex = LastIndex,
+                WaitTime = TimeSpan.FromMinutes(_config.WaitTime)
+            }, ct).ConfigureAwait(false);
+            if (kvResult.StatusCode == HttpStatusCode.NotFound)
+            {
+                return null;
+            }
+            if (kvResult.StatusCode != HttpStatusCode.OK)
+                throw new Exception($"获取KV失败，状态码：{kvResult.StatusCode}");
+            var kvData = kvResult.Response;
+            if (kvData == null || !kvData.Any())
+            {
+                return null;
+            }
+
+            var result = new Dictionary<string, string>();
+            foreach (var kv in kvData)
+            {
+                result.Add(kv.Key, DataConverter.BytesToString(kv.Value));
+            }
+            return result;
+        }
+
         public async Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default)
         {
             using var client = Connect();
@@ -180,6 +210,11 @@ namespace Wing.Consul
                 WaitIndex = LastIndex,
                 WaitTime = TimeSpan.FromMinutes(_config.WaitTime)
             }, ct).ConfigureAwait(false);
+            if (result.StatusCode == HttpStatusCode.NotFound)
+            {
+                setData(null);
+                return;
+            }
             if (result.StatusCode != HttpStatusCode.OK)
                 throw new Exception($"获取KV失败，状态码：{result.StatusCode}");
             if (result.LastIndex > LastIndex)
@@ -206,6 +241,45 @@ namespace Wing.Consul
                        .ToDictionary(kv => kv.Key, kv => kv.Value);
                 setData(data);
             }
+        }
+
+        public async Task<bool> Put(string key, byte[] value, CancellationToken ct = default)
+        {
+            using var client = Connect();
+            var result = await client.KV.Put(new KVPair { Key = key, Value = value }, new WriteOptions
+            {
+                Token = _config.Token,
+                Datacenter = _config.DataCenter
+            }, ct).ConfigureAwait(false);
+            if (result.StatusCode != HttpStatusCode.OK)
+                throw new Exception($"保存KV失败，状态码：{result.StatusCode}");
+            return result.Response;
+        }
+
+        public async Task<bool> Delete(string key, CancellationToken ct = default)
+        {
+            var client = Connect();
+            WriteResult<bool> result;
+            if (key.EndsWith('/'))
+            {
+                result = await client.KV.DeleteTree(key, new WriteOptions
+                {
+                    Token = _config.Token,
+                    Datacenter = _config.DataCenter
+                }, ct).ConfigureAwait(false);
+            }
+            else
+            {
+                result = await client.KV.Delete(key, new WriteOptions
+                {
+                    Token = _config.Token,
+                    Datacenter = _config.DataCenter
+                }, ct).ConfigureAwait(false);
+            }
+           
+            if (result.StatusCode != HttpStatusCode.OK)
+                throw new Exception($"删除KV失败，状态码：{result.StatusCode}");
+            return result.Response;
         }
 
         public async Task Register(ServiceData config)

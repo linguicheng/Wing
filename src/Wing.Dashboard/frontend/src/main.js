@@ -18,7 +18,9 @@ import VXETable from 'vxe-table'
 import 'vxe-table/lib/index.css'
 
 import Bus from '@/libs/bus'
+// import JsonViewer from 'vue-json-viewer'
 
+// Vue.use(JsonViewer)
 Vue.use(Bus)
 // 核心插件
 Vue.use(d2Admin)

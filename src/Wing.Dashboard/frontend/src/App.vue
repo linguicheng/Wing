@@ -28,6 +28,6 @@ export default {
 
 /* 框架内 table 高度 */
 .table-container {
-  height: calc(100vh - 60px - 21px - 74px - 73px) !important;
+  height: calc(100vh - 60px - 41px - 82px - 73px - 45px) !important;
 }
 </style>

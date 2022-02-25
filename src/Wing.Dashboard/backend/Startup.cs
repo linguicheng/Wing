@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Consul;
 using Wing.Dashboard.Filters;
 
 namespace Wing.Dashboard
@@ -25,6 +25,11 @@ namespace Wing.Dashboard
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
                 options.Filters.Add(typeof(ApiResultFilter));
+            });
+            //禁用默认行为
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
             services.AddWing();
         }

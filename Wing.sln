@@ -42,6 +42,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Server", "samples\Wing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreService2", "samples\AspNetCoreService2\AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.Models", "src\Wing.Models\Wing.Models.csproj", "{F76FC8A5-87A4-4697-85B1-C045AF78386D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -104,6 +106,10 @@ Global
 		{D946CF51-B376-4313-90EB-F168A484E4AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D946CF51-B376-4313-90EB-F168A484E4AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D946CF51-B376-4313-90EB-F168A484E4AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F76FC8A5-87A4-4697-85B1-C045AF78386D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F76FC8A5-87A4-4697-85B1-C045AF78386D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F76FC8A5-87A4-4697-85B1-C045AF78386D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F76FC8A5-87A4-4697-85B1-C045AF78386D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,6 +129,7 @@ Global
 		{9482E722-4792-4106-8D56-ACDDEF3F6FC0} = {7F194B38-FA35-4E8E-8018-A5D597B7D845}
 		{1BF719F2-AB15-43BF-BB1A-36B3A2235729} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
 		{D946CF51-B376-4313-90EB-F168A484E4AA} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
+		{F76FC8A5-87A4-4697-85B1-C045AF78386D} = {7F194B38-FA35-4E8E-8018-A5D597B7D845}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4E7060C-278C-4789-8857-13E1D41F6AD6}

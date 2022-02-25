@@ -138,7 +138,7 @@
 
 <script>
 export default {
-  name: 'serviceDetail',
+  name: 'service-detail',
   data () {
     return {
       loading: false,
@@ -198,7 +198,7 @@ export default {
     }
   },
   mounted () {
-    this.Bus.on('serviceNameSelected', val => {
+    this.Bus.on('serviceNameToDetail', val => {
       this.pageModel.data.name = val
       this.search()
     })
@@ -207,7 +207,7 @@ export default {
     this.search()
   },
   beforeDestroy () {
-    this.Bus.off('serviceNameSelected')
+    this.Bus.off('serviceNameToDetail')
   },
   methods: {
     async search () {
@@ -220,7 +220,7 @@ export default {
         this.$message.error('仅能删除状态为“已死亡”的服务节点！')
         return
       }
-      var result = await this.$api.SERVICE_DELETE({ serviceId: row.id })
+      const result = await this.$api.SERVICE_DELETE({ serviceId: row.id })
       if (result) {
         this.$message({
           type: 'success',
