@@ -44,7 +44,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreService2", "sampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Persistence", "src\Wing.Persistence\Wing.Persistence.csproj", "{F76FC8A5-87A4-4697-85B1-C045AF78386D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.SqlServer", "src\Wing.SqlServer\Wing.SqlServer.csproj", "{EF594A1F-4F2A-4AB0-AEBE-A7AD4DD41556}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.SqlServer", "src\Wing.SqlServer\Wing.SqlServer.csproj", "{EF594A1F-4F2A-4AB0-AEBE-A7AD4DD41556}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

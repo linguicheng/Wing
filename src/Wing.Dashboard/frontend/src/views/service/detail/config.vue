@@ -74,13 +74,13 @@ export default {
         value: ''
       },
       placeholder: '请输入配置Value',
-      serviceName: '',
+      configKey: '',
       id: 1
     }
   },
   mounted () {
     this.Bus.on('serviceNameToConfig', async val => {
-      this.serviceName = val
+      this.configKey = val
       await this.search()
     })
   },
@@ -109,7 +109,7 @@ export default {
           return
         }
         const dirs = u.key.split('/')
-        if (dirs[0] !== this.serviceName) {
+        if (dirs[0] !== this.configKey) {
           this.$message.error('配置key不合法')
           return
         }
@@ -129,7 +129,7 @@ export default {
     },
     async search () {
       this.loading = true
-      const result = await this.$api.CONFIG_GET({ serviceName: this.serviceName })
+      const result = await this.$api.CONFIG_GET({ key: this.configKey })
       this.loading = false
       console.log('服务配置', result)
       if (!result) {

@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Wing.ServiceProvider.Config
+﻿namespace Wing.ServiceProvider.Config
 {
     public enum LoadBalancerOptions
     {

@@ -67,9 +67,9 @@ namespace Wing.Consul
             await _discoveryServiceProvider.GetKVData(setData, ct);
         }
 
-        public async Task Register(ServiceData service)
+        public async Task Register()
         {
-            await _discoveryServiceProvider.Register(service);
+            await _discoveryServiceProvider.Register();
         }
 
         public Task<List<Service>> Get(HealthStatus healthStatus)
@@ -101,9 +101,9 @@ namespace Wing.Consul
             return await _discoveryServiceProvider.Detail(serviceId);
         }
 
-        public async Task<Dictionary<string, string>> GetKVData(string serviceName, CancellationToken ct = default)
+        public async Task<Dictionary<string, string>> GetKVData(string key, CancellationToken ct = default)
         {
-            return await _discoveryServiceProvider.GetKVData(serviceName, ct);
+            return await _discoveryServiceProvider.GetKVData(key, ct);
         }
 
         public async Task<bool> Put(string key, byte[] value, CancellationToken ct = default)

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Wing.ServiceProvider.Config
+﻿namespace Wing.ServiceProvider.Config
 {
     public class Provider
     {

@@ -77,63 +77,11 @@ namespace Wing.Consul
         {
             using var client = Connect();
             var checks = await client.Agent.Checks();
-            var checkResult = checks.Response.Values;
             var services = await client.Agent.Services();
             List<Service> result = new List<Service>();
             foreach (var s in services.Response.Values)
             {
-                var status = wingHealthStatus.Healthy;
-                var checkService = checkResult.Where(x => x.ServiceID == s.ID).FirstOrDefault();
-                if (checkService != null)
-                {
-                    if (checkService.Status.Equals(consulHealthStatus.Passing))
-                    {
-                        status = wingHealthStatus.Healthy;
-                    }
-                    else if (checkService.Status.Equals(consulHealthStatus.Maintenance))
-                    {
-                        status = wingHealthStatus.Maintenance;
-                    }
-                    else if (checkService.Status.Equals(consulHealthStatus.Warning))
-                    {
-                        status = wingHealthStatus.Warning;
-                    }
-                    else
-                    {
-                        status = wingHealthStatus.Critical;
-                    }
-                }
-
-                if (healthStatus != null && status != healthStatus)
-                {
-                    continue;
-                }
-                var scheme = string.Empty;
-                ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
-                var service = new Service()
-                {
-                    Id = s.ID,
-                    Name = s.Service,
-                    Status = status,
-                    ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
-                };
-                ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
-                {
-                    int.TryParse(x, out int weight);
-                    service.EffectiveWeight = service.Weight = weight;
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.SERVICEOPTION, x =>
-                {
-                    service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
-                {
-                    service.Developer = x;
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCEROPTION, x =>
-                {
-                    service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
-                });
+                var service = BuildService(s, checks.Response);
                 if (serviceOption == null)
                 {
                     if (string.IsNullOrWhiteSpace(serviceName))
@@ -170,10 +118,10 @@ namespace Wing.Consul
             return result;
         }
 
-        public async Task<Dictionary<string, string>> GetKVData(string serviceName, CancellationToken ct = default)
+        public async Task<Dictionary<string, string>> GetKVData(string key, CancellationToken ct = default)
         {
             using var client = Connect();
-            var kvResult = await client.KV.List(serviceName, new QueryOptions
+            var kvResult = await client.KV.List(key, new QueryOptions
             {
                 Token = _config.Token,
                 Datacenter = _config.DataCenter,
@@ -203,7 +151,7 @@ namespace Wing.Consul
         public async Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default)
         {
             using var client = Connect();
-            var result = await client.KV.List(_config.Service.Name, new QueryOptions
+            var result = await client.KV.List(_config.Service.ConfigKey, new QueryOptions
             {
                 Token = _config.Token,
                 Datacenter = _config.DataCenter,
@@ -212,8 +160,7 @@ namespace Wing.Consul
             }, ct).ConfigureAwait(false);
             if (result.StatusCode == HttpStatusCode.NotFound)
             {
-                setData(null);
-                return;
+                throw new Exception($"找不到配置Key【{_config.Service.ConfigKey}】的配置信息");
             }
             if (result.StatusCode != HttpStatusCode.OK)
                 throw new Exception($"获取KV失败，状态码：{result.StatusCode}");
@@ -223,8 +170,7 @@ namespace Wing.Consul
                 var kvData = result.Response;
                 if (kvData == null || !kvData.Any())
                 {
-                    setData(null);
-                    return;
+                    throw new Exception($"配置Key【{_config.Service.ConfigKey}】的配置信息为空");
                 }
                 var data = kvData.Where(kv => !kv.Key.EndsWith("/") && kv.Value != null && kv.Value.Any())
                        .SelectMany(kv => DataConverter.BytesToDictionary(kv.Value).Select(pair =>
@@ -276,15 +222,25 @@ namespace Wing.Consul
                     Datacenter = _config.DataCenter
                 }, ct).ConfigureAwait(false);
             }
-           
+
             if (result.StatusCode != HttpStatusCode.OK)
                 throw new Exception($"删除KV失败，状态码：{result.StatusCode}");
             return result.Response;
         }
 
-        public async Task Register(ServiceData config)
+        public async Task Register()
         {
+            var config = _config.Service;
             using var client = Connect();
+            var services = await client.Agent.Services();
+            foreach (var s in services.Response.Values)
+            {
+                if (s.Address == config.Host && s.Port == config.Port)
+                {
+                    await client.Agent.ServiceDeregister(s.ID);
+                    break;
+                }
+            }
             List<AgentServiceCheck> _checks = new List<AgentServiceCheck>();
             var healthcheck = config.HealthCheck;
             if (config.Option == ServiceOptions.Http)
@@ -306,15 +262,6 @@ namespace Wing.Consul
                     Timeout = TimeSpan.FromSeconds(healthcheck.Timeout ?? 10)
                 });
             }
-            var services = await client.Agent.Services();
-            foreach (var s in services.Response.Values)
-            {
-                if (s.Address == config.Host && s.Port == config.Port)
-                {
-                    await client.Agent.ServiceDeregister(s.ID);
-                    break;
-                }
-            }
             var registration = new AgentServiceRegistration()
             {
                 Checks = _checks.ToArray(),
@@ -322,7 +269,7 @@ namespace Wing.Consul
                 Name = config.Name,
                 Address = config.Host,
                 Port = config.Port,
-                Tags = BuildTags(config).ToArray()
+                Tags = BuildTags().ToArray()
             };
             await client.Agent.ServiceRegister(registration);
         }
@@ -350,14 +297,16 @@ namespace Wing.Consul
             }
         }
 
-        private List<string> BuildTags(ServiceData service)
+        private List<string> BuildTags()
         {
+            var service = _config.Service;
             List<string> tags = new List<string>
             {
-                $"{ServiceTag.SERVICEOPTION}:{service.Option}",
-                $"{ServiceTag.LOADBALANCEROPTION}:{service.LoadBalancer.Option}",
+                $"{ServiceTag.SERVICE_OPTION}:{service.Option}",
+                $"{ServiceTag.LOADBALANCER_OPTION}:{service.LoadBalancer.Option}",
                 $"{ServiceTag.SCHEME}:{service.Scheme}",
-                $"{ServiceTag.DEVELOPER}:{service.Developer}"
+                $"{ServiceTag.DEVELOPER}:{service.Developer}",
+                $"{ServiceTag.CONFIG_KEY}:{service.ConfigKey}"
             };
             int weight = service.LoadBalancer.Weight ?? 0;
             if (weight > 0)
@@ -376,11 +325,67 @@ namespace Wing.Consul
             return tags;
         }
 
+        private Service BuildService(AgentService s,Dictionary<string,AgentCheck> checks)
+        {
+            var status = wingHealthStatus.Healthy;
+            var checkService = checks.Values.Where(x => x.ServiceID == s.ID).FirstOrDefault();
+            if (checkService != null)
+            {
+                if (checkService.Status.Equals(consulHealthStatus.Passing))
+                {
+                    status = wingHealthStatus.Healthy;
+                }
+                else if (checkService.Status.Equals(consulHealthStatus.Maintenance))
+                {
+                    status = wingHealthStatus.Maintenance;
+                }
+                else if (checkService.Status.Equals(consulHealthStatus.Warning))
+                {
+                    status = wingHealthStatus.Warning;
+                }
+                else
+                {
+                    status = wingHealthStatus.Critical;
+                }
+            }
+
+            var scheme = string.Empty;
+            ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
+            var service = new Service()
+            {
+                Id = s.ID,
+                Name = s.Service,
+                Status = status,
+                ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
+            };
+            ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
+            {
+                int.TryParse(x, out int weight);
+                service.EffectiveWeight = service.Weight = weight;
+            });
+            ServiceTagSplit(s.Tags, ServiceTag.SERVICE_OPTION, x =>
+            {
+                service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
+            });
+            ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
+            {
+                service.Developer = x;
+            });
+            ServiceTagSplit(s.Tags, ServiceTag.CONFIG_KEY, x =>
+            {
+                service.ConfigKey = x;
+            });
+            ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCER_OPTION, x =>
+            {
+                service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
+            });
+            return service;
+        }
+
         public async Task<Service> Detail(string serviceId)
         {
             using var client = Connect();
             var checks = await client.Agent.Checks();
-            var checkResult = checks.Response.Values;
             var services = await client.Agent.Services();
             List<Service> result = new List<Service>();
             foreach (var s in services.Response.Values)
@@ -389,55 +394,7 @@ namespace Wing.Consul
                 {
                     continue;
                 }
-                var status = wingHealthStatus.Healthy;
-                var checkService = checkResult.Where(x => x.ServiceID == s.ID).FirstOrDefault();
-                if (checkService != null)
-                {
-                    if (checkService.Status.Equals(consulHealthStatus.Passing))
-                    {
-                        status = wingHealthStatus.Healthy;
-                    }
-                    else if (checkService.Status.Equals(consulHealthStatus.Maintenance))
-                    {
-                        status = wingHealthStatus.Maintenance;
-                    }
-                    else if (checkService.Status.Equals(consulHealthStatus.Warning))
-                    {
-                        status = wingHealthStatus.Warning;
-                    }
-                    else
-                    {
-                        status = wingHealthStatus.Critical;
-                    }
-                }
-
-                var scheme = string.Empty;
-                ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
-                var service = new Service()
-                {
-                    Id = s.ID,
-                    Name = s.Service,
-                    Status = status,
-                    ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
-                };
-                ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
-                {
-                    int.TryParse(x, out int weight);
-                    service.EffectiveWeight = service.Weight = weight;
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.SERVICEOPTION, x =>
-                {
-                    service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
-                {
-                    service.Developer = x;
-                });
-                ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCEROPTION, x =>
-                {
-                    service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
-                });
-                return service;
+                return BuildService(s, checks.Response);
             }
             return null;
         }

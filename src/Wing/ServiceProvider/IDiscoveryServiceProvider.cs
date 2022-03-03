@@ -27,7 +27,7 @@ namespace Wing.ServiceProvider
 
         Task<List<Service>> GetHttpServices(string serviceName, HealthStatus healthStatus);
 
-        Task<Dictionary<string, string>> GetKVData(string serviceName, CancellationToken ct = default);
+        Task<Dictionary<string, string>> GetKVData(string key, CancellationToken ct = default);
 
         Task GetKVData(Action<Dictionary<string, string>> setData, CancellationToken ct = default);
 
@@ -37,6 +37,6 @@ namespace Wing.ServiceProvider
 
         Task<bool> Deregister(string serviceId);
 
-        Task Register(ServiceData service);
+        Task Register();
     }
 }

@@ -66,7 +66,8 @@ namespace Wing.Dashboard.Controllers
                     ServiceType = s.ServiceOptions,
                     LoadBalancer = s.LoadBalancer,
                     Status = s.Status,
-                    Developer = s.Developer
+                    Developer = s.Developer,
+                    ConfigKey = s.ConfigKey
                 });
             });
         }

@@ -1,6 +1,4 @@
-﻿using Wing.Configuration;
-
-namespace Wing.ServiceProvider.Config
+﻿namespace Wing.ServiceProvider.Config
 {
     public class ServiceData
     {
@@ -17,6 +15,8 @@ namespace Wing.ServiceProvider.Config
         public string Tag { get; set; }
 
         public LoadBalancer LoadBalancer { get; set; }
+
+        public string ConfigKey { get; set; }
 
         public string Scheme { get; set; }
 

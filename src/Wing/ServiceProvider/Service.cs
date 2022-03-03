@@ -20,6 +20,8 @@ namespace Wing.ServiceProvider
 
         public string Developer { get; set; }
 
+        public string ConfigKey { get; set; }
+
         public int EffectiveWeight { get; set; }
 
         internal int CurrentWeight { get; set; }

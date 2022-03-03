@@ -20,5 +20,7 @@ namespace Wing.Dashboard.Model
         public HealthStatus Status { get; set; }
 
         public string Developer { get; set; }
+
+        public string ConfigKey { get; set; }
     }
 }

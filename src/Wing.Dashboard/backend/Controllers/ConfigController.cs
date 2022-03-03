@@ -20,9 +20,9 @@ namespace Wing.Dashboard.Controllers
         }
 
         [HttpGet]
-        public async Task<Dictionary<string, string>> Get(string serviceName)
+        public async Task<Dictionary<string, string>> Get(string key)
         {
-            return await _discoveryService.GetKVData(serviceName);
+            return await _discoveryService.GetKVData(key);
         }
 
         [HttpGet]
