@@ -1,4 +1,6 @@
-﻿using Wing.Configuration.ServiceBuilder;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Wing.Configuration.ServiceBuilder;
 
 namespace Wing.Persistence
 {
@@ -6,7 +8,7 @@ namespace Wing.Persistence
     {
         public static IWingServiceBuilder AddPersistence(this IWingServiceBuilder wingBuilder, string gateWayConnectionString = "name=ConnectionStrings:WingGateWay", string mqConnectionString = "name=ConnectionStrings:WingMQ")
         {
-            DynamicRegister.RegisterContext(wingBuilder.Services, gateWayConnectionString, mqConnectionString);
+            wingBuilder.Services.AddDbContext<GateWayDbContext>(options => options.UseSqlServer(gateWayConnectionString));
             return wingBuilder;
         }
     }

@@ -4,9 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Wing.SqlServer;
 
-namespace Wing.SqlServer.Migrations
+namespace Wing.Persistence.Migrations
 {
     [DbContext(typeof(GateWayDbContext))]
     partial class GateWayDbContextModelSnapshot : ModelSnapshot

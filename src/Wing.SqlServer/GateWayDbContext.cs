@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Wing.Models.GateWay;
 
-namespace Wing.SqlServer
+namespace Wing.Persistence
 {
     public class GateWayDbContext : DbContext
     {

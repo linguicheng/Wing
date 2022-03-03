@@ -11,7 +11,6 @@ namespace Wing.Dashboard.Controllers
 {
     public class ConfigController : BaseController
     {
-
         private readonly IDiscoveryServiceProvider _discoveryService;
 
         public ConfigController()
