@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
@@ -17,6 +18,7 @@ namespace Wing.GateWay.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
+            serviceContext.RequestTime = DateTime.Now;
             var fullPath = serviceContext.HttpContext.Request.Path.ToString();
             var paths = fullPath.Split("/");
             if (paths == null || paths.Length <= 2)

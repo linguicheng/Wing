@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Wing.Persistence.Migrations
+namespace Wing.SqlServer.Migrations
 {
     public partial class InitialCreate : Migration
     {

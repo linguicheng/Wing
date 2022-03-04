@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,8 @@ namespace Wing.GateWay.Middleware
         private readonly ServiceRequestDelegate _next;
         private readonly ILogger<AuthenticationMiddleware> _logger;
 
-        public AuthenticationMiddleware(ServiceRequestDelegate next, ILogger<AuthenticationMiddleware> logger)
+        public AuthenticationMiddleware(ServiceRequestDelegate next,
+            ILogger<AuthenticationMiddleware> logger)
         {
             _next = next;
             _logger = logger;
@@ -34,6 +36,7 @@ namespace Wing.GateWay.Middleware
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，AuthKey权限认证不通过");
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    await LogProvider.Add(serviceContext);
                     return;
                 }
 

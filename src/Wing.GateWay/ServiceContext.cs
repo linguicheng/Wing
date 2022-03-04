@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 
 namespace Wing.GateWay
 {
@@ -16,5 +17,9 @@ namespace Wing.GateWay
         public string DownstreamPath { get; set; }
 
         public Policy Policy { get; set; }
+
+        public DateTime RequestTime { get; set; }
+
+        public DateTime ResponseTime { get; set; }
     }
 }

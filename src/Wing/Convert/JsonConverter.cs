@@ -3,7 +3,7 @@ using Newtonsoft.Json.Converters;
 
 namespace Wing.Convert
 {
-    public class JsonHelper : IJson
+    public class JsonConverter : IJson
     {
         public T Deserialize<T>(string value)
         {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Wing.Persistence.Migrations
+namespace Wing.SqlServer.Migrations
 {
     [DbContext(typeof(GateWayDbContext))]
     [Migration("20220227143250_InitialCreate")]

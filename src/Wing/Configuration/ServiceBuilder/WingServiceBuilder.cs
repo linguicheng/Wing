@@ -22,7 +22,7 @@ namespace Wing.Configuration.ServiceBuilder
             Services.AddHttpClient();
             Services.AddHealthChecks();
             Services.AddSingleton<IMemoryCache, MemoryCache>();
-            Services.AddSingleton<IJson, JsonHelper>();
+            Services.AddSingleton<IJson, JsonConverter>();
             Services.AddSingleton<IRequest, ApiRequest>();
             Services.AddSingleton<ILoadBalancerCache, LoadBalancerCache>();
             Services.AddSingleton<IServiceFactory, ServiceFactory>();

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Wing.Models.GateWay;
+using Wing.Persistence.GateWay;
 
-namespace Wing.Persistence
+namespace Wing.SqlServer
 {
     public class GateWayDbContext : DbContext
     {
@@ -16,13 +16,15 @@ namespace Wing.Persistence
                 eb.ToTable("GateWay_Log");
                 eb.Property(b => b.Id).HasColumnType("varchar(32)");
                 eb.Property(b => b.ServiceName).HasColumnType("varchar(800)");
-                eb.Property(b => b.DownstreamUrl).HasColumnType("varchar(max)");
-                eb.Property(b => b.RequestUrl).HasColumnType("varchar(max)");
+                eb.Property(b => b.DownstreamUrl).HasColumnType("varchar(8000)");
+                eb.Property(b => b.RequestUrl).HasColumnType("varchar(8000)");
                 eb.Property(b => b.Policy).HasColumnType("varchar(max)");
                 eb.Property(b => b.ClientIp).HasColumnType("varchar(20)");
                 eb.Property(b => b.RequestTime).HasColumnType("datetime");
                 eb.Property(b => b.ResponseTime).HasColumnType("datetime");
-                eb.Property(b => b.RequestType).HasColumnType("varchar(20)");
+                eb.Property(b => b.RequestMethod).HasColumnType("varchar(20)");
+                eb.Property(b => b.Token).HasColumnType("varchar(8000)");
+                eb.Property(b => b.AuthKey).HasColumnType("varchar(8000)");
             });
         }
     }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Wing.Models.GateWay
+namespace Wing.Persistence.GateWay
 {
     public class Log
     {
@@ -9,12 +9,14 @@ namespace Wing.Models.GateWay
         public string DownstreamUrl { get; set; }
         public string RequestUrl { get; set; }
         public string ClientIp { get; set; }
-        public DateTime? RequestTime { get; set; }
-        public string RequestType { get; set; }
+        public DateTime RequestTime { get; set; }
+        public string RequestMethod { get; set; }
         public string RequestValue { get; set; }
-        public DateTime? ResponseTime { get; set; }
+        public DateTime ResponseTime { get; set; }
         public string ResponseValue { get; set; }
         public int StatusCode { get; set; }
         public string Policy { get; set; }
+        public string AuthKey { get; set; }
+        public string Token { get; set; }
     }
 }

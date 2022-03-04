@@ -12,6 +12,7 @@ namespace Wing.GateWay
     {
         public static HttpRequestMessage ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path)
         {
+            req.Body.Position = 0;
             var reqMsg = new HttpRequestMessage
             {
                 Method = new HttpMethod(req.Method),
