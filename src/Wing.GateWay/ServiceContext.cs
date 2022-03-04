@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
+using Microsoft.AspNetCore.Http;
 
 namespace Wing.GateWay
 {

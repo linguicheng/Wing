@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Dashboard.Filters;
+using Wing.Persistence;
 
 namespace Wing.Dashboard
 {
@@ -31,7 +32,7 @@ namespace Wing.Dashboard
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            services.AddWing();
+            services.AddWing().AddPersistence();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

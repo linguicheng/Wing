@@ -10,12 +10,15 @@ namespace Wing.GateWay.Middleware
     {
         private readonly ServiceRequestDelegate _next;
         private readonly ILogger<AuthenticationMiddleware> _logger;
+        private readonly ILogProvider _logProvider;
 
         public AuthenticationMiddleware(ServiceRequestDelegate next,
-            ILogger<AuthenticationMiddleware> logger)
+            ILogger<AuthenticationMiddleware> logger,
+            ILogProvider logProvider)
         {
             _next = next;
             _logger = logger;
+            _logProvider = logProvider;
         }
 
         public async Task InvokeAsync(ServiceContext serviceContext)
@@ -36,7 +39,7 @@ namespace Wing.GateWay.Middleware
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，AuthKey权限认证不通过");
                     context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    await LogProvider.Add(serviceContext);
+                    await _logProvider.Add(serviceContext);
                     return;
                 }
 
