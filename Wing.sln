@@ -46,7 +46,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.SqlServer", "src\Wing.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Dashboard", "samples\Sample.Dashboard\Sample.Dashboard.csproj", "{51D0CFFC-F79E-44D1-89AD-F2BA6D701D11}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.Dashboard", "src\Wing.Dashboard\backend\Wing.Dashboard.csproj", "{03967492-4553-4127-8147-F078C69163E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.Dashboard", "src\Wing.Dashboard\Wing.Dashboard.csproj", "{03967492-4553-4127-8147-F078C69163E9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
