@@ -3,7 +3,7 @@
 namespace Wing.Dashboard.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("wing/api/[controller]/[action]")]
     public class BaseController : ControllerBase
     {
     }

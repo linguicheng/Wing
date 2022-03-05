@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Wing.Server": {
+    "Sample.GateWay": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5088",

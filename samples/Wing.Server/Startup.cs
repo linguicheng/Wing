@@ -8,7 +8,7 @@ using Wing.Configuration.ServiceBuilder;
 using Wing.GateWay;
 using Wing.Persistence;
 
-namespace Wing.Server
+namespace Sample.GateWay
 {
     public class Startup
     {
