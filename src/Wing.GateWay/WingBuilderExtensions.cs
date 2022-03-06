@@ -8,6 +8,7 @@ namespace Wing.GateWay
         public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder)
         {
             wingBuilder.Services.AddScoped<ILogProvider, LogProvider>();
+            wingBuilder.App += new WingStartupFilter().Configure();
             return wingBuilder;
         }
     }

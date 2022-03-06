@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.RabbitMQ;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Configuration.ApplicationBuilder;
 using Wing.Auth;
 using System.Linq;
 using System.Security.Claims;
@@ -40,7 +38,6 @@ namespace AspNetCoreService
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseWing();
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseRouting();

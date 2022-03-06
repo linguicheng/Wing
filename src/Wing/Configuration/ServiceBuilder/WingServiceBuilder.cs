@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,6 +17,8 @@ namespace Wing.Configuration.ServiceBuilder
         public IServiceCollection Services { get; }
 
         public IConfiguration Configuration { get; }
+
+        public Action<IApplicationBuilder> App { get; set; }
 
         public WingServiceBuilder(IServiceCollection services)
         {

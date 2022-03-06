@@ -9,7 +9,7 @@ namespace Wing.DynamicMethod
 {
     public class GlobalInjection
     {
-        protected static readonly Assembly[] Assemblies;
+        public static readonly Assembly[] Assemblies;
 
         static GlobalInjection()
         {

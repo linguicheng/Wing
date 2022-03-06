@@ -30,12 +30,7 @@ namespace Wing.GateWay.Middleware
                     || string.Equals(m.Name, InvokeAsyncMethodName, StringComparison.Ordinal))
                     .ToArray();
 
-                if (invokeMethods.Length > 1)
-                {
-                    throw new InvalidOperationException();
-                }
-
-                if (invokeMethods.Length == 0)
+                if (invokeMethods == null || invokeMethods.Length != 1)
                 {
                     throw new InvalidOperationException();
                 }

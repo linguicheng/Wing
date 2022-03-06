@@ -1,11 +1,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Dashboard.Filters;
+using Wing.Dashboard;
 using Wing.Persistence;
 
 namespace Sample.Dashboard
@@ -22,17 +21,7 @@ namespace Sample.Dashboard
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers(options =>
-            {
-                options.Filters.Add(typeof(ApiExceptionFilter));
-                options.Filters.Add(typeof(ApiResultFilter));
-            });
-            //禁用默认行为
-            services.Configure<ApiBehaviorOptions>(options =>
-            {
-                options.SuppressModelStateInvalidFilter = true;
-            });
-            services.AddWing().AddPersistence();
+            services.AddWing().AddDashboard().AddPersistence();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
