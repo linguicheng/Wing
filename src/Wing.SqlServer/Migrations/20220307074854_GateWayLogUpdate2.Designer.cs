@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wing.SqlServer;
 
 namespace Wing.SqlServer.Migrations
 {
     [DbContext(typeof(GateWayDbContext))]
-    partial class GateWayDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220307074854_GateWayLogUpdate2")]
+    partial class GateWayLogUpdate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -28,13 +30,13 @@ namespace Wing.SqlServer.Migrations
                         .HasColumnType("varchar(8000)");
 
                     b.Property<string>("ClientIp")
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("DownstreamUrl")
                         .HasColumnType("varchar(8000)");
 
                     b.Property<string>("GateWayServerIp")
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("varchar(20)");
 
                     b.Property<string>("Policy")
                         .HasColumnType("varchar(max)");

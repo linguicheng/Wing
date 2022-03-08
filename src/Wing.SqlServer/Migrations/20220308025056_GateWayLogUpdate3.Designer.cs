@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Wing.SqlServer;
 
 namespace Wing.SqlServer.Migrations
 {
     [DbContext(typeof(GateWayDbContext))]
-    partial class GateWayDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220308025056_GateWayLogUpdate3")]
+    partial class GateWayLogUpdate3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

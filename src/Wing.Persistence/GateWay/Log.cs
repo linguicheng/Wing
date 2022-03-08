@@ -8,7 +8,18 @@ namespace Wing.Persistence.GateWay
         public string ServiceName { get; set; }
         public string DownstreamUrl { get; set; }
         public string RequestUrl { get; set; }
+        /// <summary>
+        /// 网关服务器IP
+        /// </summary>
+        public string GateWayServerIp { get; set; }
+        /// <summary>
+        /// 客户端请求IP
+        /// </summary>
         public string ClientIp { get; set; }
+        /// <summary>
+        /// 服务地址
+        /// </summary>
+        public string ServiceAddress { get; set; }
         public DateTime RequestTime { get; set; }
         public string RequestMethod { get; set; }
         public string RequestValue { get; set; }

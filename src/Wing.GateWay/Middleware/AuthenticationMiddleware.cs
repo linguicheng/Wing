@@ -1,5 +1,4 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
@@ -38,8 +37,7 @@ namespace Wing.GateWay.Middleware
                     context.Request.Headers["AuthKey"].ToString() != serviceContext.Policy.AuthKey)
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，AuthKey权限认证不通过");
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
-                    await _logProvider.Add(serviceContext);
+                    await Unauthorized(serviceContext);
                     return;
                 }
 
@@ -53,7 +51,7 @@ namespace Wing.GateWay.Middleware
                 if (!result.Succeeded)
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，JWT权限认证不通过");
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    await Unauthorized(serviceContext);
                     return;
                 }
 
@@ -61,7 +59,7 @@ namespace Wing.GateWay.Middleware
                 if (!context.User.Identity.IsAuthenticated)
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，JWT权限认证不通过");
-                    context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                    await Unauthorized(serviceContext);
                     return;
                 }
 
@@ -69,6 +67,13 @@ namespace Wing.GateWay.Middleware
             }
 
             await _next(serviceContext);
+        }
+
+        private async Task Unauthorized(ServiceContext serviceContext)
+        {
+            serviceContext.StatusCode = (int)HttpStatusCode.Unauthorized;
+            serviceContext.HttpContext.Response.StatusCode = serviceContext.StatusCode;
+            await _logProvider.Add(serviceContext);
         }
     }
 }

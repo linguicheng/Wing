@@ -12,7 +12,6 @@ namespace Wing.GateWay
     {
         public static HttpRequestMessage ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path)
         {
-            req.Body.Position = 0;
             var reqMsg = new HttpRequestMessage
             {
                 Method = new HttpMethod(req.Method),
@@ -38,9 +37,10 @@ namespace Wing.GateWay
              });
         }
 
-        public static async Task FromHttpResponseMessage(this HttpResponse response, HttpResponseMessage reqMsg)
+        public static async Task FromHttpResponseMessage(this HttpResponse response, HttpResponseMessage reqMsg, Action<int, string> action)
         {
-            response.StatusCode = (int)reqMsg.StatusCode;
+            var statusCode = (int)reqMsg.StatusCode;
+            response.StatusCode = statusCode;
             string content = string.Empty;
             if (reqMsg.Content != null)
             {
@@ -54,6 +54,7 @@ namespace Wing.GateWay
                 content = await reader.ReadToEndAsync();
             }
 
+            action(statusCode, content);
             await response.WriteAsync(content);
         }
     }

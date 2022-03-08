@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Timeout;
@@ -20,13 +19,19 @@ namespace Wing.GateWay.Middleware
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
         private readonly ILogger<PolicyMiddleware> _logger;
+        private readonly ILogProvider _logProvider;
 
-        public PolicyMiddleware(ServiceRequestDelegate next, IHttpClientFactory clientFactory, IServiceFactory serviceFactory, ILogger<PolicyMiddleware> logger)
+        public PolicyMiddleware(ServiceRequestDelegate next,
+            IHttpClientFactory clientFactory,
+            IServiceFactory serviceFactory,
+            ILogger<PolicyMiddleware> logger,
+            ILogProvider logProvider)
         {
             _next = next;
             _clientFactory = clientFactory;
             _serviceFactory = serviceFactory;
             _logger = logger;
+            _logProvider = logProvider;
         }
 
         public async Task InvokeAsync(ServiceContext serviceContext)
@@ -37,7 +42,7 @@ namespace Wing.GateWay.Middleware
                 return;
             }
 
-            await InvokeWithPolicy(serviceContext.ServiceName, serviceContext.HttpContext, serviceContext.DownstreamPath, serviceContext.Policy);
+            await InvokeWithPolicy(serviceContext);
         }
 
         private bool PolicyConfigIsChange(Policy oldConfig, Policy config)
@@ -51,9 +56,10 @@ namespace Wing.GateWay.Middleware
                 oldConfig.RetryIntervalMilliseconds != config.RetryIntervalMilliseconds;
         }
 
-        private async Task InvokeWithPolicy(string serviceName, HttpContext context, string path, Policy config)
+        private async Task InvokeWithPolicy(ServiceContext serviceContext)
         {
-            Policies.TryGetValue(serviceName, out KeyValuePair<Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
+            var config = serviceContext.Policy;
+            Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
             var policy = policyPair.Value;
             if (policy == null || PolicyConfigIsChange(policyPair.Key, config))
             {
@@ -103,7 +109,7 @@ namespace Wing.GateWay.Middleware
                     });
 
                 policy = unknownErrorFallBack.WrapAsync(serviceNotFoundFallBack).WrapAsync(policy);
-                Policies.AddOrUpdate(serviceName, KeyValuePair.Create(config, policy), (key, value) =>
+                Policies.AddOrUpdate(serviceContext.ServiceName, KeyValuePair.Create(config, policy), (key, value) =>
                 {
                     return KeyValuePair.Create(config, policy);
                 });
@@ -111,14 +117,20 @@ namespace Wing.GateWay.Middleware
 
             var resMsg = await policy.ExecuteAsync(async () =>
             {
-                return await _serviceFactory.HttpServiceInvoke(serviceName, async serviceAddr =>
+                return await _serviceFactory.HttpServiceInvoke(serviceContext.ServiceName, async serviceAddr =>
                 {
-                    var reqMsg = context.Request.ToHttpRequestMessage(serviceAddr, path);
-                    var client = _clientFactory.CreateClient(serviceName);
+                    serviceContext.ServiceAddress = serviceAddr.ToString();
+                    var reqMsg = serviceContext.HttpContext.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
+                    var client = _clientFactory.CreateClient(serviceContext.ServiceName);
                     return await client.SendAsync(reqMsg);
                 });
             });
-            await context.Response.FromHttpResponseMessage(resMsg);
+            await serviceContext.HttpContext.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
+            {
+                serviceContext.StatusCode = statusCode;
+                serviceContext.ResponseValue = content;
+                _logProvider.Add(serviceContext);
+            });
         }
     }
 }

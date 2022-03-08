@@ -11,12 +11,17 @@ namespace Wing.GateWay.Middleware
         private readonly ServiceRequestDelegate _next;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
+        private readonly ILogProvider _logProvider;
 
-        public NoPolicyMiddleware(ServiceRequestDelegate next, IHttpClientFactory clientFactory, IServiceFactory serviceFactory)
+        public NoPolicyMiddleware(ServiceRequestDelegate next,
+            IHttpClientFactory clientFactory,
+            IServiceFactory serviceFactory,
+            ILogProvider logProvider)
         {
             _next = next;
             _clientFactory = clientFactory;
             _serviceFactory = serviceFactory;
+            _logProvider = logProvider;
         }
 
         public async Task InvokeAsync(ServiceContext serviceContext)
@@ -38,19 +43,29 @@ namespace Wing.GateWay.Middleware
             {
                 var resMsg = await _serviceFactory.HttpServiceInvoke(serviceContext.ServiceName, async serviceAddr =>
                 {
+                    serviceContext.ServiceAddress = serviceAddr.ToString();
                     var reqMsg = context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
                     var client = _clientFactory.CreateClient(serviceContext.ServiceName);
                     return await client.SendAsync(reqMsg);
                 });
-                await context.Response.FromHttpResponseMessage(resMsg);
+                await context.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
+                {
+                    serviceContext.StatusCode = statusCode;
+                    serviceContext.ResponseValue = content;
+                    _logProvider.Add(serviceContext);
+                });
             }
             catch (ServiceNotFoundException)
             {
-                context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.StatusCode = serviceContext.StatusCode;
+                await _logProvider.Add(serviceContext);
             }
             catch
             {
-                context.Response.StatusCode = (int)HttpStatusCode.BadGateway;
+                serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
+                context.Response.StatusCode = serviceContext.StatusCode;
+                await _logProvider.Add(serviceContext);
             }
         }
     }

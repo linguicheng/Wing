@@ -20,6 +20,10 @@ namespace Wing.GateWay
 
         public DateTime RequestTime { get; set; }
 
-        public DateTime ResponseTime { get; set; }
+        public string ServiceAddress { get; set; }
+
+        public int StatusCode { get; set; }
+
+        public string ResponseValue { get; set; }
     }
 }

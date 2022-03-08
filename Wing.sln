@@ -36,7 +36,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution items", "solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Auth", "src\Wing.Auth\Wing.Auth.csproj", "{9482E722-4792-4106-8D56-ACDDEF3F6FC0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GateWay", "samples\Wing.Server\Sample.GateWay.csproj", "{1BF719F2-AB15-43BF-BB1A-36B3A2235729}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GateWay", "samples\Sample.GateWay\Sample.GateWay.csproj", "{1BF719F2-AB15-43BF-BB1A-36B3A2235729}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreService2", "samples\AspNetCoreService2\AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
 EndProject
