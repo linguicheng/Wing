@@ -1,19 +1,7 @@
 ﻿using System.Collections.Generic;
 
-namespace Wing.GateWay
+namespace Wing.GateWay.Config
 {
-    public class Config
-    {
-        public List<Policy> Policies { get; set; }
-
-        public Global Global { get; set; }
-    }
-
-    public class Global
-    {
-        public Policy Policy { get; set; }
-    }
-
     public class Policy
     {
         public string ServiceName { get; set; }
@@ -33,5 +21,12 @@ namespace Wing.GateWay
         public string AuthKey { get; set; }
 
         public bool? UseJWTAuth { get; set; }
+    }
+
+    public class PolicyConfig
+    {
+        public List<Policy> Policies { get; set; }
+
+        public Policy Global { get; set; }
     }
 }

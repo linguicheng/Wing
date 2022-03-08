@@ -5,9 +5,11 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Wing.Convert;
+using Wing.GateWay.Config;
 using Wing.Persistence.GateWay;
 
 namespace Wing.GateWay
@@ -17,16 +19,27 @@ namespace Wing.GateWay
         private readonly ILogService _logService;
         private readonly IJson _json;
         private readonly ILogger<LogProvider> _logger;
+        private readonly IConfiguration _configuration;
 
-        public LogProvider(ILogService logService, IJson json, ILogger<LogProvider> logger)
+        public LogProvider(ILogService logService,
+            IJson json,
+            ILogger<LogProvider> logger,
+            IConfiguration configuration)
         {
             _logService = logService;
             _json = json;
             _logger = logger;
+            _configuration = configuration;
         }
 
         public async Task Add(ServiceContext serviceContext)
         {
+            var config = _configuration.GetSection("GateWay:Log").Get<LogConfig>();
+            if (!config.IsEnabled)
+            {
+                return;
+            }
+
             var httpContext = serviceContext.HttpContext;
             var request = httpContext.Request;
             Log log = null;

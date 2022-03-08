@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Wing.GateWay.Config;
 
 namespace Wing.GateWay.Middleware
 {
@@ -42,7 +43,7 @@ namespace Wing.GateWay.Middleware
             }
 
             serviceContext.DownstreamPath = "/" + string.Join('/', downstreamPaths);
-            var config = _configuration.GetSection("GateWay").Get<Config>();
+            var config = _configuration.GetSection("GateWay:Policy").Get<PolicyConfig>();
             if (config != null)
             {
                 if (config.Policies != null && config.Policies.Count > 0)
@@ -50,7 +51,7 @@ namespace Wing.GateWay.Middleware
                     serviceContext.Policy = config.Policies.Where(p => p.ServiceName == serviceContext.ServiceName).FirstOrDefault();
                 }
 
-                serviceContext.Policy ??= config.Global?.Policy;
+                serviceContext.Policy ??= config.Global;
             }
 
             await _next(serviceContext);

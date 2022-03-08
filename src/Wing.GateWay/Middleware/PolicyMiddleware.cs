@@ -14,7 +14,7 @@ namespace Wing.GateWay.Middleware
 {
     public class PolicyMiddleware
     {
-        private static readonly ConcurrentDictionary<string, KeyValuePair<Policy, AsyncPolicy<HttpResponseMessage>>> Policies = new ConcurrentDictionary<string, KeyValuePair<Policy, AsyncPolicy<HttpResponseMessage>>>();
+        private static readonly ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>> Policies = new ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>>();
         private readonly ServiceRequestDelegate _next;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
@@ -45,7 +45,7 @@ namespace Wing.GateWay.Middleware
             await InvokeWithPolicy(serviceContext);
         }
 
-        private bool PolicyConfigIsChange(Policy oldConfig, Policy config)
+        private bool PolicyConfigIsChange(Config.Policy oldConfig, Config.Policy config)
         {
             return oldConfig == null ||
                 oldConfig.IsEnableBreaker != config.IsEnableBreaker ||
@@ -59,7 +59,7 @@ namespace Wing.GateWay.Middleware
         private async Task InvokeWithPolicy(ServiceContext serviceContext)
         {
             var config = serviceContext.Policy;
-            Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
+            Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
             var policy = policyPair.Value;
             if (policy == null || PolicyConfigIsChange(policyPair.Key, config))
             {

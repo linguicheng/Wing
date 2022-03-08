@@ -16,7 +16,7 @@ namespace Wing.GateWay
 
         public string DownstreamPath { get; set; }
 
-        public Policy Policy { get; set; }
+        public Config.Policy Policy { get; set; }
 
         public DateTime RequestTime { get; set; }
 
