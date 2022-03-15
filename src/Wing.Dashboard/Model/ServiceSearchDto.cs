@@ -10,6 +10,7 @@ namespace Wing.Dashboard.Model
         public ServiceOptions? ServiceType { get; set; }
 
         public LoadBalancerOptions? LoadBalancer { get; set; }
+
         public HealthStatus? Status { get; set; }
     }
 }

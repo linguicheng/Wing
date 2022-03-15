@@ -9,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Wing.Convert;
+using Wing.EventBus;
 using Wing.GateWay.Config;
 using Wing.Persistence.GateWay;
 
@@ -16,17 +17,14 @@ namespace Wing.GateWay
 {
     public class LogProvider : ILogProvider
     {
-        private readonly ILogService _logService;
         private readonly IJson _json;
         private readonly ILogger<LogProvider> _logger;
         private readonly IConfiguration _configuration;
 
-        public LogProvider(ILogService logService,
-            IJson json,
+        public LogProvider(IJson json,
             ILogger<LogProvider> logger,
             IConfiguration configuration)
         {
-            _logService = logService;
             _json = json;
             _logger = logger;
             _configuration = configuration;
@@ -75,16 +73,22 @@ namespace Wing.GateWay
                     log.RequestValue = await reader.ReadToEndAsync();
                 }
 
-                await _logService.Add(log);
+                if (config.UseEventBus)
+                {
+                    var result = await ServiceLocator.GetRequiredService<ILogService>().Add(log);
+                    if (result <= 0)
+                    {
+                        _logger.LogInformation($"数据库保存失败，请求日志：{_json.Serialize(log)}");
+                    }
+                }
+                else
+                {
+                    ServiceLocator.GetRequiredService<IEventBus>().Publish(log);
+                }
             }
             catch (Exception ex)
             {
-                if (log != null)
-                {
-                    _logger.LogInformation($"请求日志：{_json.Serialize(log)}");
-                }
-
-                _logger.LogError(ex, "请求日志记录异常");
+                _logger.LogError(ex, "发生异常,请求日志：{0}", log != null ? _json.Serialize(log) : string.Empty);
             }
         }
     }

@@ -5,14 +5,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Wing.Dashboard.Helper;
 using Wing.Dashboard.Model;
-using Wing.Dashboard.Result;
+using Wing.Model;
+using Wing.Result;
 using Wing.ServiceProvider;
 
 namespace Wing.Dashboard.Controllers
 {
     public class ServiceController : BaseController
     {
-
         private readonly IDiscoveryServiceProvider _discoveryService;
 
         public ServiceController()
@@ -37,6 +37,7 @@ namespace Wing.Dashboard.Controllers
             {
                 services = await _discoveryService.Get(dto.Data.Status.Value);
             }
+
             return services.ToPage<Service, ServiceDetailDto>(s =>
             {
                 if (!string.IsNullOrWhiteSpace(dto.Data.Name) && !s.Name.Contains(dto.Data.Name))
@@ -55,7 +56,8 @@ namespace Wing.Dashboard.Controllers
                 }
 
                 return true;
-            }, dto, (s, result) =>
+            }, dto,
+            (s, result) =>
             {
                 result.Add(new ServiceDetailDto
                 {
@@ -95,7 +97,8 @@ namespace Wing.Dashboard.Controllers
                 }
 
                 return true;
-            }, dto, (s, result) =>
+            }, dto,
+            (s, result) =>
             {
                 s.CriticalLv = Math.Round(s.CriticalTotal * 100.0 / s.Total, 2);
                 s.HealthyLv = Math.Round(s.HealthyTotal * 100.0 / s.Total, 2);
@@ -113,10 +116,12 @@ namespace Wing.Dashboard.Controllers
             {
                 throw new Exception("该服务节点不存在");
             }
+
             if (service.Status != HealthStatus.Critical)
             {
                 throw new Exception("仅能删除状态为“已死亡”的服务节点");
             }
+
             return await _discoveryService.Deregister(serviceId);
         }
     }

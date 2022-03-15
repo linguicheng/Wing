@@ -1,4 +1,4 @@
-﻿namespace Wing.Dashboard.Model
+﻿namespace Wing.Model
 {
     public class PageModel
     {
@@ -7,7 +7,9 @@
             PageSize = 15;
             PageIndex = 1;
         }
+
         public int PageSize { get; set; }
+
         public int PageIndex { get; set; }
     }
 }

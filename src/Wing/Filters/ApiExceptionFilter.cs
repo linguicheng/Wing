@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System.Threading.Tasks;
-using Wing.Dashboard.Result;
+using Wing.Result;
 
-namespace Wing.Dashboard.Filters
+namespace Wing.Filters
 {
     public class ApiExceptionFilter : IAsyncExceptionFilter
     {
@@ -13,6 +13,7 @@ namespace Wing.Dashboard.Filters
             {
                 context.Result = new ObjectResult(new ApiResult() { Code = ResultType.Exception, Msg = context.Exception.Message });
             }
+
             context.ExceptionHandled = true;
             return Task.CompletedTask;
         }

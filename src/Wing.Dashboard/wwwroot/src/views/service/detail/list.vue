@@ -60,6 +60,7 @@
     </template>
      <div class="table-container">
       <vxe-table ref="xTable"
+                 class="mytable-scrollbar"
                  border
                  resizable
                  height="100%"

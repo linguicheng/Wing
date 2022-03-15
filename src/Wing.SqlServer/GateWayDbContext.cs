@@ -5,9 +5,12 @@ namespace Wing.SqlServer
 {
     public class GateWayDbContext : DbContext
     {
-        public GateWayDbContext(DbContextOptions<GateWayDbContext> options) : base(options)
-        { }
-            public DbSet<Log> Logs { get; set; }
+        public GateWayDbContext(DbContextOptions<GateWayDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Log> Logs { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -87,16 +87,7 @@ namespace AspNetCoreService.Controllers
         [HttpGet("Publish")]
         public void Publish()
         {
-            _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond }, result =>
-            {
-                if (result)
-                {
-
-                }
-                else
-                {
-                }
-            });
+            _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond });
         }
     }
 }

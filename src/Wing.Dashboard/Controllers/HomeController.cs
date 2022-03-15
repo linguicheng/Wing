@@ -7,7 +7,7 @@ namespace Wing.Dashboard.Controllers
         [Route("wing")]
         public RedirectResult Index()
         {
-            return new RedirectResult(url: "/wing/index", permanent: true);
+            return new RedirectResult(url: "/wing/index.html", permanent: true);
         }
     }
 }

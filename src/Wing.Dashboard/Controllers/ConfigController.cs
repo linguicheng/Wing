@@ -4,7 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using Wing.Convert;
 using Wing.Dashboard.Helper;
 using Wing.Dashboard.Model;
-using Wing.Dashboard.Result;
+using Wing.Model;
+using Wing.Result;
 using Wing.ServiceProvider;
 
 namespace Wing.Dashboard.Controllers
@@ -41,8 +42,10 @@ namespace Wing.Dashboard.Controllers
                 {
                     DataConverter.BuildConfig(value);
                 }
+
                 await _discoveryService.Put(configDto.Key, value);
             }
+
             return true;
         }
 

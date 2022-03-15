@@ -1,4 +1,4 @@
-﻿namespace Wing.Dashboard.Model
+﻿namespace Wing.Model
 {
     public class PageModel<T> : PageModel
     {

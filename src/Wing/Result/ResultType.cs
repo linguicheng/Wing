@@ -1,4 +1,4 @@
-﻿namespace Wing.Dashboard.Result
+﻿namespace Wing.Result
 {
     public enum ResultType
     {

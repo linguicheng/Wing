@@ -4,6 +4,6 @@
     {
         public bool IsEnabled { get; set; }
 
-        public LogProviderEnum Provider { get; set; }
+        public bool UseEventBus { get; set; }
     }
 }

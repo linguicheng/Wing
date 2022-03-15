@@ -27,7 +27,7 @@ export default ({ request }) => ({
    * @param {*} data
    * @returns
    */
-  SERVICE (data = {}) {
+  SERVICE_LIST (data = {}) {
     return request({
       method: 'GET',
       url: 'Service/List',

@@ -48,6 +48,15 @@ const frameIn = [
         },
         component: _import('config')
       },
+      {
+        path: 'gateWayLog',
+        name: 'gateWayLog',
+        meta: {
+          title: '网关日志',
+          auth: true
+        },
+        component: _import('log')
+      },
       // 系统 前端日志
       {
         path: 'log',

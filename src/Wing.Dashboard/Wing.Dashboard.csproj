@@ -4,6 +4,14 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
+	</PropertyGroup>
+
   <ItemGroup>
     <None Remove="wwwroot\dist\css\app.1da1b4a8.css" />
     <None Remove="wwwroot\dist\css\app.1da1b4a8.css.gz" />
@@ -21,10 +29,12 @@
     <None Remove="wwwroot\dist\css\chunk-6ead409f.1867762e.css" />
     <None Remove="wwwroot\dist\css\chunk-6ead409f.1867762e.css.gz" />
     <None Remove="wwwroot\dist\css\chunk-89c0581e.f0b076de.css" />
+    <None Remove="wwwroot\dist\css\chunk-b8b44f84.275e0c84.css" />
     <None Remove="wwwroot\dist\css\chunk-c4358a20.6ce34d49.css" />
     <None Remove="wwwroot\dist\css\chunk-d6bddee0.870b6250.css" />
     <None Remove="wwwroot\dist\css\chunk-e336426a.f0b076de.css" />
     <None Remove="wwwroot\dist\css\chunk-fc506b80.5525b1ea.css" />
+    <None Remove="wwwroot\dist\css\chunk-ff21003c.b3b410bd.css" />
     <None Remove="wwwroot\dist\css\chunk-vendors.0089d6b6.css" />
     <None Remove="wwwroot\dist\css\chunk-vendors.0089d6b6.css.gz" />
     <None Remove="wwwroot\dist\css\theme-colors.4d08422c.css" />
@@ -70,6 +80,8 @@
     <None Remove="wwwroot\dist\index.html" />
     <None Remove="wwwroot\dist\js\app.55884492.js" />
     <None Remove="wwwroot\dist\js\app.55884492.js.gz" />
+    <None Remove="wwwroot\dist\js\app.5e601623.js" />
+    <None Remove="wwwroot\dist\js\app.5e601623.js.gz" />
     <None Remove="wwwroot\dist\js\app.cbf204c1.js" />
     <None Remove="wwwroot\dist\js\app.cbf204c1.js.gz" />
     <None Remove="wwwroot\dist\js\chunk-0dff281c.121616f0.js" />
@@ -97,10 +109,12 @@
     <None Remove="wwwroot\dist\js\chunk-6ead409f.27f9c746.js" />
     <None Remove="wwwroot\dist\js\chunk-89c0581e.b3577835.js" />
     <None Remove="wwwroot\dist\js\chunk-89c0581e.b3577835.js.gz" />
+    <None Remove="wwwroot\dist\js\chunk-b8b44f84.48704640.js" />
     <None Remove="wwwroot\dist\js\chunk-c4358a20.b78afabd.js" />
     <None Remove="wwwroot\dist\js\chunk-d6bddee0.215e0e03.js" />
     <None Remove="wwwroot\dist\js\chunk-e336426a.8a28421d.js" />
     <None Remove="wwwroot\dist\js\chunk-fc506b80.054351a5.js" />
+    <None Remove="wwwroot\dist\js\chunk-ff21003c.3a4ea52a.js" />
     <None Remove="wwwroot\dist\js\chunk-vendors.4054c265.js" />
     <None Remove="wwwroot\dist\js\chunk-vendors.4054c265.js.gz" />
   </ItemGroup>
@@ -122,10 +136,11 @@
     <EmbeddedResource Include="wwwroot\dist\css\chunk-6ead409f.1867762e.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-6ead409f.1867762e.css.gz" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-89c0581e.f0b076de.css" />
+    <EmbeddedResource Include="wwwroot\dist\css\chunk-b8b44f84.275e0c84.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-c4358a20.6ce34d49.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-d6bddee0.870b6250.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-e336426a.f0b076de.css" />
-    <EmbeddedResource Include="wwwroot\dist\css\chunk-fc506b80.5525b1ea.css" />
+    <EmbeddedResource Include="wwwroot\dist\css\chunk-ff21003c.b3b410bd.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-vendors.0089d6b6.css" />
     <EmbeddedResource Include="wwwroot\dist\css\chunk-vendors.0089d6b6.css.gz" />
     <EmbeddedResource Include="wwwroot\dist\css\theme-colors.4d08422c.css" />
@@ -169,8 +184,8 @@
     <EmbeddedResource Include="wwwroot\dist\img\qr@2x.c0f04adb.png" />
     <EmbeddedResource Include="wwwroot\dist\img\we.91ba5945.svg" />
     <EmbeddedResource Include="wwwroot\dist\index.html" />
-    <EmbeddedResource Include="wwwroot\dist\js\app.55884492.js" />
-    <EmbeddedResource Include="wwwroot\dist\js\app.55884492.js.gz" />
+    <EmbeddedResource Include="wwwroot\dist\js\app.5e601623.js" />
+    <EmbeddedResource Include="wwwroot\dist\js\app.5e601623.js.gz" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-0dff281c.121616f0.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-10bd9bec.5c8de887.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-15af0c58.c007ac9a.js" />
@@ -196,19 +211,25 @@
     <EmbeddedResource Include="wwwroot\dist\js\chunk-6ead409f.27f9c746.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-89c0581e.b3577835.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-89c0581e.b3577835.js.gz" />
+    <EmbeddedResource Include="wwwroot\dist\js\chunk-b8b44f84.48704640.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-c4358a20.b78afabd.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-d6bddee0.215e0e03.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-e336426a.8a28421d.js" />
-    <EmbeddedResource Include="wwwroot\dist\js\chunk-fc506b80.054351a5.js" />
+    <EmbeddedResource Include="wwwroot\dist\js\chunk-ff21003c.3a4ea52a.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.4054c265.js" />
     <EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.4054c265.js.gz" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
     <ProjectReference Include="..\Wing\Wing.csproj" />
   </ItemGroup>
 

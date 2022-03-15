@@ -16,6 +16,7 @@
     </template>
      <div class="table-container">
       <vxe-table ref="xTable"
+                 class="mytable-scrollbar"
                  border
                  resizable
                  height="100%"
@@ -118,7 +119,7 @@ export default {
     },
     async search () {
       this.loading = true
-      this.services = await this.$api.SERVICE(this.pageModel)
+      this.services = await this.$api.SERVICE_LIST(this.pageModel)
       this.loading = false
     },
     sizeChange (val) {

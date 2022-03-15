@@ -8,14 +8,15 @@ using Consul;
 using Wing.Convert;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
-using wingHealthStatus = Wing.ServiceProvider.HealthStatus;
 using consulHealthStatus = Consul.HealthStatus;
+using wingHealthStatus = Wing.ServiceProvider.HealthStatus;
 
 namespace Wing.Consul
 {
     public class ConsulProvider : IDiscoveryServiceProvider
     {
         private readonly Provider _config;
+
         private ulong LastIndex { get; set; }
 
         public ConsulProvider(Provider config)
@@ -23,100 +24,21 @@ namespace Wing.Consul
             _config = config;
         }
 
-        private ConsulClient Connect()
-        {
-            return new ConsulClient(x =>
-            {
-                x.Address = new Uri(_config.Url);
-                x.Token = _config.Token;
-                x.Datacenter = _config.DataCenter;
-            });
-        }
+        public async Task<List<Service>> Get() => await Get(string.Empty, null, null);
 
-        public async Task<List<Service>> Get()
-        {
-            return await Get(string.Empty, null, null);
-        }
+        public async Task<List<Service>> Get(wingHealthStatus healthStatus) => await Get(string.Empty, null, healthStatus);
 
-        public async Task<List<Service>> Get(wingHealthStatus healthStatus)
-        {
-            return await Get(string.Empty, null, healthStatus);
-        }
+        public async Task<List<Service>> Get(string serviceName) => await Get(serviceName, null, null);
 
-        public async Task<List<Service>> Get(string serviceName)
-        {
-            return await Get(serviceName, null, null);
-        }
+        public async Task<List<Service>> Get(string serviceName, wingHealthStatus healthStatus) => await Get(serviceName, null, healthStatus);
 
-        public async Task<List<Service>> Get(string serviceName, wingHealthStatus healthStatus)
-        {
-            return await Get(serviceName, null, healthStatus);
-        }
+        public async Task<List<Service>> GetGrpcServices(string serviceName) => await Get(serviceName, ServiceOptions.Grpc, null);
 
-        public async Task<List<Service>> GetGrpcServices(string serviceName)
-        {
-            return await Get(serviceName, ServiceOptions.Grpc, null);
-        }
+        public async Task<List<Service>> GetHttpServices(string serviceName) => await Get(serviceName, ServiceOptions.Http, null);
 
-        public async Task<List<Service>> GetHttpServices(string serviceName)
-        {
-            return await Get(serviceName, ServiceOptions.Http, null);
-        }
+        public async Task<List<Service>> GetGrpcServices(string serviceName, wingHealthStatus healthStatus) => await Get(serviceName, ServiceOptions.Grpc, healthStatus);
 
-        public async Task<List<Service>> GetGrpcServices(string serviceName, wingHealthStatus healthStatus)
-        {
-            return await Get(serviceName, ServiceOptions.Grpc, healthStatus);
-        }
-
-        public async Task<List<Service>> GetHttpServices(string serviceName, wingHealthStatus healthStatus)
-        {
-            return await Get(serviceName, ServiceOptions.Http, healthStatus);
-        }
-
-        private async Task<List<Service>> Get(string serviceName, ServiceOptions? serviceOption, wingHealthStatus? healthStatus)
-        {
-            using var client = Connect();
-            var checks = await client.Agent.Checks();
-            var services = await client.Agent.Services();
-            List<Service> result = new List<Service>();
-            foreach (var s in services.Response.Values)
-            {
-                var service = BuildService(s, checks.Response);
-                if (serviceOption == null)
-                {
-                    if (string.IsNullOrWhiteSpace(serviceName))
-                    {
-                        result.Add(service);
-                        continue;
-                    }
-
-                    if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
-                    {
-                        result.Add(service);
-                    }
-                    continue;
-
-                }
-
-                if (service.ServiceOptions != serviceOption)
-                {
-                    continue;
-                }
-
-                if (string.IsNullOrWhiteSpace(serviceName))
-                {
-                    result.Add(service);
-                    continue;
-                }
-
-                if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
-                {
-                    result.Add(service);
-                }
-            }
-
-            return result;
-        }
+        public async Task<List<Service>> GetHttpServices(string serviceName, wingHealthStatus healthStatus) => await Get(serviceName, ServiceOptions.Http, healthStatus);
 
         public async Task<Dictionary<string, string>> GetKVData(string key, CancellationToken ct = default)
         {
@@ -132,8 +54,12 @@ namespace Wing.Consul
             {
                 return null;
             }
+
             if (kvResult.StatusCode != HttpStatusCode.OK)
+            {
                 throw new Exception($"获取KV失败，状态码：{kvResult.StatusCode}");
+            }
+
             var kvData = kvResult.Response;
             if (kvData == null || !kvData.Any())
             {
@@ -145,6 +71,7 @@ namespace Wing.Consul
             {
                 result.Add(kv.Key, DataConverter.BytesToString(kv.Value));
             }
+
             return result;
         }
 
@@ -162,8 +89,12 @@ namespace Wing.Consul
             {
                 throw new Exception($"找不到配置Key【{_config.Service.ConfigKey}】的配置信息");
             }
+
             if (result.StatusCode != HttpStatusCode.OK)
+            {
                 throw new Exception($"获取KV失败，状态码：{result.StatusCode}");
+            }
+
             if (result.LastIndex > LastIndex)
             {
                 LastIndex = result.LastIndex;
@@ -172,6 +103,7 @@ namespace Wing.Consul
                 {
                     throw new Exception($"配置Key【{_config.Service.ConfigKey}】的配置信息为空");
                 }
+
                 var data = kvData.Where(kv => !kv.Key.EndsWith("/") && kv.Value != null && kv.Value.Any())
                        .SelectMany(kv => DataConverter.BytesToDictionary(kv.Value).Select(pair =>
                              {
@@ -198,7 +130,10 @@ namespace Wing.Consul
                 Datacenter = _config.DataCenter
             }, ct).ConfigureAwait(false);
             if (result.StatusCode != HttpStatusCode.OK)
+            {
                 throw new Exception($"保存KV失败，状态码：{result.StatusCode}");
+            }
+
             return result.Response;
         }
 
@@ -224,7 +159,10 @@ namespace Wing.Consul
             }
 
             if (result.StatusCode != HttpStatusCode.OK)
+            {
                 throw new Exception($"删除KV失败，状态码：{result.StatusCode}");
+            }
+
             return result.Response;
         }
 
@@ -241,11 +179,12 @@ namespace Wing.Consul
                     break;
                 }
             }
-            List<AgentServiceCheck> _checks = new List<AgentServiceCheck>();
+
+            List<AgentServiceCheck> checks = new List<AgentServiceCheck>();
             var healthcheck = config.HealthCheck;
             if (config.Option == ServiceOptions.Http)
             {
-                _checks.Add(new AgentServiceCheck()
+                checks.Add(new AgentServiceCheck()
                 {
                     Interval = TimeSpan.FromSeconds(healthcheck.Interval ?? 10),
                     HTTP = healthcheck.Url,
@@ -254,7 +193,7 @@ namespace Wing.Consul
             }
             else
             {
-                _checks.Add(new AgentServiceCheck()
+                checks.Add(new AgentServiceCheck()
                 {
                     Interval = TimeSpan.FromSeconds(healthcheck.Interval ?? 10),
                     GRPC = healthcheck.Url,
@@ -262,9 +201,10 @@ namespace Wing.Consul
                     Timeout = TimeSpan.FromSeconds(healthcheck.Timeout ?? 10)
                 });
             }
+
             var registration = new AgentServiceRegistration()
             {
-                Checks = _checks.ToArray(),
+                Checks = checks.ToArray(),
                 ID = Guid.NewGuid().ToString(),
                 Name = config.Name,
                 Address = config.Host,
@@ -279,6 +219,100 @@ namespace Wing.Consul
             using var client = Connect();
             var result = await client.Agent.ServiceDeregister(serviceId);
             return result.StatusCode == HttpStatusCode.OK;
+        }
+
+        public async Task<Service> Detail(string serviceId)
+        {
+            using var client = Connect();
+            var checks = await client.Agent.Checks();
+            var services = await client.Agent.Services();
+            List<Service> result = new List<Service>();
+            foreach (var s in services.Response.Values)
+            {
+                if (s.ID != serviceId)
+                {
+                    continue;
+                }
+
+                return BuildService(s, checks.Response);
+            }
+
+            return null;
+        }
+
+        private async Task<List<Service>> Get(string serviceName, ServiceOptions? serviceOption, wingHealthStatus? healthStatus)
+        {
+            using var client = Connect();
+            var checks = await client.Agent.Checks();
+            var services = await client.Agent.Services();
+            List<Service> result = new List<Service>();
+            foreach (var s in services.Response.Values)
+            {
+                var service = BuildService(s, checks.Response);
+                if (serviceOption == null)
+                {
+                    if (string.IsNullOrWhiteSpace(serviceName))
+                    {
+                        if (healthStatus != null && healthStatus != service.Status)
+                        {
+                            continue;
+                        }
+
+                        result.Add(service);
+                        continue;
+                    }
+
+                    if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (healthStatus != null && healthStatus != service.Status)
+                        {
+                            continue;
+                        }
+
+                        result.Add(service);
+                    }
+
+                    continue;
+                }
+
+                if (service.ServiceOptions != serviceOption)
+                {
+                    continue;
+                }
+
+                if (string.IsNullOrWhiteSpace(serviceName))
+                {
+                    if (healthStatus != null && healthStatus != service.Status)
+                    {
+                        continue;
+                    }
+
+                    result.Add(service);
+                    continue;
+                }
+
+                if (s.Service.Equals(serviceName, StringComparison.OrdinalIgnoreCase))
+                {
+                    if (healthStatus != null && healthStatus != service.Status)
+                    {
+                        continue;
+                    }
+
+                    result.Add(service);
+                }
+            }
+
+            return result;
+        }
+
+        private ConsulClient Connect()
+        {
+            return new ConsulClient(x =>
+            {
+                x.Address = new Uri(_config.Url);
+                x.Token = _config.Token;
+                x.Datacenter = _config.DataCenter;
+            });
         }
 
         private void ServiceTagSplit(IEnumerable<string> tags, string startsWith, Action<string> action)
@@ -322,10 +356,11 @@ namespace Wing.Consul
                     tags.Add(item);
                 }
             }
+
             return tags;
         }
 
-        private Service BuildService(AgentService s,Dictionary<string,AgentCheck> checks)
+        private Service BuildService(AgentService s, Dictionary<string, AgentCheck> checks)
         {
             var status = wingHealthStatus.Healthy;
             var checkService = checks.Values.Where(x => x.ServiceID == s.ID).FirstOrDefault();
@@ -380,23 +415,6 @@ namespace Wing.Consul
                 service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
             });
             return service;
-        }
-
-        public async Task<Service> Detail(string serviceId)
-        {
-            using var client = Connect();
-            var checks = await client.Agent.Checks();
-            var services = await client.Agent.Services();
-            List<Service> result = new List<Service>();
-            foreach (var s in services.Response.Values)
-            {
-                if (s.ID != serviceId)
-                {
-                    continue;
-                }
-                return BuildService(s, checks.Response);
-            }
-            return null;
         }
     }
 }

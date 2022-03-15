@@ -1,9 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using System;
-using Wing.Dashboard.Result;
+using Wing.Result;
 
-namespace Wing.Dashboard.Filters
+namespace Wing.Filters
 {
     public class ApiResultFilter : IActionFilter
     {
@@ -17,6 +17,7 @@ namespace Wing.Dashboard.Filters
                     context.Result = new ObjectResult(result);
                     return;
                 }
+
                 context.Result = new ObjectResult(new ApiResult<object> { Code = ResultType.Success, Data = objectResult.Value });
             }
             else if (context.Result is EmptyResult)
@@ -46,6 +47,7 @@ namespace Wing.Dashboard.Filters
                         msg += error.ErrorMessage + ",";
                     }
                 }
+
                 msg = msg.TrimEnd(',');
                 context.Result = new ObjectResult(new ApiResult() { Code = ResultType.Exception, Msg = msg });
             }

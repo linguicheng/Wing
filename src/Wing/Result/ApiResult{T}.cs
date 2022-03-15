@@ -1,4 +1,4 @@
-﻿namespace Wing.Dashboard.Result
+﻿namespace Wing.Result
 {
     public class ApiResult<T> : ApiResult
     {

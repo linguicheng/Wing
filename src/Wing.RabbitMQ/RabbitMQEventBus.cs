@@ -52,6 +52,22 @@ namespace Wing.RabbitMQ
             });
         }
 
+        public void Publish(EventMessage message)
+        {
+            _connection.Create(channel =>
+            {
+                channel.ExchangeDeclare(exchange: _config.ExchangeName, type: ExchangeType.Direct);
+                var props = channel.CreateBasicProperties();
+                props.DeliveryMode = 2;
+                var msg = _json.Serialize(message);
+                var routingKey = message.GetType().FullName;
+                _logger.LogDebug("消息发布：内容【{0}】，exchange={1}，routingKey={2}", msg, _config.ExchangeName, routingKey);
+                var body = Encoding.UTF8.GetBytes(msg);
+                channel.ConfirmSelect();
+                channel.BasicPublish(exchange: _config.ExchangeName, routingKey: routingKey, basicProperties: props, body: body);
+            });
+        }
+
         public void Subscribe<TEventMessage, TConsumer>()
             where TEventMessage : EventMessage
             where TConsumer : ISubscribe<TEventMessage>, new()

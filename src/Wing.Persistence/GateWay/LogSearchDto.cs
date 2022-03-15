@@ -1,12 +1,9 @@
 ﻿using System;
-using Wing.EventBus;
 
 namespace Wing.Persistence.GateWay
 {
-    public class Log : EventMessage
+    public class LogSearchDto
     {
-        public string Id { get; set; }
-
         public string ServiceName { get; set; }
 
         public string DownstreamUrl { get; set; }
@@ -25,13 +22,17 @@ namespace Wing.Persistence.GateWay
         /// </summary>
         public string ServiceAddress { get; set; }
 
-        public DateTime RequestTime { get; set; }
+        public DateTime? RequestTimeBegin { get; set; }
+
+        public DateTime? RequestTimeEnd { get; set; }
 
         public string RequestMethod { get; set; }
 
         public string RequestValue { get; set; }
 
-        public DateTime ResponseTime { get; set; }
+        public DateTime? ResponseTimeBegin { get; set; }
+
+        public DateTime? ResponseTimeEnd { get; set; }
 
         public string ResponseValue { get; set; }
 

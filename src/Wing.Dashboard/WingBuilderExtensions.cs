@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Dashboard.Filters;
+using Wing.Filters;
 
 namespace Wing.Dashboard
 {
@@ -14,7 +14,8 @@ namespace Wing.Dashboard
                 options.Filters.Add(typeof(ApiExceptionFilter));
                 options.Filters.Add(typeof(ApiResultFilter));
             });
-            //禁用默认行为
+
+            // 禁用默认行为
             wingBuilder.Services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;

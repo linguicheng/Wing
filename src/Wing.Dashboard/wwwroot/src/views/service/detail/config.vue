@@ -17,6 +17,7 @@
           <el-col :span="5">
             <div style="height:640px">
                 <vxe-table ref="config"
+                      class="mytable-scrollbar"
                       border
                       resizable
                       height="100%"

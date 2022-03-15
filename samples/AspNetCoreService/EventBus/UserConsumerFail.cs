@@ -9,7 +9,7 @@ namespace AspNetCoreService.EventBus
     {
         public Task<bool> Consume(User eventMessage)
         {
-            Console.WriteLine($"姓名：{eventMessage.Name}，年龄：{eventMessage.Age}，EventId：{eventMessage.EventId}，CreateTime：{eventMessage.CreateTime}");
+            Console.WriteLine($"姓名：{eventMessage.Name}，年龄：{eventMessage.Age}");
             return Task.FromResult(true);
         }
     }
