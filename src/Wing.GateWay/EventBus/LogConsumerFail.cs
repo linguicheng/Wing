@@ -8,15 +8,22 @@ using Wing.Persistence.GateWay;
 
 namespace Wing.GateWay.EventBus
 {
-    public class LogConsumer : ISubscribe<Log>
+    [Subscribe(QueueMode.DLX)]
+    public class LogConsumerFail : ISubscribe<Log>
     {
         public async Task<bool> Consume(Log log)
         {
-            var logger = ServiceLocator.GetRequiredService<ILogger<LogConsumer>>();
+            var logger = ServiceLocator.GetRequiredService<ILogger<LogConsumerFail>>();
             var json = ServiceLocator.GetRequiredService<IJson>();
             try
             {
-                var result = await ServiceLocator.GetRequiredService<ILogService>().Add(log);
+                var logService = ServiceLocator.GetRequiredService<ILogService>();
+                if (await logService.Any(log.Id))
+                {
+                    return true;
+                }
+
+                var result = await logService.Add(log);
                 if (result <= 0)
                 {
                     logger.LogError($"数据库保存失败，请求日志：{json.Serialize(log)}");

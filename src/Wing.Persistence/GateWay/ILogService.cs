@@ -11,6 +11,8 @@ namespace Wing.Persistence.GateWay
 
         Task<int> Add(IEnumerable<Log> logs);
 
+        Task<bool> Any(string id);
+
         Task<PageResult<List<Log>>> List(PageModel<LogSearchDto> model);
     }
 }

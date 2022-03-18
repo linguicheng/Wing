@@ -11,7 +11,7 @@ namespace Wing.Persistence
         public static IWingServiceBuilder AddPersistence(this IWingServiceBuilder wingBuilder, string gateWayConnectionString = "name=ConnectionStrings:WingGateWay", string mqConnectionString = "name=ConnectionStrings:WingMQ")
         {
             wingBuilder.Services.AddDbContext<GateWayDbContext>(options => options.UseSqlServer(gateWayConnectionString));
-            wingBuilder.Services.AddScoped<ILogService, LogService>();
+            wingBuilder.Services.AddTransient<ILogService, LogService>();
             return wingBuilder;
         }
     }

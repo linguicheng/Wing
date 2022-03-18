@@ -75,15 +75,15 @@ namespace Wing.GateWay
 
                 if (config.UseEventBus)
                 {
+                    ServiceLocator.GetRequiredService<IEventBus>().Publish(log);
+                }
+                else
+                {
                     var result = await ServiceLocator.GetRequiredService<ILogService>().Add(log);
                     if (result <= 0)
                     {
                         _logger.LogInformation($"数据库保存失败，请求日志：{_json.Serialize(log)}");
                     }
-                }
-                else
-                {
-                    ServiceLocator.GetRequiredService<IEventBus>().Publish(log);
                 }
             }
             catch (Exception ex)

@@ -56,4 +56,7 @@ export default {
 .mytable-scrollbar ::-webkit-scrollbar-corner {
   background-color: #FFFFFF;
 }
+.search{
+  margin-left: 10px;
+}
 </style>

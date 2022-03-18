@@ -130,8 +130,8 @@
       </vxe-table>
     </div>
     <template slot="footer">
-      <el-pagination :current-page="pageModel.pageSize"
-                     :page-size="pageModel.pageIndex"
+      <el-pagination :current-page="pageModel.pageIndex"
+                     :page-size="pageModel.pageSize"
                      :page-sizes="[15, 25, 35, 45]"
                      layout="total, sizes, prev, pager, next, jumper"
                      :total="services.totalCount"
@@ -255,7 +255,4 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.search{
-  margin-left: 10px;
-}
 </style>

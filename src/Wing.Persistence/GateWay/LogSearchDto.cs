@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Wing.Persistence.GateWay
 {
@@ -22,9 +23,7 @@ namespace Wing.Persistence.GateWay
         /// </summary>
         public string ServiceAddress { get; set; }
 
-        public DateTime? RequestTimeBegin { get; set; }
-
-        public DateTime? RequestTimeEnd { get; set; }
+        public List<DateTime> RequestTime { get; set; }
 
         public string RequestMethod { get; set; }
 
