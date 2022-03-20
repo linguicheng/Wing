@@ -1,11 +1,7 @@
-﻿using System.Collections.Generic;
-
-namespace Wing.GateWay.Config
+﻿namespace Wing.Policy
 {
-    public class Policy
+    public class PolicyConfig
     {
-        public string ServiceName { get; set; }
-
         public bool IsEnableBreaker { get; set; }
 
         public int ExceptionsAllowedBeforeBreaking { get; set; }
@@ -18,9 +14,11 @@ namespace Wing.GateWay.Config
 
         public int TimeOutMilliseconds { get; set; }
 
-        public string AuthKey { get; set; }
+        public string CacheKeyPrefix { get; set; }
 
-        public bool? UseJWTAuth { get; set; }
+        public int CacheMilliseconds { get; set; }
+
+        public string CacheKey { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -37,7 +35,7 @@ namespace Wing.GateWay.Config
             return base.ToString();
         }
 
-        public static bool operator ==(Policy left, Policy right)
+        public static bool operator ==(PolicyConfig left, PolicyConfig right)
         {
             return left != null &&
                 left.IsEnableBreaker == right.IsEnableBreaker &&
@@ -45,10 +43,13 @@ namespace Wing.GateWay.Config
                 left.MillisecondsOfBreak == right.MillisecondsOfBreak &&
                 left.TimeOutMilliseconds == right.TimeOutMilliseconds &&
                 left.MaxRetryTimes == right.MaxRetryTimes &&
+                left.CacheMilliseconds == right.CacheMilliseconds &&
+                left.CacheKeyPrefix == right.CacheKeyPrefix &&
+                left.CacheKey == right.CacheKey &&
                 left.RetryIntervalMilliseconds == right.RetryIntervalMilliseconds;
         }
 
-        public static bool operator !=(Policy left, Policy right)
+        public static bool operator !=(PolicyConfig left, PolicyConfig right)
         {
             return left == null ||
                 left.IsEnableBreaker != right.IsEnableBreaker ||
@@ -56,14 +57,10 @@ namespace Wing.GateWay.Config
                 left.MillisecondsOfBreak != right.MillisecondsOfBreak ||
                 left.TimeOutMilliseconds != right.TimeOutMilliseconds ||
                 left.MaxRetryTimes != right.MaxRetryTimes ||
+                left.CacheMilliseconds != right.CacheMilliseconds ||
+                left.CacheKeyPrefix != right.CacheKeyPrefix ||
+                left.CacheKey != right.CacheKey ||
                 left.RetryIntervalMilliseconds != right.RetryIntervalMilliseconds;
         }
-    }
-
-    public class PolicyConfig
-    {
-        public List<Policy> Policies { get; set; }
-
-        public Policy Global { get; set; }
     }
 }

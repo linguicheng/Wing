@@ -1,4 +1,5 @@
 ﻿using System;
+using AspectCore.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 
@@ -11,7 +12,7 @@ namespace Wing.Configuration.HostBuilder
             return hostBuilder.ConfigureAppConfiguration((hostingContext, config) =>
              {
                  action?.Invoke(config);
-             }).UseServiceProviderFactory(new WingServiceProviderFactory());
+             }).UseServiceProviderFactory(new WingServiceProviderFactory()).UseServiceContext();
         }
     }
 }

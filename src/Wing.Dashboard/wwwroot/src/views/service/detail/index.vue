@@ -1,8 +1,10 @@
 <template>
   <div>
     <transition name="el-fade-in-linear">
-      <list v-if="order===0" @show="show" />
-      <config v-else-if="order===1" @show="show" />
+      <keep-alive include="service-detail">
+        <list v-if="order===0" @show="show" />
+        <config v-else-if="order===1" @show="show" />
+      </keep-alive>
     </transition>
   </div>
 </template>

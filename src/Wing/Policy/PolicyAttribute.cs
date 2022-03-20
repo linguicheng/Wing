@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using AspectCore.DynamicProxy;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -14,66 +15,43 @@ namespace Wing.Policy
     public class PolicyAttribute : AbstractInterceptorAttribute
     {
         /// <summary>
-        /// 是否启用熔断
+        /// 回退方法，默认是：当前方法+Fallback
         /// </summary>
-        public bool IsEnableBreaker { get; set; } = false;
-        /// <summary>
-        /// 熔断前出现允许错误几次
-        /// </summary>
-        public int ExceptionsAllowedBeforeBreaking { get; set; } = 3;
-        /// <summary>
-        /// 执行超过多少毫秒则认为超时（0表示不检测超时）
-        /// </summary>
-        public int TimeOutMilliseconds { get; set; } = 0;
-        /// <summary>
-        /// 熔断多长时间（毫秒）
-        /// </summary>
-        public int MillisecondsOfBreak { get; set; } = 1000;
-        /// <summary>
-        /// 最多重试几次，如果为0则不重试
-        /// </summary>
-        public int MaxRetryTimes { get; set; } = 0;
-        /// <summary>
-        /// 重试间隔的毫秒数
-        /// </summary>
-        public int RetryIntervalMilliseconds { get; set; } = 100;
-        /// <summary>
-        /// 缓存多少毫秒（0表示不缓存），用“类名+方法名+所有参数ToString拼接”做缓存Key
-        /// </summary>
-        public int CacheMilliseconds { get; set; } = 0;
-        /// <summary>
-        /// 默认是WingCommandCache_Key_{命名空间+类名+方法声明+实参}
-        /// </summary>
-        public string CacheKey { get; set; }
-
-        public PolicyAttribute(string fallBackMethod)
-        {
-            FallBackMethod = fallBackMethod;
-        }
-
         public string FallBackMethod { get; set; }
 
-        private static readonly ConcurrentDictionary<MethodInfo, AsyncPolicy> Policies = new ConcurrentDictionary<MethodInfo, AsyncPolicy>();
+        private string ConfigKey { get; set; }
+
+        public PolicyAttribute(string configKey = "Policy:Global")
+        {
+            ConfigKey = configKey;
+        }
+
+        private static readonly ConcurrentDictionary<MethodInfo, WingAsyncPolicy> Policies = new ConcurrentDictionary<MethodInfo, WingAsyncPolicy>();
 
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
-            Policies.TryGetValue(context.ServiceMethod, out AsyncPolicy policy);
-            if (policy == null)
+            var config = context.ServiceProvider.GetRequiredService<IConfiguration>().GetSection(ConfigKey).Get<PolicyConfig>();
+            FallBackMethod ??= $"{context.ServiceMethod.Name}FallBack";
+            Policies.TryGetValue(context.ServiceMethod, out WingAsyncPolicy wingPolicy);
+            AsyncPolicy policy;
+            if (wingPolicy == null
+                || wingPolicy.Policy == null
+                || wingPolicy.Config != config)
             {
                 policy = Polly.Policy.NoOpAsync();
-                if (IsEnableBreaker)
+                if (config.IsEnableBreaker)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().CircuitBreakerAsync(ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(MillisecondsOfBreak)));
+                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().CircuitBreakerAsync(config.ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(config.MillisecondsOfBreak)));
                 }
 
-                if (TimeOutMilliseconds > 0)
+                if (config.TimeOutMilliseconds > 0)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.TimeoutAsync(() => TimeSpan.FromMilliseconds(TimeOutMilliseconds), Polly.Timeout.TimeoutStrategy.Pessimistic));
+                    policy = policy.WrapAsync(Polly.Policy.TimeoutAsync(() => TimeSpan.FromMilliseconds(config.TimeOutMilliseconds), Polly.Timeout.TimeoutStrategy.Pessimistic));
                 }
 
-                if (MaxRetryTimes > 0)
+                if (config.MaxRetryTimes > 0)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().WaitAndRetryAsync(MaxRetryTimes, i => TimeSpan.FromMilliseconds(RetryIntervalMilliseconds)));
+                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().WaitAndRetryAsync(config.MaxRetryTimes, i => TimeSpan.FromMilliseconds(config.RetryIntervalMilliseconds)));
                 }
 
                 var policyFallBack = Polly.Policy
@@ -98,16 +76,20 @@ namespace Wing.Policy
                     });
 
                 policy = policyFallBack.WrapAsync(policy);
-                Policies.TryAdd(context.ServiceMethod, policy);
+                Policies.TryAdd(context.ServiceMethod, new WingAsyncPolicy { Policy = policy, Config = config });
+            }
+            else
+            {
+                policy = wingPolicy.Policy;
             }
 
             Context pollyCtx = new Context
             {
                 ["aspectContext"] = context
             };
-            if (CacheMilliseconds > 0)
+            if (config.CacheMilliseconds > 0)
             {
-                string cacheKey = CacheKey ?? $"WingPolicyCache_Key_{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}";
+                string cacheKey = config.CacheKey ?? $"{config.CacheKeyPrefix}WingPolicyCache_{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}";
                 var cacheProvider = context.ServiceProvider.GetService<IMemoryCache>();
                 var cacheValue = cacheProvider.Get(cacheKey);
                 if (cacheValue != null)
@@ -117,7 +99,7 @@ namespace Wing.Policy
                 }
 
                 await policy.ExecuteAsync(ctx => next(context), pollyCtx);
-                cacheProvider.Set(cacheKey, context.ReturnValue, TimeSpan.FromMilliseconds(CacheMilliseconds));
+                cacheProvider.Set(cacheKey, context.ReturnValue, TimeSpan.FromMilliseconds(config.CacheMilliseconds));
                 return;
             }
 

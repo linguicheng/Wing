@@ -9,14 +9,7 @@ namespace AspNetCoreService.Policy
 {
     public interface IProduct
     {
-        [Policy("InvokeHelloFallback", 
-            CacheMilliseconds = 0, 
-            ExceptionsAllowedBeforeBreaking = 3, 
-            IsEnableBreaker = false, 
-            MaxRetryTimes = 0, 
-            MillisecondsOfBreak = 3000, 
-            RetryIntervalMilliseconds = 1000, 
-            TimeOutMilliseconds = 1000)]
+        [Policy]
         Task<string> InvokeHello(string name);
         Task<string> InvokeHelloFallback(string name);
     }
@@ -27,6 +20,7 @@ namespace AspNetCoreService.Policy
         {
             _serviceFactory = serviceFactory;
         }
+
         public async Task<string> InvokeHello(string name)
         {
             var token = await _serviceFactory.GrpcServiceInvoke("grpctest", async serviceAddr =>
@@ -48,6 +42,7 @@ namespace AspNetCoreService.Policy
             });
 
         }
+
         public Task<string> InvokeHelloFallback(string name)
         {
             return Task.FromResult("test-fallback");

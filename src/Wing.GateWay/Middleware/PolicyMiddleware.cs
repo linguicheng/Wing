@@ -45,23 +45,12 @@ namespace Wing.GateWay.Middleware
             await InvokeWithPolicy(serviceContext);
         }
 
-        private bool PolicyConfigIsChange(Config.Policy oldConfig, Config.Policy config)
-        {
-            return oldConfig == null ||
-                oldConfig.IsEnableBreaker != config.IsEnableBreaker ||
-                oldConfig.ExceptionsAllowedBeforeBreaking != config.ExceptionsAllowedBeforeBreaking ||
-                oldConfig.MillisecondsOfBreak != config.MillisecondsOfBreak ||
-                oldConfig.TimeOutMilliseconds != config.TimeOutMilliseconds ||
-                oldConfig.MaxRetryTimes != config.MaxRetryTimes ||
-                oldConfig.RetryIntervalMilliseconds != config.RetryIntervalMilliseconds;
-        }
-
         private async Task InvokeWithPolicy(ServiceContext serviceContext)
         {
             var config = serviceContext.Policy;
             Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
             var policy = policyPair.Value;
-            if (policy == null || PolicyConfigIsChange(policyPair.Key, config))
+            if (policy == null || policyPair.Key != config)
             {
                 policy = Polly.Policy.NoOpAsync<HttpResponseMessage>();
                 if (config.TimeOutMilliseconds > 0)
