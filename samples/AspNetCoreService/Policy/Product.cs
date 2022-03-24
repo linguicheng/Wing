@@ -2,6 +2,7 @@
 using Grpc.Net.Client;
 using GrpcService;
 using System.Threading.Tasks;
+using Wing.Injection;
 using Wing.Policy;
 using Wing.ServiceProvider;
 
@@ -13,7 +14,7 @@ namespace AspNetCoreService.Policy
         Task<string> InvokeHello(string name);
         Task<string> InvokeHelloFallback(string name);
     }
-    public class Product : IProduct
+    public class Product : IProduct, ITransient
     {
         private readonly IServiceFactory _serviceFactory;
         public Product(IServiceFactory serviceFactory)

@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Convert;
-using Wing.DynamicMethod;
 using Wing.EventBus;
+using Wing.Injection;
 
 namespace Wing.RabbitMQ
 {

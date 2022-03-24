@@ -32,7 +32,7 @@ namespace Wing.GateWay.Middleware
                 return;
             }
 
-            if (serviceContext.Policy != null && (serviceContext.Policy.IsEnableBreaker || serviceContext.Policy.MaxRetryTimes > 0 || serviceContext.Policy.TimeOutMilliseconds > 0))
+            if (!(serviceContext.Policy is null) && (serviceContext.Policy.IsEnableBreaker || serviceContext.Policy.MaxRetryTimes > 0 || serviceContext.Policy.TimeOutMilliseconds > 0))
             {
                 await _next(serviceContext);
                 return;

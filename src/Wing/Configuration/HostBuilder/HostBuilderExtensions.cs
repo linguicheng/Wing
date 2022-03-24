@@ -12,7 +12,7 @@ namespace Wing.Configuration.HostBuilder
             return hostBuilder.ConfigureAppConfiguration((hostingContext, config) =>
              {
                  action?.Invoke(config);
-             }).UseServiceProviderFactory(new WingServiceProviderFactory()).UseServiceContext();
+             }).UseServiceProviderFactory(new WingServiceProviderFactory());
         }
     }
 }

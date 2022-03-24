@@ -22,7 +22,7 @@ namespace Wing.GateWay.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (serviceContext.Policy == null)
+            if (serviceContext.Policy is null)
             {
                 await _next(serviceContext);
                 return;

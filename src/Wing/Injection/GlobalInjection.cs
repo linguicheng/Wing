@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Wing.EventBus;
 using Wing.Policy;
 
-namespace Wing.DynamicMethod
+namespace Wing.Injection
 {
     public class GlobalInjection
     {
@@ -46,17 +46,46 @@ namespace Wing.DynamicMethod
             }
         }
 
-        public static void RegisterCommandService(IServiceCollection services)
+        public static void Injection(IServiceCollection services)
         {
             foreach (var type in Assemblies.SelectMany(a =>
             a.GetTypes()
-            .Where(t => !t.IsInterface && System.Convert.ToBoolean(
-                t.GetInterfaces().FirstOrDefault()?.GetMethods()
-                .Any(m =>
-                     m.GetCustomAttribute(typeof(PolicyAttribute)) != null))))
+            .Where(t => !t.IsInterface && t.GetInterfaces().Any(u => u == typeof(IScoped)
+                || u == typeof(ISingleton)
+                || u == typeof(ITransient))))
             .ToArray())
             {
-                services.AddSingleton(type.GetInterfaces().First(), type);
+                var interfaces = type.GetInterfaces();
+                if (interfaces.Count() == 1)
+                {
+                    if (interfaces[0] == typeof(IScoped))
+                    {
+                        services.AddScoped(type);
+                    }
+                    else if (interfaces[0] == typeof(ISingleton))
+                    {
+                        services.AddSingleton(type);
+                    }
+                    else if (interfaces[0] == typeof(ITransient))
+                    {
+                        services.AddTransient(type);
+                    }
+                }
+                else if (interfaces.Count() == 2)
+                {
+                    if (interfaces[1] == typeof(IScoped))
+                    {
+                        services.AddScoped(interfaces[0], type);
+                    }
+                    else if (interfaces[1] == typeof(ISingleton))
+                    {
+                        services.AddSingleton(interfaces[0], type);
+                    }
+                    else if (interfaces[1] == typeof(ITransient))
+                    {
+                        services.AddTransient(interfaces[0], type);
+                    }
+                }
             }
         }
     }

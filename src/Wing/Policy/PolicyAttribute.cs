@@ -21,9 +21,10 @@ namespace Wing.Policy
 
         private string ConfigKey { get; set; }
 
-        public PolicyAttribute(string configKey = "Policy:Global")
+        public PolicyAttribute(string configKey = "Policy:Global", string fallBackMethod = null)
         {
             ConfigKey = configKey;
+            FallBackMethod = fallBackMethod;
         }
 
         private static readonly ConcurrentDictionary<MethodInfo, WingAsyncPolicy> Policies = new ConcurrentDictionary<MethodInfo, WingAsyncPolicy>();
@@ -31,12 +32,10 @@ namespace Wing.Policy
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
             var config = context.ServiceProvider.GetRequiredService<IConfiguration>().GetSection(ConfigKey).Get<PolicyConfig>();
-            FallBackMethod ??= $"{context.ServiceMethod.Name}FallBack";
+            FallBackMethod = string.IsNullOrWhiteSpace(FallBackMethod) ? $"{context.ServiceMethod.Name}Fallback" : FallBackMethod;
             Policies.TryGetValue(context.ServiceMethod, out WingAsyncPolicy wingPolicy);
             AsyncPolicy policy;
-            if (wingPolicy == null
-                || wingPolicy.Policy == null
-                || wingPolicy.Config != config)
+            if (wingPolicy == null || wingPolicy.Config != config)
             {
                 policy = Polly.Policy.NoOpAsync();
                 if (config.IsEnableBreaker)
@@ -54,6 +53,7 @@ namespace Wing.Policy
                     policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().WaitAndRetryAsync(config.MaxRetryTimes, i => TimeSpan.FromMilliseconds(config.RetryIntervalMilliseconds)));
                 }
 
+                var logger = context.ServiceProvider.GetService<ILogger<PolicyAttribute>>();
                 var policyFallBack = Polly.Policy
                     .Handle<Exception>()
                     .FallbackAsync(
@@ -63,6 +63,11 @@ namespace Wing.Policy
                         {
                             AspectContext aspectContext = (AspectContext)ctx["aspectContext"];
                             var fallBackMethod = context.ServiceMethod.DeclaringType.GetMethod(FallBackMethod);
+                            if (fallBackMethod == null)
+                            {
+                                throw new Exception($"找不到异常降级方法【{FallBackMethod}】");
+                            }
+
                             var fallBackResult = fallBackMethod.Invoke(context.Implementation, context.Parameters);
                             aspectContext.ReturnValue = fallBackResult;
                         });
@@ -70,13 +75,14 @@ namespace Wing.Policy
                     {
                         await Task.Run(() =>
                         {
-                            var logger = context.ServiceProvider.GetService<ILogger<PolicyAttribute>>();
                             logger.LogError(ex, "触发异常降级，方法为：{0}", $"{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}");
                         });
                     });
 
                 policy = policyFallBack.WrapAsync(policy);
-                Policies.TryAdd(context.ServiceMethod, new WingAsyncPolicy { Policy = policy, Config = config });
+                Policies.AddOrUpdate(context.ServiceMethod,
+                    new WingAsyncPolicy { Policy = policy, Config = config },
+                    (key, value) => new WingAsyncPolicy { Policy = policy, Config = config });
             }
             else
             {
@@ -89,7 +95,7 @@ namespace Wing.Policy
             };
             if (config.CacheMilliseconds > 0)
             {
-                string cacheKey = config.CacheKey ?? $"{config.CacheKeyPrefix}WingPolicyCache_{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}";
+                string cacheKey = string.IsNullOrWhiteSpace(config.CacheKey) ? $"{config.CacheKeyPrefix}WingPolicyCache_{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}" : config.CacheKey;
                 var cacheProvider = context.ServiceProvider.GetService<IMemoryCache>();
                 var cacheValue = cacheProvider.Get(cacheKey);
                 if (cacheValue != null)

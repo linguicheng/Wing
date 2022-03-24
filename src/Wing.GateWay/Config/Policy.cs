@@ -39,8 +39,7 @@ namespace Wing.GateWay.Config
 
         public static bool operator ==(Policy left, Policy right)
         {
-            return left != null &&
-                left.IsEnableBreaker == right.IsEnableBreaker &&
+            return left.IsEnableBreaker == right.IsEnableBreaker &&
                 left.ExceptionsAllowedBeforeBreaking == right.ExceptionsAllowedBeforeBreaking &&
                 left.MillisecondsOfBreak == right.MillisecondsOfBreak &&
                 left.TimeOutMilliseconds == right.TimeOutMilliseconds &&
@@ -50,8 +49,7 @@ namespace Wing.GateWay.Config
 
         public static bool operator !=(Policy left, Policy right)
         {
-            return left == null ||
-                left.IsEnableBreaker != right.IsEnableBreaker ||
+            return left.IsEnableBreaker != right.IsEnableBreaker ||
                 left.ExceptionsAllowedBeforeBreaking != right.ExceptionsAllowedBeforeBreaking ||
                 left.MillisecondsOfBreak != right.MillisecondsOfBreak ||
                 left.TimeOutMilliseconds != right.TimeOutMilliseconds ||

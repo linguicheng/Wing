@@ -75,9 +75,9 @@ namespace Wing.SqlServer
                 TotalCount = await _context.Logs.AsNoTracking().CountAsync(),
                 Items = await _context.Logs.AsNoTracking()
                         .Where(where)
+                        .OrderByDescending(x => x.RequestTime)
                         .Skip(dto.PageSize * (dto.PageIndex - 1))
                         .Take(dto.PageSize)
-                        .OrderByDescending(x => x.RequestTime)
                         .ToListAsync()
             };
         }

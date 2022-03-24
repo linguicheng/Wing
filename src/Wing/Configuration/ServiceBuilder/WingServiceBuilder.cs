@@ -7,8 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Convert;
-using Wing.DynamicMethod;
 using Wing.HttpTransport;
+using Wing.Injection;
 using Wing.LoadBalancer;
 using Wing.Policy;
 using Wing.ServiceProvider;
@@ -33,7 +33,7 @@ namespace Wing.Configuration.ServiceBuilder
             Services.AddSingleton<IRequest, ApiRequest>();
             Services.AddSingleton<ILoadBalancerCache, LoadBalancerCache>();
             Services.AddSingleton<IServiceFactory, ServiceFactory>();
-            GlobalInjection.RegisterCommandService(Services);
+            GlobalInjection.Injection(Services);
             ServiceLocator.ServiceProvider = Services.BuildServiceProvider();
             Configuration = ServiceLocator.GetRequiredService<IConfiguration>();
             var configCenterEnabled = Configuration["ConfigCenterEnabled"];

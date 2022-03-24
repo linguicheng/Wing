@@ -37,8 +37,7 @@
 
         public static bool operator ==(PolicyConfig left, PolicyConfig right)
         {
-            return left != null &&
-                left.IsEnableBreaker == right.IsEnableBreaker &&
+            return left.IsEnableBreaker == right.IsEnableBreaker &&
                 left.ExceptionsAllowedBeforeBreaking == right.ExceptionsAllowedBeforeBreaking &&
                 left.MillisecondsOfBreak == right.MillisecondsOfBreak &&
                 left.TimeOutMilliseconds == right.TimeOutMilliseconds &&
@@ -51,8 +50,7 @@
 
         public static bool operator !=(PolicyConfig left, PolicyConfig right)
         {
-            return left == null ||
-                left.IsEnableBreaker != right.IsEnableBreaker ||
+            return left.IsEnableBreaker != right.IsEnableBreaker ||
                 left.ExceptionsAllowedBeforeBreaking != right.ExceptionsAllowedBeforeBreaking ||
                 left.MillisecondsOfBreak != right.MillisecondsOfBreak ||
                 left.TimeOutMilliseconds != right.TimeOutMilliseconds ||
