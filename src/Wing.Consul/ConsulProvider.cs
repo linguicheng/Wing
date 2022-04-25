@@ -5,7 +5,7 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 using Consul;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
 using consulHealthStatus = Consul.HealthStatus;

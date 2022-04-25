@@ -1,6 +1,6 @@
 ﻿using Wing.EventBus;
 
-namespace AspNetCoreService.EventBus
+namespace Sample.AspNetCoreService.EventBus
 {
     public class User: EventMessage
     {

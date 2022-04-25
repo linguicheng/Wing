@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.EventBus;
 using Wing.GateWay.Config;
 using Wing.Persistence.GateWay;
@@ -43,6 +43,7 @@ namespace Wing.GateWay
             Log log = null;
             try
             {
+                var now = DateTime.Now;
                 log = new Log
                 {
                     Id = Guid.NewGuid().ToString("N"),
@@ -52,13 +53,15 @@ namespace Wing.GateWay
                     RequestTime = serviceContext.RequestTime,
                     RequestMethod = request.Method,
                     RequestUrl = request.GetDisplayUrl(),
-                    ResponseTime = DateTime.Now,
+                    ResponseTime = now,
                     ServiceName = serviceContext.ServiceName,
                     StatusCode = serviceContext.StatusCode,
                     ResponseValue = serviceContext.ResponseValue,
                     GateWayServerIp = httpContext.Connection.LocalIpAddress.ToString(),
-                    ServiceAddress = serviceContext.ServiceAddress
+                    ServiceAddress = serviceContext.ServiceAddress,
+                    UsedMillSeconds = (now - serviceContext.RequestTime).TotalMilliseconds
                 };
+
                 if (request.Headers != null && request.Headers.ContainsKey("AuthKey"))
                 {
                     log.AuthKey = request.Headers["AuthKey"].ToString();

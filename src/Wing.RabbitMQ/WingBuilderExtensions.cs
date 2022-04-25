@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using Wing.Configuration.ServiceBuilder;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.EventBus;
 using Wing.Injection;
 

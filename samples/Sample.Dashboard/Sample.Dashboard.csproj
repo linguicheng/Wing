@@ -8,7 +8,7 @@
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.Dashboard\Wing.Dashboard.csproj" />
     <ProjectReference Include="..\..\src\Wing.NLog\Wing.NLog.csproj" />
-    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
+    <ProjectReference Include="..\..\Wing.SqlServer\Wing.SqlServer\Wing.SqlServer.csproj" />
   </ItemGroup>
 
 

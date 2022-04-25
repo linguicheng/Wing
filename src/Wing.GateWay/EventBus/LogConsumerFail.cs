@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wing;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.GateWay;
 

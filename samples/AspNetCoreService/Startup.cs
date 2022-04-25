@@ -8,6 +8,7 @@ using Wing.Configuration.ServiceBuilder;
 using Wing.Auth;
 using System.Linq;
 using System.Security.Claims;
+using Wing.APM;
 
 namespace AspNetCoreService
 {
@@ -28,7 +29,7 @@ namespace AspNetCoreService
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 return user == "byron";
-            });
+            }).AddAPM();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AspNetCoreService.GrpcServices
+namespace Sample.AspNetCoreService.GrpcServices
 {
     public class AggregatorService
     {

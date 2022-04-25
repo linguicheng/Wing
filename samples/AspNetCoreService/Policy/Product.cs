@@ -6,7 +6,7 @@ using Wing.Injection;
 using Wing.Policy;
 using Wing.ServiceProvider;
 
-namespace AspNetCoreService.Policy
+namespace Sample.AspNetCoreService.Policy
 {
     public interface IProduct
     {

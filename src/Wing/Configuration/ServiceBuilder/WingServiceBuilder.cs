@@ -6,7 +6,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.HttpTransport;
 using Wing.Injection;
 using Wing.LoadBalancer;

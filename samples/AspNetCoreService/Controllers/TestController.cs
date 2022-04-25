@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AspNetCoreService.EventBus;
-using AspNetCoreService.Policy;
+using Sample.AspNetCoreService.EventBus;
+using Sample.AspNetCoreService.Policy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -11,7 +11,7 @@ using Wing.Auth;
 using Wing.EventBus;
 using Wing.HttpTransport;
 
-namespace AspNetCoreService.Controllers
+namespace Sample.AspNetCoreService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -65,7 +65,7 @@ namespace AspNetCoreService.Controllers
         {
             return await _product.InvokeHello(name);
         }
-        [Authorize]
+
         [HttpGet("test3")]
         public string Test3()
         {

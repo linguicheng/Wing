@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Wing.EventBus;
 
-namespace AspNetCoreService.EventBus
+namespace Sample.AspNetCoreService.EventBus
 {
     public class UserConsumer : ISubscribe<User>
     {

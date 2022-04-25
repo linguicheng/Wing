@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.EventBus;
 
 namespace Wing.RabbitMQ

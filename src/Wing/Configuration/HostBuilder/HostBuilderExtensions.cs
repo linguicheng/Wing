@@ -1,5 +1,4 @@
 ﻿using System;
-using AspectCore.Extensions.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 

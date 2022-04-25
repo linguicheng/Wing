@@ -23,6 +23,7 @@ namespace Wing.Consul
             {
                 consulProvider = new IntervalConsulProvider(discoveryConfig.Interval.Value * 1000, consulProvider);
             }
+
             var service = discoveryConfig.Service;
             if (service != null)
             {
@@ -30,19 +31,22 @@ namespace Wing.Consul
                 {
                     service.ConfigKey = service.Name;
                 }
+
                 if (service.Scheme == "http")
                 {
                     AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 }
+
                 consulProvider.Register();
             }
+
             ServiceLocator.DiscoveryService = consulProvider;
             var configCenterEnabled = configration["ConfigCenterEnabled"];
-            if (configCenterEnabled!="False")
+            if (configCenterEnabled != "False")
             {
                 builder.Add(new ConfigurationSource());
             }
-            
+
             return builder;
         }
     }

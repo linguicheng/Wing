@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Wing.Convert;
+using Wing.Converter;
 using Wing.Dashboard.Helper;
 using Wing.Dashboard.Model;
 using Wing.Model;

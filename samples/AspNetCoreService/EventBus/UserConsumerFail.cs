@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Wing.EventBus;
 
-namespace AspNetCoreService.EventBus
+namespace Sample.AspNetCoreService.EventBus
 {
     [Subscribe(QueueMode.DLX)]
     public class UserConsumerFail : ISubscribe<User>
