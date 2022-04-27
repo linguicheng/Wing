@@ -59,7 +59,7 @@ namespace Wing.GateWay
                     ResponseValue = serviceContext.ResponseValue,
                     GateWayServerIp = httpContext.Connection.LocalIpAddress.ToString(),
                     ServiceAddress = serviceContext.ServiceAddress,
-                    UsedMillSeconds = (now - serviceContext.RequestTime).TotalMilliseconds
+                    UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds)
                 };
 
                 if (request.Headers != null && request.Headers.ContainsKey("AuthKey"))

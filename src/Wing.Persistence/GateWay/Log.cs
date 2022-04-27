@@ -50,7 +50,7 @@ namespace Wing.Persistence.GateWay
         /// <summary>
         /// 耗时(毫秒)
         /// </summary>
-        public double UsedMillSeconds { get; set; }
+        public long UsedMillSeconds { get; set; }
 
         public int StatusCode { get; set; }
 
