@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -10,10 +11,10 @@ namespace Wing.Consul
 {
     public class IntervalConsulProvider : IDiscoveryServiceProvider, IDisposable
     {
+        private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
         private List<Service> _services;
         private bool _wait = false;
         private Timer _timer;
-        private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
 
         public IntervalConsulProvider(int interval, IDiscoveryServiceProvider discoveryServiceProvider)
         {
@@ -27,7 +28,14 @@ namespace Wing.Consul
                  }
 
                  _wait = true;
-                 _services = await _discoveryServiceProvider.Get();
+                 try
+                 {
+                     _services = await _discoveryServiceProvider.Get();
+                 }
+                 catch
+                 {
+                 }
+
                  _wait = false;
              }, interval, 0, interval);
         }

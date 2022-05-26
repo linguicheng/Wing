@@ -7,7 +7,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Converter;
-using Wing.HttpTransport;
 using Wing.Injection;
 using Wing.LoadBalancer;
 using Wing.Policy;
@@ -30,7 +29,6 @@ namespace Wing.Configuration.ServiceBuilder
             Services.AddHealthChecks();
             Services.AddSingleton<IMemoryCache, MemoryCache>();
             Services.AddSingleton<IJson, JsonConverter>();
-            Services.AddSingleton<IRequest, ApiRequest>();
             Services.AddSingleton<ILoadBalancerCache, LoadBalancerCache>();
             Services.AddSingleton<IServiceFactory, ServiceFactory>();
             GlobalInjection.Injection(Services);

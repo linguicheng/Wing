@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
+using Wing.ServiceProvider;
 
 namespace Wing.Configuration
 {
@@ -8,9 +9,9 @@ namespace Wing.Configuration
         public override void Load()
         {
             ServiceLocator.DiscoveryService.GetKVData(SetData)
-                    .ConfigureAwait(false)
-                    .GetAwaiter()
-                    .GetResult();
+                .ConfigureAwait(false)
+                .GetAwaiter()
+                .GetResult();
         }
 
         public void SetData(Dictionary<string, string> configData)

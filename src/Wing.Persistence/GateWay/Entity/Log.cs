@@ -7,7 +7,7 @@ namespace Wing.Persistence.GateWay
     [Table(Name = "GateWay_Log")]
     public class Log : EventMessage
     {
-        [Column(DbType = "varchar(32)")]
+        [Column(DbType = "varchar(50)")]
         public string Id { get; set; }
 
         [Column(DbType = "varchar(800)")]

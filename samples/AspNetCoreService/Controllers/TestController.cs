@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Wing.Auth;
 using Wing.EventBus;
-using Wing.HttpTransport;
+using System.Net.Http;
 
 namespace Sample.AspNetCoreService.Controllers
 {
@@ -21,14 +21,14 @@ namespace Sample.AspNetCoreService.Controllers
         {
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
-        private readonly IRequest _request;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IEventBus _eventBus;
         private readonly IProduct _product;
         private readonly IAuth _auth;
         private readonly IConfiguration _configuration;
-        public TestController( IAuth auth, IRequest request, IEventBus eventBus, IProduct product, IConfiguration configuration)
+        public TestController( IAuth auth, IHttpClientFactory httpClientFactory, IEventBus eventBus, IProduct product, IConfiguration configuration)
         {
-            _request = request;
+            _httpClientFactory = httpClientFactory;
             _eventBus = eventBus;
             _product = product;
             _auth = auth;
@@ -51,14 +51,20 @@ namespace Sample.AspNetCoreService.Controllers
         }
 
         [HttpGet("test1")]
-        public async Task<string> Test1()
+        public async Task<ActionResult> Test1()
         {
-            return await _request.Get<string>("http://192.168.56.99:5002/api/values");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("http://192.168.56.99:5002");
+            string result = await client.GetStringAsync("/api/values");
+            return Ok(result);
         }
         [HttpGet("test2")]
-        public async Task<string> Test2()
+        public async Task<ActionResult> Test2()
         {
-            return await _request.Get<string>("http://192.168.56.98:5002/api/values");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("http://192.168.56.98:5002");
+            string result = await client.GetStringAsync("/api/values");
+            return Ok(result);
         }
         [HttpGet("Hello")]
         public async Task<string> Hello(string name)

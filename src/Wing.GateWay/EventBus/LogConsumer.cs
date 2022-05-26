@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Wing;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.GateWay;
+using Wing.ServiceProvider;
 
 namespace Wing.GateWay.EventBus
 {

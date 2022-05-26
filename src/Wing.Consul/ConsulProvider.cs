@@ -336,16 +336,16 @@ namespace Wing.Consul
             var service = _config.Service;
             List<string> tags = new List<string>
             {
-                $"{ServiceTag.SERVICE_OPTION}:{service.Option}",
-                $"{ServiceTag.LOADBALANCER_OPTION}:{service.LoadBalancer.Option}",
-                $"{ServiceTag.SCHEME}:{service.Scheme}",
-                $"{ServiceTag.DEVELOPER}:{service.Developer}",
-                $"{ServiceTag.CONFIG_KEY}:{service.ConfigKey}"
+                $"{ServiceTag.ServiceOption}:{service.Option}",
+                $"{ServiceTag.LoadBalancerOption}:{service.LoadBalancer.Option}",
+                $"{ServiceTag.Schema}:{service.Scheme}",
+                $"{ServiceTag.Developer}:{service.Developer}",
+                $"{ServiceTag.ConfigKey}:{service.ConfigKey}"
             };
             int weight = service.LoadBalancer.Weight ?? 0;
             if (weight > 0)
             {
-                tags.Add($"{ServiceTag.WEIGHT}:{weight}");
+                tags.Add($"{ServiceTag.Wegiht}:{weight}");
             }
 
             if (!string.IsNullOrWhiteSpace(service.Tag))
@@ -385,7 +385,7 @@ namespace Wing.Consul
             }
 
             var scheme = string.Empty;
-            ServiceTagSplit(s.Tags, ServiceTag.SCHEME, x => scheme = x);
+            ServiceTagSplit(s.Tags, ServiceTag.Schema, x => scheme = x);
             var service = new Service()
             {
                 Id = s.ID,
@@ -393,24 +393,24 @@ namespace Wing.Consul
                 Status = status,
                 ServiceAddress = new ServiceAddress(s.Address, s.Port, scheme)
             };
-            ServiceTagSplit(s.Tags, ServiceTag.WEIGHT, x =>
+            ServiceTagSplit(s.Tags, ServiceTag.Wegiht, x =>
             {
                 int.TryParse(x, out int weight);
                 service.EffectiveWeight = service.Weight = weight;
             });
-            ServiceTagSplit(s.Tags, ServiceTag.SERVICE_OPTION, x =>
+            ServiceTagSplit(s.Tags, ServiceTag.ServiceOption, x =>
             {
                 service.ServiceOptions = (ServiceOptions)Enum.Parse(typeof(ServiceOptions), x);
             });
-            ServiceTagSplit(s.Tags, ServiceTag.DEVELOPER, x =>
+            ServiceTagSplit(s.Tags, ServiceTag.Developer, x =>
             {
                 service.Developer = x;
             });
-            ServiceTagSplit(s.Tags, ServiceTag.CONFIG_KEY, x =>
+            ServiceTagSplit(s.Tags, ServiceTag.ConfigKey, x =>
             {
                 service.ConfigKey = x;
             });
-            ServiceTagSplit(s.Tags, ServiceTag.LOADBALANCER_OPTION, x =>
+            ServiceTagSplit(s.Tags, ServiceTag.LoadBalancerOption, x =>
             {
                 service.LoadBalancer = (LoadBalancerOptions)Enum.Parse(typeof(LoadBalancerOptions), x);
             });

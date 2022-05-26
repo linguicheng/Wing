@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -12,6 +13,7 @@ using Wing.Converter;
 using Wing.EventBus;
 using Wing.GateWay.Config;
 using Wing.Persistence.GateWay;
+using Wing.ServiceProvider;
 
 namespace Wing.GateWay
 {
@@ -46,8 +48,8 @@ namespace Wing.GateWay
                 var now = DateTime.Now;
                 log = new Log
                 {
-                    Id = Guid.NewGuid().ToString("N"),
-                    ClientIp = httpContext.Connection.RemoteIpAddress.ToString(),
+                    Id = Guid.NewGuid().ToString(),
+                    ClientIp = httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString(),
                     DownstreamUrl = serviceContext.DownstreamPath,
                     Policy = _json.Serialize(serviceContext.Policy),
                     RequestTime = serviceContext.RequestTime,
@@ -57,7 +59,7 @@ namespace Wing.GateWay
                     ServiceName = serviceContext.ServiceName,
                     StatusCode = serviceContext.StatusCode,
                     ResponseValue = serviceContext.ResponseValue,
-                    GateWayServerIp = httpContext.Connection.LocalIpAddress.ToString(),
+                    GateWayServerIp = Tools.LocalIp,
                     ServiceAddress = serviceContext.ServiceAddress,
                     UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds)
                 };

@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Wing.Auth;
-using Wing.HttpTransport;
 
 namespace AspNetCoreService.Controllers
 {
@@ -18,11 +18,11 @@ namespace AspNetCoreService.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
 
-        private readonly IRequest _request;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAuth _auth;
-        public WeatherForecastController(IRequest request, IAuth auth)
+        public WeatherForecastController(IHttpClientFactory httpClientFactory, IAuth auth)
         {
-            _request = request;
+            _httpClientFactory = httpClientFactory;
             _auth = auth;
         }
         [Authorize("Wing")]
@@ -40,14 +40,20 @@ namespace AspNetCoreService.Controllers
             .ToArray();
         }
         [HttpGet("test1")]
-        public async Task<string> Test1()
+        public async Task<ActionResult> Test1()
         {
-            return await _request.Get<string>("http://192.168.56.99:5002/api/values");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("http://192.168.56.99:5002");
+            string result = await client.GetStringAsync("/api/values");
+            return Ok(result);
         }
         [HttpGet("test2")]
-        public async Task<string> Test2()
+        public async Task<ActionResult> Test2()
         {
-            return await _request.Get<string>("http://192.168.56.98:5002/api/values");
+            var client = _httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri("http://192.168.56.98:5002");
+            string result = await client.GetStringAsync("/api/values");
+            return Ok(result);
         }
         [Authorize]
         [HttpGet("test3")]

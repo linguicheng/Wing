@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.HostBuilder;
 using Wing.Consul;
-using Wing.NLog;
 
 namespace AspNetCoreService
 {

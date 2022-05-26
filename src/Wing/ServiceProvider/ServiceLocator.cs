@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.DependencyInjection;
-using Wing.ServiceProvider;
+using Wing.ServiceProvider.Config;
 
-namespace Wing
+namespace Wing.ServiceProvider
 {
     public class ServiceLocator
     {
         public static IServiceProvider ServiceProvider { get; set; }
 
         public static IDiscoveryServiceProvider DiscoveryService { get; set; }
+
+        public static ServiceData CurrentService { get; set; }
 
         public static object GetService(Type serviceType)
         {

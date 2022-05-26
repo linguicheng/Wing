@@ -17,6 +17,7 @@ namespace Wing.Consul
                 throw new ArgumentNullException(nameof(discoveryConfig));
             }
 
+            ServiceLocator.CurrentService = discoveryConfig.Service;
             IDiscoveryServiceProvider consulProvider;
             consulProvider = new ConsulProvider(discoveryConfig);
             if (discoveryConfig.Interval.GetValueOrDefault() > 0)

@@ -25,9 +25,8 @@ namespace Wing.Configuration.ServiceBuilder
             {
                 return x =>
                 {
-                    next(x);
-
                     builder.App(x);
+                    next(x);
                 };
             }
         }

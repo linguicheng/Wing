@@ -2,11 +2,11 @@
 {
     public class ServiceTag
     {
-        public const string WEIGHT = "W";
-        public const string LOADBALANCER_OPTION = "L";
-        public const string SCHEME = "S";
-        public const string DEVELOPER = "D";
-        public const string SERVICE_OPTION = "T";
-        public const string CONFIG_KEY = "K";
+        public const string Wegiht = "W";
+        public const string LoadBalancerOption = "L";
+        public const string Schema = "S";
+        public const string Developer = "D";
+        public const string ServiceOption = "T";
+        public const string ConfigKey = "K";
     }
 }

@@ -25,6 +25,7 @@ namespace AspNetCoreService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddHttpClient();
             services.AddWing().AddRabbitMQ().AddJwt(context =>
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;

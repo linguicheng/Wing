@@ -2,6 +2,7 @@
 using AspectCore.DependencyInjection;
 using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using Wing.ServiceProvider;
 
 namespace Wing.Configuration.HostBuilder
 {
