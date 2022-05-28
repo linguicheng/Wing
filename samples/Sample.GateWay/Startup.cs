@@ -17,10 +17,10 @@ namespace Sample.GateWay
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddWing()
-                    .AddRabbitMQ()
                     .AddJwt()
+                    .AddPersistence()
                     .AddGateWay()
-                    .AddPersistence();
+                    .AddRabbitMQ();    
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

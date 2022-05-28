@@ -1,14 +1,17 @@
 ﻿using System.Collections.Concurrent;
-using System.IO;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Wing.Persistence.APM;
 
 namespace Wing.APM.Listeners
 {
-    public class ListenerHelper
+    public class ListenerTracer
     {
-        public static readonly ConcurrentDictionary<string, TracerDto> TracerData = new ConcurrentDictionary<string, TracerDto>();
+        public static readonly List<TracerDto> Data = new List<TracerDto>();
+
+        public TracerDto this[string traceId] => Data.Single(x => x.Tracer.Id == traceId);
 
         public static T GetProperty<T>(object value, string name)
         {
@@ -22,9 +25,7 @@ namespace Wing.APM.Listeners
             string content = string.Empty;
             if (reqMsg.Content != null)
             {
-                using var stream = await reqMsg.Content.ReadAsStreamAsync();
-                using var reader = new StreamReader(stream);
-                content = await reader.ReadToEndAsync();
+                content = await reqMsg.Content.ReadAsStringAsync();
             }
 
             return content;
@@ -35,9 +36,7 @@ namespace Wing.APM.Listeners
             string content = string.Empty;
             if (resMsg.Content != null)
             {
-                using var stream = await resMsg.Content.ReadAsStreamAsync();
-                using var reader = new StreamReader(stream);
-                content = await reader.ReadToEndAsync();
+                content = await resMsg.Content.ReadAsStringAsync();
             }
 
             return content;

@@ -14,6 +14,7 @@ namespace Wing.APM.Listeners
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HttpDiagnosticListener> _logger;
+        private readonly ListenerTracer _listenerTracer;
 
         public string Name => "HttpHandlerDiagnosticListener";
 
@@ -21,6 +22,7 @@ namespace Wing.APM.Listeners
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
+            _listenerTracer = new ListenerTracer();
         }
 
         public void OnCompleted()
@@ -50,13 +52,13 @@ namespace Wing.APM.Listeners
             }
             catch (Exception ex)
             {
-                _logger.LogError("http监听异常：", ex);
+                _logger.LogError(ex, "http监听异常");
             }
         }
 
         private void Start(object value)
         {
-            var request = ListenerHelper.GetProperty<HttpRequestMessage>(value, "Request");
+            var request = ListenerTracer.GetProperty<HttpRequestMessage>(value, "Request");
             if (request == null || request.Headers.Contains(ApmTag.TraceId))
             {
                 return;
@@ -79,17 +81,17 @@ namespace Wing.APM.Listeners
                         RequestMethod = request.Method.ToString(),
                         RequestTime = DateTime.Now,
                         RequestUrl = request.RequestUri.ToString(),
-                        RequestValue = ListenerHelper.GetRequestValue(request)
+                        RequestValue = ListenerTracer.GetRequestValue(request)
                                                 .ConfigureAwait(false)
                                                 .GetAwaiter()
                                                 .GetResult()
                     }
                 };
-                ListenerHelper.TracerData.TryAdd(tracerDto.Tracer.Id, tracerDto);
+                ListenerTracer.Data.Add(tracerDto);
             }
             else
             {
-                tracerDto = ListenerHelper.TracerData[context.Items[ApmTag.TraceId].ToString()];
+                tracerDto = ListenerTracer.Data.Single(x => x.Tracer.Id == context.Items[ApmTag.TraceId].ToString());
                 if (tracerDto.HttpTracerDetails == null)
                 {
                     tracerDto.HttpTracerDetails = new List<HttpTracerDetail>();
@@ -104,7 +106,7 @@ namespace Wing.APM.Listeners
                     RequestMethod = request.Method.ToString(),
                     RequestTime = DateTime.Now,
                     RequestUrl = request.RequestUri.ToString(),
-                    RequestValue = ListenerHelper.GetRequestValue(request)
+                    RequestValue = ListenerTracer.GetRequestValue(request)
                                                 .ConfigureAwait(false)
                                                 .GetAwaiter()
                                                 .GetResult()
@@ -118,15 +120,15 @@ namespace Wing.APM.Listeners
 
         private void Exception(object value)
         {
-            var exception = ListenerHelper.GetProperty<Exception>(value, "Exception");
-            var request = ListenerHelper.GetProperty<HttpRequestMessage>(value, "Request");
+            var exception = ListenerTracer.GetProperty<Exception>(value, "Exception");
+            var request = ListenerTracer.GetProperty<HttpRequestMessage>(value, "Request");
             if (request == null || !request.Properties.ContainsKey(ApmTag.TraceId))
             {
                 return;
             }
 
             var traceId = request.Properties[ApmTag.TraceId].ToString();
-            var tracerDto = ListenerHelper.TracerData[traceId];
+            var tracerDto = _listenerTracer[traceId];
             if (request.Properties.ContainsKey(ApmTag.TraceDetailId))
             {
                 var traceDetail = tracerDto.HttpTracerDetails.Where(x => x.Id == request.Properties[ApmTag.TraceDetailId].ToString()).Single();
@@ -140,21 +142,21 @@ namespace Wing.APM.Listeners
 
         private void Stop(object value)
         {
-            var request = ListenerHelper.GetProperty<HttpRequestMessage>(value, "Request");
+            var request = ListenerTracer.GetProperty<HttpRequestMessage>(value, "Request");
             if (request == null || !request.Properties.ContainsKey(ApmTag.TraceId))
             {
                 return;
             }
 
-            var response = ListenerHelper.GetProperty<HttpResponseMessage>(value, "Response");
+            var response = ListenerTracer.GetProperty<HttpResponseMessage>(value, "Response");
             TracerDto tracerDto;
             var traceId = request.Properties[ApmTag.TraceId].ToString();
-            tracerDto = ListenerHelper.TracerData[traceId];
+            tracerDto = _listenerTracer[traceId];
             var responseValue = string.Empty;
             int? statusCode = null;
             if (response != null)
             {
-                responseValue = ListenerHelper.GetResponseValue(response)
+                responseValue = ListenerTracer.GetResponseValue(response)
                                                     .ConfigureAwait(false)
                                                     .GetAwaiter()
                                                     .GetResult();

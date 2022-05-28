@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -12,9 +11,9 @@ namespace Wing.Consul
     public class IntervalConsulProvider : IDiscoveryServiceProvider, IDisposable
     {
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
+        private readonly Timer _timer;
         private List<Service> _services;
         private bool _wait = false;
-        private Timer _timer;
 
         public IntervalConsulProvider(int interval, IDiscoveryServiceProvider discoveryServiceProvider)
         {
@@ -37,7 +36,7 @@ namespace Wing.Consul
                  }
 
                  _wait = false;
-             }, interval, 0, interval);
+             }, null, 0, interval);
         }
 
         public async Task<bool> Deregister(string serviceId)
@@ -104,6 +103,7 @@ namespace Wing.Consul
                                     && s.ServiceOptions == ServiceOptions.Http
                                     && s.Status == healthStatus).ToList());
         }
+
         public async Task<Service> Detail(string serviceId)
         {
             return await _discoveryServiceProvider.Detail(serviceId);

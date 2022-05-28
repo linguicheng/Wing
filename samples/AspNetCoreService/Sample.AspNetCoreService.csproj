@@ -27,6 +27,7 @@
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing.Redis\Wing.Redis.csproj" />
     <ProjectReference Include="..\..\src\Wing\Wing.csproj" />
+    <ProjectReference Include="..\..\Wing.SqlServer\Wing.SqlServer\Wing.SqlServer.csproj" />
   </ItemGroup>
 
 </Project>

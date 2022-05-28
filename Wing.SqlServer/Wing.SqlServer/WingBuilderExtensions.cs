@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
 using System;
 using Wing.Persistence.GateWay;
+using Wing.Persistence.Apm;
 
 namespace Wing.Persistence
 {
@@ -18,6 +19,7 @@ namespace Wing.Persistence
                               .Build();
             wingBuilder.Services.AddSingleton(typeof(IFreeSql), serviceProvider => fsql);
             wingBuilder.Services.AddSingleton<ILogService, LogService>();
+            wingBuilder.Services.AddSingleton<ITracerService, TracerService>();
             wingBuilder.Services.AddFreeRepository();
             return wingBuilder;
         }

@@ -32,6 +32,7 @@ namespace Wing.GateWay.EventBus
             catch (Exception ex)
             {
                 logger.LogError(ex, "发生异常，请求日志：{0}", json.Serialize(log));
+                return false;
             }
 
             return true;

@@ -6,6 +6,7 @@ using Wing.Configuration.ServiceBuilder;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Injection;
+using Wing.ServiceProvider;
 
 namespace Wing.RabbitMQ
 {
@@ -36,17 +37,13 @@ namespace Wing.RabbitMQ
                 VirtualHost = config.VirtualHost,
                 Port = config.Port
             };
-
-            wingBuilder.Services.AddSingleton(typeof(IEventBus), serviceProvider =>
-            {
-                var eventBus = new RabbitMQEventBus(new RabbitMQConnection(factory),
+            var eventBus = new RabbitMQEventBus(new RabbitMQConnection(factory),
                  new ConsumerConnection(factory),
-                 serviceProvider.GetRequiredService<IJson>(),
-                 serviceProvider.GetRequiredService<ILogger<RabbitMQEventBus>>(),
+                 ServiceLocator.GetRequiredService<IJson>(),
+                 ServiceLocator.GetRequiredService<ILogger<RabbitMQEventBus>>(),
                  config);
-                GlobalInjection.CreateSubscribe(eventBus);
-                return eventBus;
-            });
+            wingBuilder.Services.AddSingleton(typeof(IEventBus), eventBus);
+            wingBuilder.App += new WingStartupFilter().Configure(eventBus);
             return wingBuilder;
         }
     }

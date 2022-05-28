@@ -61,9 +61,9 @@ namespace Wing.APM
                 context.Request.Body.Position = 0;
             }
 
-            ListenerHelper.TracerData.TryAdd(tracerDto.Tracer.Id, tracerDto);
+            ListenerTracer.Data.Add(tracerDto);
             await _next(context);
-            tracerDto = ListenerHelper.TracerData[tracerDto.Tracer.Id];
+            tracerDto = new ListenerTracer()[tracerDto.Tracer.Id];
             tracerDto.Tracer.ResponseTime = DateTime.Now;
             tracerDto.Tracer.UsedMillSeconds = Convert.ToInt64((tracerDto.Tracer.ResponseTime - tracerDto.Tracer.RequestTime).TotalMilliseconds);
             if (context.Items.ContainsKey(ApmTag.Exception))
@@ -71,6 +71,8 @@ namespace Wing.APM
                 tracerDto.Tracer.Exception = context.Items[ApmTag.Exception].ToString();
             }
 
+            // 待处理
+            tracerDto.Tracer.ResponseValue = "";
             tracerDto.IsStop = true;
         }
     }

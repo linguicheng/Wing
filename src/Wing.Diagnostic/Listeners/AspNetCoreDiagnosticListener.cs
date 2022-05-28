@@ -10,9 +10,9 @@ namespace Wing.APM.Listeners
         public string Name => "Microsoft.AspNetCore";
         public AspNetCoreDiagnosticListener(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor= httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor;
         }
-        
+
 
         public void OnCompleted()
         {

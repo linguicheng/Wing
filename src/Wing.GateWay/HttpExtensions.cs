@@ -49,9 +49,7 @@ namespace Wing.GateWay
                     response.ContentType = reqMsg.Content.Headers.GetValues("Content-Type").Single();
                 }
 
-                using var stream = await reqMsg.Content.ReadAsStreamAsync();
-                using var reader = new StreamReader(stream);
-                content = await reader.ReadToEndAsync();
+                content = await reqMsg.Content.ReadAsStringAsync();
             }
 
             action(statusCode, content);
