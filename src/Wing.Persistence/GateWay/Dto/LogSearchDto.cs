@@ -29,10 +29,6 @@ namespace Wing.Persistence.GateWay
 
         public string RequestValue { get; set; }
 
-        public DateTime? ResponseTimeBegin { get; set; }
-
-        public DateTime? ResponseTimeEnd { get; set; }
-
         public string ResponseValue { get; set; }
 
         public int StatusCode { get; set; }

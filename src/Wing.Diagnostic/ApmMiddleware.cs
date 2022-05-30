@@ -62,17 +62,27 @@ namespace Wing.APM
             }
 
             ListenerTracer.Data.Add(tracerDto);
-            await _next(context);
-            tracerDto = new ListenerTracer()[tracerDto.Tracer.Id];
-            tracerDto.Tracer.ResponseTime = DateTime.Now;
-            tracerDto.Tracer.UsedMillSeconds = Convert.ToInt64((tracerDto.Tracer.ResponseTime - tracerDto.Tracer.RequestTime).TotalMilliseconds);
-            if (context.Items.ContainsKey(ApmTag.Exception))
+            var originalResponseStream = context.Response.Body;
+            using (var ms = new MemoryStream())
             {
-                tracerDto.Tracer.Exception = context.Items[ApmTag.Exception].ToString();
+                context.Response.Body = ms;
+                await _next(context);
+                tracerDto = new ListenerTracer()[tracerDto.Tracer.Id];
+                tracerDto.Tracer.ResponseTime = DateTime.Now;
+                tracerDto.Tracer.UsedMillSeconds = Convert.ToInt64((tracerDto.Tracer.ResponseTime - tracerDto.Tracer.RequestTime).TotalMilliseconds);
+                if (context.Items.ContainsKey(ApmTag.Exception))
+                {
+                    tracerDto.Tracer.Exception = context.Items[ApmTag.Exception].ToString();
+                }
+
+                ms.Seek(0, SeekOrigin.Begin);
+                var reader = new StreamReader(ms);
+                tracerDto.Tracer.ResponseValue = await reader.ReadToEndAsync();
+                ms.Seek(0, SeekOrigin.Begin);
+                await ms.CopyToAsync(originalResponseStream);
+                context.Response.Body = originalResponseStream;
             }
 
-            // 待处理
-            tracerDto.Tracer.ResponseValue = "";
             tracerDto.IsStop = true;
         }
     }

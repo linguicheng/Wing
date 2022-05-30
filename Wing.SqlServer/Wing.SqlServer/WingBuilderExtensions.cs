@@ -16,7 +16,7 @@ namespace Wing.Persistence
             IFreeSql fsql = new FreeSqlBuilder()
                               .UseConnectionString(DataType.SqlServer, connectionString)
                               .UseAutoSyncStructure(autoSyncStructure) //自动同步实体结构到数据库，FreeSql不会扫描程序集，只有CRUD时才会生成表。
-                              .Build();
+                              .Build().Map();
             wingBuilder.Services.AddSingleton(typeof(IFreeSql), serviceProvider => fsql);
             wingBuilder.Services.AddSingleton<ILogService, LogService>();
             wingBuilder.Services.AddSingleton<ITracerService, TracerService>();

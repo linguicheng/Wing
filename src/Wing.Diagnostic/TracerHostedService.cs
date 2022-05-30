@@ -14,6 +14,7 @@ namespace Wing.APM
         private readonly ILogger<TracerHostedService> _logger;
         private readonly ITracerService _tracerService;
         private Timer _timer;
+        private bool _wait = false;
 
         public TracerHostedService(ILogger<TracerHostedService> logger, ITracerService tracerService)
         {
@@ -36,20 +37,36 @@ namespace Wing.APM
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _timer = new Timer(x =>
+            _timer = new Timer(async x =>
               {
+                  if (_wait)
+                  {
+                      return;
+                  }
+
+                  _wait = true;
                   var tracers = ListenerTracer.Data.Where(x => x.IsStop).ToList();
                   if (tracers == null || !tracers.Any())
                   {
+                      _wait = false;
                       return;
                   }
 
                   try
                   {
+                      foreach (var tracer in tracers)
+                      {
+                          await _tracerService.Add(tracer);
+                          ListenerTracer.Data.Remove(tracer);
+                      }
                   }
                   catch (Exception ex)
                   {
                       _logger.LogError(ex, "APM链路跟踪平台持久化异常");
+                  }
+                  finally
+                  {
+                      _wait = false;
                   }
               }, null, TimeSpan.FromSeconds(3), TimeSpan.FromSeconds(3));
             return Task.CompletedTask;

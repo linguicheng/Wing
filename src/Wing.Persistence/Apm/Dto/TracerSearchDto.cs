@@ -1,14 +1,18 @@
 ﻿using System;
-using FreeSql.DataAnnotations;
+using System.Collections.Generic;
 
 namespace Wing.Persistence.Apm
 {
-    public class HttpTracerDetail
+    public class TracerSearchDto
     {
-        [Column(IsPrimary = true)]
-        public string Id { get; set; }
+        public string ServiceName { get; set; }
 
-        public string TraceId { get; set; }
+        /// <summary>
+        /// 服务地址
+        /// </summary>
+        public string ServiceUrl { get; set; }
+
+        public List<DateTime> RequestTime { get; set; }
 
         /// <summary>
         /// Grpc or Http
@@ -17,13 +21,14 @@ namespace Wing.Persistence.Apm
 
         public string RequestUrl { get; set; }
 
-        public DateTime RequestTime { get; set; }
-
         public string RequestMethod { get; set; }
 
         public string RequestValue { get; set; }
 
-        public DateTime ResponseTime { get; set; }
+        /// <summary>
+        /// 客户端请求IP
+        /// </summary>
+        public string ClientIp { get; set; }
 
         public string ResponseValue { get; set; }
 

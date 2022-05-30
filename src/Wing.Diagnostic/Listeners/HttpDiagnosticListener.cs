@@ -91,7 +91,7 @@ namespace Wing.APM.Listeners
             }
             else
             {
-                tracerDto = ListenerTracer.Data.Single(x => x.Tracer.Id == context.Items[ApmTag.TraceId].ToString());
+                tracerDto = _listenerTracer[context.Items[ApmTag.TraceId].ToString()];
                 if (tracerDto.HttpTracerDetails == null)
                 {
                     tracerDto.HttpTracerDetails = new List<HttpTracerDetail>();
@@ -177,9 +177,8 @@ namespace Wing.APM.Listeners
                 tracerDto.Tracer.ResponseValue = responseValue;
                 tracerDto.Tracer.StatusCode = statusCode;
                 tracerDto.Tracer.UsedMillSeconds = Convert.ToInt64((tracerDto.Tracer.ResponseTime - tracerDto.Tracer.RequestTime).TotalMilliseconds);
+                tracerDto.IsStop = true;
             }
-
-            tracerDto.IsStop = true;
         }
     }
 }
