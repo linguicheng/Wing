@@ -1,24 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+  <Import Project="..\..\build\common.props" />
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-	    <PrivateAssets>all</PrivateAssets>
-	    <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-	  </PackageReference>
-	</ItemGroup>
-	
   <ItemGroup>
     <ProjectReference Include="..\Wing\Wing.csproj" />
   </ItemGroup>

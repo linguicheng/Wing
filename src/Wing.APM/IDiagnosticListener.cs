@@ -6,6 +6,5 @@ namespace Wing.APM
     public interface IDiagnosticListener : IObserver<KeyValuePair<string, object>>
     {
         string Name { get; }
-
     }
 }

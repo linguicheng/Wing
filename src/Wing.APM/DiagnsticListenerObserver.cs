@@ -1,15 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using Microsoft.Extensions.Logging;
 
 namespace Wing.APM
 {
     public class DiagnsticListenerObserver : IObserver<DiagnosticListener>
     {
-        private IEnumerable<IDiagnosticListener> _listeners;
         private readonly ILogger<DiagnsticListenerObserver> _logger;
+        private IEnumerable<IDiagnosticListener> _listeners;
 
         public DiagnsticListenerObserver(IEnumerable<IDiagnosticListener> listeners, ILogger<DiagnsticListenerObserver> logger)
         {
@@ -19,7 +19,6 @@ namespace Wing.APM
 
         public void OnCompleted()
         {
-
         }
 
         public void OnError(Exception error)

@@ -1,18 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+  <Import Project="..\..\build\common.props" />
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<CodeAnalysisRuleSet>../../StyleCop.ruleset</CodeAnalysisRuleSet>
-	</PropertyGroup>
-
-	<ItemGroup>
+  <ItemGroup>
 	  <None Remove="wwwroot\dist\css\app.1e5d7778.css" />
 	  <None Remove="wwwroot\dist\css\app.1e5d7778.css.gz" />
 	  <None Remove="wwwroot\dist\css\chunk-10bd9bec.55ac1270.css" />
@@ -108,7 +98,7 @@
 	  <None Remove="wwwroot\dist\js\chunk-vendors.4054c265.js.gz" />
 	</ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
 	  <EmbeddedResource Include="wwwroot\dist\css\app.1e5d7778.css" />
 	  <EmbeddedResource Include="wwwroot\dist\css\app.1e5d7778.css.gz" />
 	  <EmbeddedResource Include="wwwroot\dist\css\chunk-10bd9bec.55ac1270.css" />
@@ -203,14 +193,6 @@
 	  <EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.4054c265.js" />
 	  <EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.4054c265.js.gz" />
 	</ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
