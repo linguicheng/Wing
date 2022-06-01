@@ -8,9 +8,9 @@ namespace Wing.Persistence.Apm
 {
     public class TracerService : ITracerService
     {
-        private readonly IFreeSql _fsql;
+        private readonly IFreeSql<WingDbFlag> _fsql;
 
-        public TracerService(IFreeSql fsql)
+        public TracerService(IFreeSql<WingDbFlag> fsql)
         {
             _fsql = fsql;
         }
@@ -22,6 +22,11 @@ namespace Wing.Persistence.Apm
             await uow.Orm.Insert(tracerDto.HttpTracerDetails).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.SqlTracerDetails).ExecuteAffrowsAsync();
             uow.Commit();
+        }
+
+        public Task<bool> Any(string tracerId)
+        {
+            return _fsql.Select<Tracer>().AnyAsync(x => x.Id == tracerId);
         }
 
         public Task<List<HttpTracerDetail>> HttpDetail(HttpTracerDetailSearchDto dto)

@@ -2,31 +2,27 @@
 using System.Diagnostics;
 using FreeSql.Aop;
 using Microsoft.Extensions.DependencyInjection;
+using Wing.APM;
+using Wing.APM.FreeSql;
 
-namespace Wing.APM.FreeSql
+namespace Wing.Persistence
 {
-    public static class WingApmBuilderExtensions
+    public class WingDbApmBuilder
     {
-        private static readonly DiagnosticListener FreeSqlListener = new DiagnosticListener("FreeSqlDiagnosticListener");
+        private static readonly DiagnosticListener FreeSqlListener = new DiagnosticListener("WingDbFreeSqlDiagnosticListener");
 
-        public static WingApmBuilder AddFreeSql(this WingApmBuilder wingApmBuilder)
-        {
-            wingApmBuilder.ServiceBuilder.Services.AddSingleton<IDiagnosticListener, FreeSqlDiagnosticListener>();
-            return wingApmBuilder;
-        }
-
-        public static WingApmBuilder Build(this WingApmBuilder wingApmBuilder, IFreeSql fsql)
+        public static void AddFreeSql(IServiceCollection services, IFreeSql<WingDbFlag> fsql)
         {
             if (fsql == null)
             {
                 throw new ArgumentNullException(nameof(fsql));
             }
 
+            services.AddSingleton<IDiagnosticListener, WingDbFreeSqlDiagnosticListener>();
             WriteToListener(fsql);
-            return wingApmBuilder;
         }
 
-        public static void WriteToListener(IFreeSql fsql)
+        public static void WriteToListener(IFreeSql<WingDbFlag> fsql)
         {
             fsql.Aop.CurdBefore += new EventHandler<CurdBeforeEventArgs>((s, e) =>
             {

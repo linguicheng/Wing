@@ -10,6 +10,8 @@ namespace Wing.Persistence.Apm
     {
         Task Add(TracerDto tracerDto);
 
+        Task<bool> Any(string tracerId);
+
         Task<PageResult<List<Tracer>>> List(PageModel<TracerSearchDto> dto);
 
         Task<List<HttpTracerDetail>> HttpDetail(HttpTracerDetailSearchDto dto);

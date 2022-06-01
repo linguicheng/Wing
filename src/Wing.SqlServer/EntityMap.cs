@@ -5,13 +5,13 @@ namespace Wing.Persistence
 {
     public static class EntityMap
     {
-        public static IFreeSql Map(this IFreeSql fsql)
+        public static IFreeSql<WingDbFlag> Map(this IFreeSql<WingDbFlag> fsql)
         {
             #region Apm entity config
             fsql.CodeFirst.Entity<Tracer>(eb =>
             {
                 eb.ToTable("APM_Tracer");
-                eb.HasIndex(x=>x.RequestTime).HasName("IX_RequestTime");
+                eb.HasIndex(x => x.RequestTime).HasName("IX_RequestTime");
                 eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.ParentId).HasColumnType("varchar(50)");

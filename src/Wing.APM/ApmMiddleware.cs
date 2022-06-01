@@ -83,6 +83,7 @@ namespace Wing.APM
                 context.Response.Body = originalResponseStream;
             }
 
+            tracerDto.Tracer.StatusCode = context.Response.StatusCode;
             tracerDto.IsStop = true;
         }
     }

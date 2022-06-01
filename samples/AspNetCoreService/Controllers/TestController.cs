@@ -26,13 +26,20 @@ namespace Sample.AspNetCoreService.Controllers
         private readonly IProduct _product;
         private readonly IAuth _auth;
         private readonly IConfiguration _configuration;
-        public TestController( IAuth auth, IHttpClientFactory httpClientFactory, IEventBus eventBus, IProduct product, IConfiguration configuration)
+        private readonly ITracerService _tracerService;
+        public TestController(IAuth auth,
+                            IHttpClientFactory httpClientFactory,
+                            IEventBus eventBus,
+                            IProduct product,
+                            ITracerService tracerService,
+                            IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
             _eventBus = eventBus;
             _product = product;
             _auth = auth;
             _configuration = configuration;
+            _tracerService = tracerService;
         }
 
         [HttpGet]
@@ -76,6 +83,17 @@ namespace Sample.AspNetCoreService.Controllers
         public string Test3()
         {
             return "Hello Wing";
+        }
+
+        [HttpGet("AddTracer")]
+        public Task AddTracer()
+        {
+            return _tracerService.Add(new Tracer
+            {
+                Id = Guid.NewGuid().ToString(),
+                RequestTime = DateTime.Now,
+                Exception = "测试AddTracer"
+            });
         }
 
         [HttpGet("test4")]

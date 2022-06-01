@@ -14,7 +14,7 @@ namespace Wing.APM
             wingBuilder.Services.AddSingleton<IDiagnosticListener, AspNetCoreDiagnosticListener>();
             wingBuilder.Services.AddSingleton<DiagnsticListenerObserver>();
             wingBuilder.Services.AddSingleton<IHostedService, TracerHostedService>();
-            wingApmBuilder?.Invoke(new WingApmBuilder(wingBuilder.Services));
+            wingApmBuilder?.Invoke(new WingApmBuilder(wingBuilder));
             wingBuilder.App += new WingStartupFilter().Configure();
             return wingBuilder;
         }

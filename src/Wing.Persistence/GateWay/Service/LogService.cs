@@ -9,9 +9,9 @@ namespace Wing.Persistence.GateWay
 {
     public class LogService : ILogService
     {
-        private readonly IFreeSql _fsql;
+        private readonly IFreeSql<WingDbFlag> _fsql;
 
-        public LogService(IFreeSql fsql)
+        public LogService(IFreeSql<WingDbFlag> fsql)
         {
             _fsql = fsql;
         }

@@ -1,14 +1,14 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Wing.Configuration.ServiceBuilder;
 
 namespace Wing.APM
 {
     public class WingApmBuilder
     {
-        public IServiceCollection Services { get; }
+        public IWingServiceBuilder ServiceBuilder { get; }
 
-        public WingApmBuilder(IServiceCollection services)
+        public WingApmBuilder(IWingServiceBuilder serviceBuilder)
         {
-            Services = services;
+            ServiceBuilder = serviceBuilder;
         }
     }
 }

@@ -10,6 +10,7 @@ namespace Wing.Consul
 {
     public class IntervalConsulProvider : IDiscoveryServiceProvider, IDisposable
     {
+        private static readonly object _lock = new object();
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
         private readonly Timer _timer;
         private List<Service> _services;
@@ -19,23 +20,27 @@ namespace Wing.Consul
         {
             _discoveryServiceProvider = discoveryServiceProvider;
             _services = new List<Service>();
-            _timer = new Timer(async x =>
+            _timer = new Timer(x =>
              {
-                 if (_wait)
+                 lock (_lock)
                  {
-                     return;
+                     if (_wait)
+                     {
+                         return;
+                     }
+
+                     _wait = true;
+                     try
+                     {
+                         _services = _discoveryServiceProvider.Get().ConfigureAwait(false).GetAwaiter().GetResult();
+                     }
+                     catch
+                     {
+                     }
+
+                     _wait = false;
                  }
 
-                 _wait = true;
-                 try
-                 {
-                     _services = await _discoveryServiceProvider.Get();
-                 }
-                 catch
-                 {
-                 }
-
-                 _wait = false;
              }, null, 0, interval);
         }
 

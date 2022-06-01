@@ -1,5 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -12,6 +11,14 @@ namespace Wing.APM.Listeners
         public static readonly List<TracerDto> Data = new List<TracerDto>();
 
         public TracerDto this[string traceId] => Data.Single(x => x.Tracer.Id == traceId);
+
+        public static void Remove(List<TracerDto> tracers)
+        {
+            foreach (var tracer in tracers)
+            {
+                Data.Remove(tracer);
+            }
+        }
 
         public static T GetProperty<T>(object value, string name)
         {

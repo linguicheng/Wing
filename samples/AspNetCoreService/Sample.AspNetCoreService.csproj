@@ -20,6 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj" />
     <ProjectReference Include="..\..\src\Wing.Auth\Wing.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.APM\Wing.APM.csproj" />

@@ -4,7 +4,7 @@ using Wing.Configuration.HostBuilder;
 using Wing.Consul;
 using Wing.NLog;
 
-namespace AspNetCoreService
+namespace Sample.AspNetCoreService
 {
     public class Program
     {

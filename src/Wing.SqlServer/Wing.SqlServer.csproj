@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.Persistence\Wing.Persistence.csproj" />
+    <ProjectReference Include="..\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj" />
   </ItemGroup>
 
 </Project>
