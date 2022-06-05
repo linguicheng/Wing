@@ -19,6 +19,8 @@ namespace Wing.Persistence.Apm
         {
             using var uow = _fsql.CreateUnitOfWork();
             await uow.Orm.Insert(tracerDto.Tracer).ExecuteAffrowsAsync();
+            await uow.Orm.Insert(tracerDto.HttpTracer).ExecuteAffrowsAsync();
+            await uow.Orm.Insert(tracerDto.SqlTracer).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.HttpTracerDetails).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.SqlTracerDetails).ExecuteAffrowsAsync();
             uow.Commit();

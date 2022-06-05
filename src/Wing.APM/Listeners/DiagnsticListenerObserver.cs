@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using Microsoft.Extensions.Logging;
 
-namespace Wing.APM
+namespace Wing.APM.Listeners
 {
     public class DiagnsticListenerObserver : IObserver<DiagnosticListener>
     {

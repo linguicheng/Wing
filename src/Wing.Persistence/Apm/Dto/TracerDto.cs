@@ -7,6 +7,10 @@ namespace Wing.Persistence.APM
     {
         public Tracer Tracer { get; set; }
 
+        public HttpTracer HttpTracer { get; set; }
+
+        public SqlTracer SqlTracer { get; set; }
+
         public List<HttpTracerDetail> HttpTracerDetails { get; set; }
 
         public List<SqlTracerDetail> SqlTracerDetails { get; set; }

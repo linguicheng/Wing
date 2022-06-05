@@ -22,8 +22,36 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
                 eb.Property(x => x.RequestValue).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.ClientIp).HasColumnType("varchar(50)");
-                eb.Property(x => x.ClientIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
+            });
+            fsql.CodeFirst.Entity<HttpTracer>(eb =>
+            {
+                eb.ToTable("APM_WS_HttpTracer");
+                eb.HasIndex(x => x.RequestTime).HasName("IX_RequestTime");
+                eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.ServiceUrl).HasColumnType("varchar(200)");
+                eb.Property(x => x.RequestType).HasColumnType("varchar(20)");
+                eb.Property(x => x.RequestUrl).HasColumnType("varchar(2000)");
+                eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
+                eb.Property(x => x.RequestValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.ServerIp).HasColumnType("varchar(50)");
+                eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
+            });
+            fsql.CodeFirst.Entity<SqlTracer>(eb =>
+            {
+                eb.ToTable("APM_WS_SqlTracer");
+                eb.HasIndex(x => x.BeginTime).HasName("IX_BeginTime");
+                eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.ServiceUrl).HasColumnType("varchar(200)");
+                eb.Property(x => x.Action).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.Sql).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.ServerIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
             fsql.CodeFirst.Entity<HttpTracerDetail>(eb =>
@@ -44,12 +72,11 @@ namespace Wing.Persistence
             {
                 eb.ToTable("APM_SqlTracerDetail");
                 eb.HasIndex(x => x.TraceId).HasName("IX_TraceId");
-                eb.HasIndex(x => x.RequestTime).HasName("IX_RequestTime");
+                eb.HasIndex(x => x.BeginTime).HasName("IX_BeginTime");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.TraceId).HasColumnType("varchar(50)");
-                eb.Property(x => x.DbType).HasColumnType("varchar(50)");
-                eb.Property(x => x.RequestValue).HasColumnType("nvarchar(max)");
-                eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Action).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.Sql).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
             #endregion

@@ -6,13 +6,13 @@ namespace Wing.APM.Listeners
 {
     public class AspNetCoreDiagnosticListener : IDiagnosticListener
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly HttpContext context;
 
         public string Name => "Microsoft.AspNetCore";
 
         public AspNetCoreDiagnosticListener(IHttpContextAccessor httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
+            context = httpContextAccessor.HttpContext;
         }
 
         public void OnCompleted()
@@ -27,12 +27,11 @@ namespace Wing.APM.Listeners
         {
             if (value.Key == "Microsoft.AspNetCore.Diagnostics.UnhandledException" || value.Key == "Microsoft.AspNetCore.Hosting.UnhandledException")
             {
-                var context = _httpContextAccessor.HttpContext;
                 if (value.Value.GetType().GetProperty("exception").GetValue(value.Value) is Exception exception)
                 {
                     if (context != null && exception != null)
                     {
-                        var tracerDto = new ListenerTracer()[context.Items[ApmTag.TraceId].ToString()];
+                        var tracerDto = new ListenerTracer()[context.Items[ApmTools.TraceId].ToString()];
                         tracerDto.Tracer.Exception = exception.ToString();
                     }
                 }

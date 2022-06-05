@@ -2,8 +2,8 @@
 using System.Diagnostics;
 using FreeSql.Aop;
 using Microsoft.Extensions.DependencyInjection;
-using Wing.APM;
 using Wing.APM.FreeSql;
+using Wing.APM.Listeners;
 
 namespace Wing.Persistence
 {

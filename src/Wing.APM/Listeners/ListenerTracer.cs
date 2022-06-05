@@ -10,7 +10,22 @@ namespace Wing.APM.Listeners
     {
         public static readonly List<TracerDto> Data = new List<TracerDto>();
 
-        public TracerDto this[string traceId] => Data.Single(x => x.Tracer.Id == traceId);
+        public TracerDto this[string traceId] => Tracer(traceId);
+
+        public static TracerDto Tracer(string id)
+        {
+            return Data.Single(x => x.Tracer?.Id == id);
+        }
+
+        public static TracerDto SqlTracer(string id)
+        {
+            return Data.Single(x => x.SqlTracer?.Id == id);
+        }
+
+        public static TracerDto HttpTracer(string id)
+        {
+            return Data.Single(x => x.HttpTracer?.Id == id);
+        }
 
         public static void Remove(List<TracerDto> tracers)
         {

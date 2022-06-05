@@ -1,6 +1,6 @@
 ﻿using Wing.Configuration.ServiceBuilder;
 
-namespace Wing.APM
+namespace Wing.APM.Builder
 {
     public class WingApmBuilder
     {

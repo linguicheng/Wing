@@ -40,19 +40,19 @@ namespace Wing.APM
                     Id = Guid.NewGuid().ToString(),
                     ClientIp = context.Connection.RemoteIpAddress.MapToIPv4().ToString(),
                     ServiceName = service.Name,
-                    ServiceUrl = $"{service.Scheme}://{service.Host}:{service.Port}",
+                    ServiceUrl = ApmTools.GetServiceUrl(service),
                     RequestType = "http",
                     RequestMethod = context.Request.Method,
                     RequestTime = DateTime.Now,
                     RequestUrl = context.Request.GetDisplayUrl()
                 }
             };
-            if (context.Request.Headers.ContainsKey(ApmTag.TraceId))
+            if (context.Request.Headers.ContainsKey(ApmTools.TraceId))
             {
-                tracerDto.Tracer.ParentId = context.Request.Headers[ApmTag.TraceId].ToString();
+                tracerDto.Tracer.ParentId = context.Request.Headers[ApmTools.TraceId].ToString();
             }
 
-            context.Items.Add(ApmTag.TraceId, tracerDto.Tracer.Id);
+            context.Items.Add(ApmTools.TraceId, tracerDto.Tracer.Id);
             if (context.Request.Body != null)
             {
                 context.Request.EnableBuffering();
@@ -69,10 +69,10 @@ namespace Wing.APM
                 await _next(context);
                 tracerDto = new ListenerTracer()[tracerDto.Tracer.Id];
                 tracerDto.Tracer.ResponseTime = DateTime.Now;
-                tracerDto.Tracer.UsedMillSeconds = Convert.ToInt64((tracerDto.Tracer.ResponseTime - tracerDto.Tracer.RequestTime).TotalMilliseconds);
-                if (context.Items.ContainsKey(ApmTag.Exception))
+                tracerDto.Tracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.Tracer.RequestTime, tracerDto.Tracer.ResponseTime);
+                if (context.Items.ContainsKey(ApmTools.Exception))
                 {
-                    tracerDto.Tracer.Exception = context.Items[ApmTag.Exception].ToString();
+                    tracerDto.Tracer.Exception = context.Items[ApmTools.Exception].ToString();
                 }
 
                 ms.Seek(0, SeekOrigin.Begin);

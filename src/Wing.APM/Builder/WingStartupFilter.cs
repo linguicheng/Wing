@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Wing.APM.Listeners;
 
-namespace Wing.APM
+namespace Wing.APM.Builder
 {
     internal class WingStartupFilter
     {

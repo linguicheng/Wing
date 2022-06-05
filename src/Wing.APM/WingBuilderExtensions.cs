@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Wing.APM.Builder;
 using Wing.APM.Listeners;
 using Wing.Configuration.ServiceBuilder;
 
