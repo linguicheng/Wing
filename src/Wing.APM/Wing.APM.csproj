@@ -3,6 +3,7 @@
   <Import Project="..\..\build\common.props" />
 	
   <ItemGroup>
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.46.0" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
 	<PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0" />
   </ItemGroup>

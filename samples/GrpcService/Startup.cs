@@ -3,8 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Wing.APM;
 using Wing.Auth;
 using Wing.Configuration.ServiceBuilder;
+using Wing.Persistence;
 
 namespace GrpcService
 {
@@ -20,7 +22,7 @@ namespace GrpcService
                 options.MaxSendMessageSize = 1 * 1024 * 1024; // 1 MB
             });
 
-            services.AddWing().AddJwt();
+            services.AddWing().AddPersistence().AddJwt().AddAPM();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

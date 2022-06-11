@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Data.Common;
-using Wing.APM.Listeners;
-using Wing.Persistence.APM;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM
@@ -11,12 +9,16 @@ namespace Wing.APM
         public const string Exception = "wing-apm-exception";
         public const string TraceId = "wing-apm-traceId";
         public const string TraceDetailId = "wing-apm-traceDetailId";
+        public const string GrpcRequest = "wing-apm-grpcRequest";
+        public const string GrpcResponse = "wing-apm-grpcResponse";
         public const string Sql_Action_SyncStructure = "表结构同步";
         public const string Sql_Action_Select = "查询";
         public const string Sql_Action_Delete = "删除";
         public const string Sql_Action_Update = "修改";
         public const string Sql_Action_Insert = "新增";
         public const string Sql_Action_InsertOrUpdate = "新增或修改";
+        public const string Http = "http";
+        public const string Grpc = "grpc";
 
         public static string SqlFormat(string sql, DbParameter[] parameters)
         {

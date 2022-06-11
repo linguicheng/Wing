@@ -13,8 +13,10 @@ namespace Wing.APM
         {
             wingBuilder.Services.AddSingleton<IDiagnosticListener, HttpDiagnosticListener>();
             wingBuilder.Services.AddSingleton<IDiagnosticListener, AspNetCoreDiagnosticListener>();
+            wingBuilder.Services.AddSingleton<IDiagnosticListener, GrpcDiagnosticListener>();
             wingBuilder.Services.AddSingleton<DiagnsticListenerObserver>();
             wingBuilder.Services.AddSingleton<IHostedService, TracerHostedService>();
+            wingBuilder.Services.AddGrpc(x => x.Interceptors.Add<GrpcInterceptor>());
             wingApmBuilder?.Invoke(new WingApmBuilder(wingBuilder));
             wingBuilder.App += new WingStartupFilter().Configure();
             return wingBuilder;

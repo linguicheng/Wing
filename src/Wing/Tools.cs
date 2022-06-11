@@ -4,6 +4,8 @@ using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.Serialization.Formatters.Binary;
+using Microsoft.AspNetCore.Http;
+using Wing.ServiceProvider;
 
 namespace Wing
 {
@@ -19,6 +21,17 @@ namespace Wing
                 .Where(p => p.PrefixOrigin == PrefixOrigin.Dhcp || p.PrefixOrigin == PrefixOrigin.Manual)
                 .OrderByDescending(p => p.PrefixOrigin)
                 .FirstOrDefault(p => p.IsDnsEligible && p.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(p.Address))?.Address.ToString();
+            }
+        }
+
+        public static string RemoteIp
+        {
+            get
+            {
+                var httpContextAccessor = ServiceLocator.GetService<IHttpContextAccessor>();
+                var context = httpContextAccessor?.HttpContext;
+                var ip = context?.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+                return string.IsNullOrWhiteSpace(ip) ? context.Connection.RemoteIpAddress?.MapToIPv4()?.ToString() : ip;
             }
         }
 

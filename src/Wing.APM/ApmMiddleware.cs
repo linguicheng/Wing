@@ -21,16 +21,29 @@ namespace Wing.APM
 
         public async Task InvokeAsync(HttpContext context)
         {
-            if (context.Request.Path.HasValue && context.Request.Path.Value == "/")
+            var path = context.Request.Path.ToString();
+            if (path == "/")
             {
                 await _next(context);
                 return;
             }
 
-            await HttpInvokeAsync(context);
+            if ((context.Request.ContentType?.Contains("application/grpc")).GetValueOrDefault())
+            {
+                await GrpcInvoke(context);
+                return;
+            }
+
+            if (!path.Contains("."))
+            {
+                await HttpInvoke(context);
+                return;
+            }
+
+            await _next(context);
         }
 
-        private async Task HttpInvokeAsync(HttpContext context)
+        private async Task GrpcInvoke(HttpContext context)
         {
             var service = ServiceLocator.CurrentService;
             var tracerDto = new TracerDto
@@ -38,10 +51,57 @@ namespace Wing.APM
                 Tracer = new Tracer
                 {
                     Id = Guid.NewGuid().ToString(),
-                    ClientIp = context.Connection.RemoteIpAddress.MapToIPv4().ToString(),
+                    ClientIp = Tools.RemoteIp,
                     ServiceName = service.Name,
                     ServiceUrl = ApmTools.GetServiceUrl(service),
-                    RequestType = "http",
+                    RequestType = ApmTools.Grpc,
+                    RequestMethod = context.Request.Method,
+                    RequestTime = DateTime.Now,
+                    RequestUrl = context.Request.GetDisplayUrl()
+                }
+            };
+            if (context.Request.Headers.ContainsKey(ApmTools.TraceId))
+            {
+                tracerDto.Tracer.ParentId = context.Request.Headers[ApmTools.TraceId].ToString();
+            }
+
+            context.Items.Add(ApmTools.TraceId, tracerDto.Tracer.Id);
+            ListenerTracer.Data.Add(tracerDto);
+            await _next(context);
+            tracerDto = new ListenerTracer()[tracerDto.Tracer.Id];
+            tracerDto.Tracer.ResponseTime = DateTime.Now;
+            tracerDto.Tracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.Tracer.RequestTime, tracerDto.Tracer.ResponseTime);
+            if (context.Items.ContainsKey(ApmTools.Exception))
+            {
+                tracerDto.Tracer.Exception = context.Items[ApmTools.Exception].ToString();
+            }
+
+            if (context.Items.ContainsKey(ApmTools.GrpcRequest))
+            {
+                tracerDto.Tracer.RequestValue = context.Items[ApmTools.GrpcRequest].ToString();
+            }
+
+            if (context.Items.ContainsKey(ApmTools.GrpcResponse))
+            {
+                tracerDto.Tracer.ResponseValue = context.Items[ApmTools.GrpcResponse].ToString();
+            }
+
+            tracerDto.Tracer.StatusCode = context.Response.StatusCode;
+            tracerDto.IsStop = true;
+        }
+
+        private async Task HttpInvoke(HttpContext context)
+        {
+            var service = ServiceLocator.CurrentService;
+            var tracerDto = new TracerDto
+            {
+                Tracer = new Tracer
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    ClientIp = Tools.RemoteIp,
+                    ServiceName = service.Name,
+                    ServiceUrl = ApmTools.GetServiceUrl(service),
+                    RequestType = ApmTools.Http,
                     RequestMethod = context.Request.Method,
                     RequestTime = DateTime.Now,
                     RequestUrl = context.Request.GetDisplayUrl()

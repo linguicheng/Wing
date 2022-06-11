@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -49,7 +48,7 @@ namespace Wing.GateWay
                 log = new Log
                 {
                     Id = Guid.NewGuid().ToString(),
-                    ClientIp = httpContext.Connection.RemoteIpAddress.MapToIPv4().ToString(),
+                    ClientIp = Tools.RemoteIp,
                     DownstreamUrl = serviceContext.DownstreamPath,
                     Policy = _json.Serialize(serviceContext.Policy),
                     RequestTime = serviceContext.RequestTime,

@@ -10,15 +10,16 @@ using Wing.ServiceProvider;
 
 namespace Wing.APM.Listeners
 {
-    public class HttpDiagnosticListener : IDiagnosticListener
+    public class GrpcDiagnosticListener : IDiagnosticListener
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<HttpDiagnosticListener> _logger;
+        private readonly ILogger<GrpcDiagnosticListener> _logger;
         private readonly ListenerTracer _listenerTracer;
 
-        public string Name => "HttpHandlerDiagnosticListener";
+        public string Name => "Grpc.Net.Client";
 
-        public HttpDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<HttpDiagnosticListener> logger)
+        public GrpcDiagnosticListener(IHttpContextAccessor httpContextAccessor,
+                                      ILogger<GrpcDiagnosticListener> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
@@ -39,20 +40,17 @@ namespace Wing.APM.Listeners
             {
                 switch (value.Key)
                 {
-                    case "System.Net.Http.HttpRequestOut.Start":
+                    case "Grpc.Net.Client.GrpcOut.Start":
                         Start(value.Value);
                         break;
-                    case "System.Net.Http.Exception":
-                        Exception(value.Value);
-                        break;
-                    case "System.Net.Http.HttpRequestOut.Stop":
+                    case "Grpc.Net.Client.GrpcOut.Stop":
                         Stop(value.Value);
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "http监听异常");
+                _logger.LogError(ex, "grpc监听异常");
             }
         }
 
@@ -78,7 +76,7 @@ namespace Wing.APM.Listeners
                         ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
                         ServiceUrl = ApmTools.GetServiceUrl(service),
-                        RequestType = ApmTools.Http,
+                        RequestType = ApmTools.Grpc,
                         RequestMethod = request.Method.ToString(),
                         RequestTime = DateTime.Now,
                         RequestUrl = request.RequestUri.ToString(),
@@ -104,42 +102,14 @@ namespace Wing.APM.Listeners
             {
                 Id = detailId,
                 TraceId = tracerDto.Tracer.Id,
-                RequestType = ApmTools.Http,
+                RequestType = ApmTools.Grpc,
                 RequestMethod = request.Method.ToString(),
                 RequestTime = DateTime.Now,
-                RequestUrl = request.RequestUri.ToString(),
-                RequestValue = ListenerTracer.GetRequestValue(request)
-                                            .ConfigureAwait(false)
-                                            .GetAwaiter()
-                                            .GetResult()
+                RequestUrl = request.RequestUri.ToString()
             });
             request.Headers.Add(ApmTools.TraceId, tracerDto.Tracer.Id);
             request.Properties.Add(ApmTools.TraceDetailId, detailId);
             request.Properties.Add(ApmTools.TraceId, tracerDto.Tracer.Id);
-        }
-
-        private void Exception(object value)
-        {
-            var exception = ListenerTracer.GetProperty<Exception>(value, "Exception");
-            var request = ListenerTracer.GetProperty<HttpRequestMessage>(value, "Request");
-            if (request == null || !request.Properties.ContainsKey(ApmTools.TraceId))
-            {
-                return;
-            }
-
-            var traceId = request.Properties[ApmTools.TraceId].ToString();
-            TracerDto tracerDto;
-            if (request.Properties.ContainsKey(ApmTools.TraceDetailId))
-            {
-                tracerDto = _listenerTracer[traceId];
-                var traceDetail = tracerDto.HttpTracerDetails.Where(x => x.Id == request.Properties[ApmTools.TraceDetailId].ToString()).Single();
-                traceDetail.Exception = exception.ToString();
-            }
-            else
-            {
-                tracerDto = ListenerTracer.HttpTracer(traceId);
-                tracerDto.HttpTracer.Exception = exception.ToString();
-            }
         }
 
         private void Stop(object value)
@@ -153,14 +123,9 @@ namespace Wing.APM.Listeners
             var response = ListenerTracer.GetProperty<HttpResponseMessage>(value, "Response");
             TracerDto tracerDto;
             var traceId = request.Properties[ApmTools.TraceId].ToString();
-            var responseValue = string.Empty;
             int? statusCode = null;
             if (response != null)
             {
-                responseValue = ListenerTracer.GetResponseValue(response)
-                                                    .ConfigureAwait(false)
-                                                    .GetAwaiter()
-                                                    .GetResult();
                 statusCode = (int)response.StatusCode;
             }
 
@@ -169,7 +134,6 @@ namespace Wing.APM.Listeners
                 tracerDto = _listenerTracer[traceId];
                 var traceDetail = tracerDto.HttpTracerDetails.Where(x => x.Id == request.Properties[ApmTools.TraceDetailId].ToString()).Single();
                 traceDetail.ResponseTime = DateTime.Now;
-                traceDetail.ResponseValue = responseValue;
                 traceDetail.StatusCode = statusCode;
                 traceDetail.UsedMillSeconds = ApmTools.UsedMillSeconds(traceDetail.RequestTime, traceDetail.ResponseTime);
             }
@@ -177,7 +141,6 @@ namespace Wing.APM.Listeners
             {
                 tracerDto = ListenerTracer.HttpTracer(traceId);
                 tracerDto.HttpTracer.ResponseTime = DateTime.Now;
-                tracerDto.HttpTracer.ResponseValue = responseValue;
                 tracerDto.HttpTracer.StatusCode = statusCode;
                 tracerDto.HttpTracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.HttpTracer.RequestTime, tracerDto.HttpTracer.ResponseTime);
                 tracerDto.IsStop = true;

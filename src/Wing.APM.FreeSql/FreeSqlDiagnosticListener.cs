@@ -14,7 +14,7 @@ namespace Wing.APM.FreeSql
 {
     public class FreeSqlDiagnosticListener : IDiagnosticListener
     {
-        private readonly HttpContext context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<FreeSqlDiagnosticListener> _logger;
         private readonly ServiceData service;
         private readonly ListenerTracer _listenerTracer;
@@ -23,7 +23,7 @@ namespace Wing.APM.FreeSql
 
         public FreeSqlDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<FreeSqlDiagnosticListener> logger)
         {
-            context = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             service = ServiceLocator.CurrentService;
             _listenerTracer = new ListenerTracer();
@@ -68,6 +68,7 @@ namespace Wing.APM.FreeSql
         {
             var data = ListenerTracer.GetProperty<CurdBeforeEventArgs>(value, "Value");
             TracerDto tracerDto;
+            var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 tracerDto = new TracerDto
@@ -105,6 +106,7 @@ namespace Wing.APM.FreeSql
         {
             var data = ListenerTracer.GetProperty<CurdAfterEventArgs>(value, "Value");
             TracerDto tracerDto;
+            var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());
@@ -131,6 +133,7 @@ namespace Wing.APM.FreeSql
         {
             var data = ListenerTracer.GetProperty<SyncStructureBeforeEventArgs>(value, "Value");
             TracerDto tracerDto;
+            var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 tracerDto = new TracerDto
@@ -168,6 +171,7 @@ namespace Wing.APM.FreeSql
         {
             var data = ListenerTracer.GetProperty<SyncStructureAfterEventArgs>(value, "Value");
             TracerDto tracerDto;
+            var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());

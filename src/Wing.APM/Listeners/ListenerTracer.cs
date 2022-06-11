@@ -58,7 +58,7 @@ namespace Wing.APM.Listeners
             string content = string.Empty;
             if (resMsg.Content != null)
             {
-                content = await resMsg.Content.ReadAsStringAsync();
+                   content = await resMsg.Content.ReadAsStringAsync();
             }
 
             return content;

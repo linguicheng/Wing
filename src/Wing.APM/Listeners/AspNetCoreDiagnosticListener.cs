@@ -6,13 +6,13 @@ namespace Wing.APM.Listeners
 {
     public class AspNetCoreDiagnosticListener : IDiagnosticListener
     {
-        private readonly HttpContext context;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
         public string Name => "Microsoft.AspNetCore";
 
         public AspNetCoreDiagnosticListener(IHttpContextAccessor httpContextAccessor)
         {
-            context = httpContextAccessor.HttpContext;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public void OnCompleted()
@@ -29,6 +29,7 @@ namespace Wing.APM.Listeners
             {
                 if (value.Value.GetType().GetProperty("exception").GetValue(value.Value) is Exception exception)
                 {
+                    var context = _httpContextAccessor.HttpContext;
                     if (context != null && exception != null)
                     {
                         var tracerDto = new ListenerTracer()[context.Items[ApmTools.TraceId].ToString()];
