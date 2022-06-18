@@ -3,10 +3,9 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.Configuration.ServiceBuilder;
-using Wing.Auth;
 using System.Linq;
 using System.Security.Claims;
+using Wing;
 
 namespace AspNetCoreService
 {

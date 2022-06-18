@@ -2,11 +2,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.Auth;
-using Wing.Configuration.ServiceBuilder;
-using Wing.GateWay;
-using Wing.Persistence;
-using Wing.RabbitMQ;
+using Wing;
 
 namespace Sample.GateWay
 {

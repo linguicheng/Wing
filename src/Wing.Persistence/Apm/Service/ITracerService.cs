@@ -14,6 +14,12 @@ namespace Wing.Persistence.Apm
 
         Task<PageResult<List<Tracer>>> List(PageModel<TracerSearchDto> dto);
 
-        Task<List<HttpTracerDetail>> HttpDetail(HttpTracerDetailSearchDto dto);
+        Task<PageResult<List<HttpTracer>>> List(PageModel<HttpTracerSearchDto> dto);
+
+        Task<PageResult<List<SqlTracer>>> List(PageModel<SqlTracerSearchDto> dto);
+
+        Task<List<HttpTracerDetail>> HttpDetail(string traceId);
+
+        Task<List<SqlTracerDetail>> SqlDetail(string traceId);
     }
 }

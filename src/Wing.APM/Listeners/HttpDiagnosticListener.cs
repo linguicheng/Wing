@@ -68,6 +68,7 @@ namespace Wing.APM.Listeners
             TracerDto tracerDto;
             var detailId = Guid.NewGuid().ToString();
             var context = _httpContextAccessor.HttpContext;
+            var requestType = (request.Content?.Headers?.ContentType?.MediaType.Contains("application/grpc")).GetValueOrDefault() ? ApmTools.Grpc : ApmTools.Http;
             if (context == null)
             {
                 tracerDto = new TracerDto
@@ -78,7 +79,7 @@ namespace Wing.APM.Listeners
                         ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
                         ServiceUrl = ApmTools.GetServiceUrl(service),
-                        RequestType = ApmTools.Http,
+                        RequestType = requestType,
                         RequestMethod = request.Method.ToString(),
                         RequestTime = DateTime.Now,
                         RequestUrl = request.RequestUri.ToString(),
@@ -104,7 +105,7 @@ namespace Wing.APM.Listeners
             {
                 Id = detailId,
                 TraceId = tracerDto.Tracer.Id,
-                RequestType = ApmTools.Http,
+                RequestType = requestType,
                 RequestMethod = request.Method.ToString(),
                 RequestTime = DateTime.Now,
                 RequestUrl = request.RequestUri.ToString(),

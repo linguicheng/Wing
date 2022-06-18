@@ -55,7 +55,13 @@ namespace Wing.APM
                       }
 
                       _wait = true;
-                      var tracers = ListenerTracer.Data.Where(x => x.IsStop).ToList();
+                      var tracers = ListenerTracer.Data.Where(x => !x.IsStop && (DateTime.Now - x.BeginTime).TotalHours > 12).ToList();
+                      if (tracers != null && tracers.Any())
+                      {
+                          ListenerTracer.Remove(tracers);
+                      }
+
+                      tracers = ListenerTracer.Data.Where(x => x.IsStop).ToList();
                       if (tracers == null || !tracers.Any())
                       {
                           _wait = false;

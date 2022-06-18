@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Wing.APM;
 using Wing.APM.Builder;
 using Wing.APM.Listeners;
 using Wing.Configuration.ServiceBuilder;
 
-namespace Wing.APM
+namespace Wing
 {
     public static class WingBuilderExtensions
     {
@@ -13,7 +14,6 @@ namespace Wing.APM
         {
             wingBuilder.Services.AddSingleton<IDiagnosticListener, HttpDiagnosticListener>();
             wingBuilder.Services.AddSingleton<IDiagnosticListener, AspNetCoreDiagnosticListener>();
-            wingBuilder.Services.AddSingleton<IDiagnosticListener, GrpcDiagnosticListener>();
             wingBuilder.Services.AddSingleton<DiagnsticListenerObserver>();
             wingBuilder.Services.AddSingleton<IHostedService, TracerHostedService>();
             wingBuilder.Services.AddGrpc(x => x.Interceptors.Add<GrpcInterceptor>());

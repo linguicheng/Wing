@@ -42,9 +42,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreService2", "sampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Persistence", "src\Wing.Persistence\Wing.Persistence.csproj", "{F76FC8A5-87A4-4697-85B1-C045AF78386D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Dashboard", "samples\Sample.Dashboard\Sample.Dashboard.csproj", "{51D0CFFC-F79E-44D1-89AD-F2BA6D701D11}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.UI", "samples\Sample.UI\Sample.UI.csproj", "{51D0CFFC-F79E-44D1-89AD-F2BA6D701D11}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Dashboard", "src\Wing.Dashboard\Wing.Dashboard.csproj", "{03967492-4553-4127-8147-F078C69163E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.UI", "src\Wing.UI\Wing.UI.csproj", "{03967492-4553-4127-8147-F078C69163E9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM", "src\Wing.APM\Wing.APM.csproj", "{39249838-46D3-4128-8102-A2E0C70862D8}"
 EndProject
@@ -54,7 +54,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "APM", "APM", "{17A8768A-2F6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Persistence", "Persistence", "{B50660C3-98D8-41CE-A48E-E408A37724B7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.APM.FreeSql", "src\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj", "{C1A8D024-EBFF-4171-9D97-5E07F959EB50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.FreeSql", "src\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj", "{C1A8D024-EBFF-4171-9D97-5E07F959EB50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

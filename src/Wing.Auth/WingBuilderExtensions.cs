@@ -6,9 +6,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using Wing.Auth;
 using Wing.Configuration.ServiceBuilder;
 
-namespace Wing.Auth
+namespace Wing
 {
     public static class WingBuilderExtensions
     {

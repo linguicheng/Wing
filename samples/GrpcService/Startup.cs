@@ -3,10 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.APM;
-using Wing.Auth;
-using Wing.Configuration.ServiceBuilder;
-using Wing.Persistence;
+using Wing;
 
 namespace GrpcService
 {

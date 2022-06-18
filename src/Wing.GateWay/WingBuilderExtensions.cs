@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
+using Wing.GateWay;
 
-namespace Wing.GateWay
+namespace Wing
 {
     public static class WingBuilderExtensions
     {

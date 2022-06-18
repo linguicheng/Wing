@@ -5,10 +5,10 @@ using RabbitMQ.Client;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Converter;
 using Wing.EventBus;
-using Wing.Injection;
+using Wing.RabbitMQ;
 using Wing.ServiceProvider;
 
-namespace Wing.RabbitMQ
+namespace Wing
 {
     public static class WingBuilderExtensions
     {

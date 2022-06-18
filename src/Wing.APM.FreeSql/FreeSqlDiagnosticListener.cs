@@ -21,6 +21,8 @@ namespace Wing.APM.FreeSql
 
         public virtual string Name => "FreeSqlDiagnosticListener";
 
+        public Func<string, bool> DoNotDiagnostic { get; protected set; } = null;
+
         public FreeSqlDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<FreeSqlDiagnosticListener> logger)
         {
             _httpContextAccessor = httpContextAccessor;
@@ -110,6 +112,12 @@ namespace Wing.APM.FreeSql
             if (context == null)
             {
                 tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());
+                if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
+                {
+                    ListenerTracer.Data.Remove(tracerDto);
+                    return;
+                }
+
                 var sqlTracer = tracerDto.SqlTracer;
                 sqlTracer.Exception = data.Exception?.ToString();
                 sqlTracer.EndTime = DateTime.Now;
@@ -121,6 +129,12 @@ namespace Wing.APM.FreeSql
 
             tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
             var traceDetail = tracerDto.SqlTracerDetails.Where(x => x.Id == data.Identifier.ToString()).Single();
+            if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
+            {
+                tracerDto.SqlTracerDetails.Remove(traceDetail);
+                return;
+            }
+
             traceDetail.Exception = data.Exception?.ToString();
             traceDetail.EndTime = DateTime.Now;
             traceDetail.UsedMillSeconds = data.ElapsedMilliseconds;
@@ -175,6 +189,12 @@ namespace Wing.APM.FreeSql
             if (context == null)
             {
                 tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());
+                if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
+                {
+                    ListenerTracer.Data.Remove(tracerDto);
+                    return;
+                }
+
                 var sqlTracer = tracerDto.SqlTracer;
                 sqlTracer.Exception = data.Exception?.ToString();
                 sqlTracer.EndTime = DateTime.Now;
@@ -186,6 +206,12 @@ namespace Wing.APM.FreeSql
 
             tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
             var traceDetail = tracerDto.SqlTracerDetails.Where(x => x.Id == data.Identifier.ToString()).Single();
+            if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
+            {
+                tracerDto.SqlTracerDetails.Remove(traceDetail);
+                return;
+            }
+
             traceDetail.Exception = data.Exception?.ToString();
             traceDetail.EndTime = DateTime.Now;
             traceDetail.UsedMillSeconds = data.ElapsedMilliseconds;

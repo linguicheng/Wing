@@ -11,6 +11,7 @@ namespace Wing.Persistence
         public WingDbFreeSqlDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<WingDbFreeSqlDiagnosticListener> logger)
             : base(httpContextAccessor, logger)
         {
+            DoNotDiagnostic = sql => sql.ToUpper().Contains("APM_");
         }
     }
 }

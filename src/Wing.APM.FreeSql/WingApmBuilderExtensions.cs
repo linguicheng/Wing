@@ -3,9 +3,10 @@ using System.Diagnostics;
 using FreeSql.Aop;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.APM.Builder;
+using Wing.APM.FreeSql;
 using Wing.APM.Listeners;
 
-namespace Wing.APM.FreeSql
+namespace Wing
 {
     public static class WingApmBuilderExtensions
     {

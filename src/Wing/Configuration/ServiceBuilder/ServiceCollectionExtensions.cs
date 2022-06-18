@@ -2,8 +2,9 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Wing.Configuration.ServiceBuilder;
 
-namespace Wing.Configuration.ServiceBuilder
+namespace Wing
 {
     public static class ServiceCollectionExtensions
     {

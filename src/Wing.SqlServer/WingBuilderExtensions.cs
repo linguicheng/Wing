@@ -2,10 +2,11 @@
 using FreeSql;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
+using Wing.Persistence;
 using Wing.Persistence.Apm;
 using Wing.Persistence.GateWay;
 
-namespace Wing.Persistence
+namespace Wing
 {
     public static class WingBuilderExtensions
     {

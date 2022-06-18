@@ -1,10 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Wing.Persistence.Apm;
 
 namespace Wing.Persistence.APM
 {
     public class TracerDto
     {
+        public TracerDto()
+        {
+            BeginTime = DateTime.Now;
+        }
+
         public Tracer Tracer { get; set; }
 
         public HttpTracer HttpTracer { get; set; }
@@ -14,6 +20,8 @@ namespace Wing.Persistence.APM
         public List<HttpTracerDetail> HttpTracerDetails { get; set; }
 
         public List<SqlTracerDetail> SqlTracerDetails { get; set; }
+
+        public DateTime BeginTime { get; private set; }
 
         public bool IsStop { get; set; } = false;
     }

@@ -3,15 +3,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Wing.RabbitMQ;
-using Wing.Configuration.ServiceBuilder;
-using Wing.Auth;
 using System.Linq;
 using System.Security.Claims;
-using Wing.APM;
-using Wing.Persistence;
 using FreeSql;
-using Wing.APM.FreeSql;
+using Wing;
 
 namespace Sample.AspNetCoreService
 {
