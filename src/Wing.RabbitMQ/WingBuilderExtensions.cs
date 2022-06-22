@@ -12,12 +12,12 @@ namespace Wing
 {
     public static class WingBuilderExtensions
     {
-        public static IWingServiceBuilder AddRabbitMQ(this IWingServiceBuilder wingBuilder)
+        public static IWingServiceBuilder AddEventBus(this IWingServiceBuilder wingBuilder)
         {
             return AddConfig(wingBuilder, wingBuilder.GetConfig<Config>("RabbitMQ"));
         }
 
-        public static IWingServiceBuilder AddRabbitMQ(this IWingServiceBuilder wingBuilder, Config config)
+        public static IWingServiceBuilder AddEventBus(this IWingServiceBuilder wingBuilder, Config config)
         {
             return AddConfig(wingBuilder, config);
         }

@@ -16,6 +16,14 @@ namespace Wing.Injection
             Assemblies = AppDomain.CurrentDomain.GetAssemblies();
         }
 
+        public static Type GetType(string name)
+        {
+            return Assemblies.SelectMany(a =>
+              a.GetTypes()
+              .Where(t => t.IsInterface && t.FullName == name))
+              .FirstOrDefault();
+        }
+
         public static void CreateSubscribe(IEventBus eventBus)
         {
             var types = Assemblies

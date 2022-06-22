@@ -4,6 +4,7 @@ using GrpcService;
 using System.Threading.Tasks;
 using Wing.Injection;
 using Wing.Policy;
+using Wing.Saga;
 using Wing.ServiceProvider;
 
 namespace Sample.AspNetCoreService.Policy
@@ -13,6 +14,10 @@ namespace Sample.AspNetCoreService.Policy
         [Policy]
         Task<string> InvokeHello(string name);
         Task<string> InvokeHelloFallback(string name);
+        [Saga]
+        Task<bool> SageTest(bool aa);
+        [Saga]
+        bool SageTest2();
     }
     public class Product : IProduct, ITransient
     {
@@ -47,6 +52,16 @@ namespace Sample.AspNetCoreService.Policy
         public Task<string> InvokeHelloFallback(string name)
         {
             return Task.FromResult("test-fallback");
+        }
+
+        public Task<bool> SageTest(bool aa)
+        {
+            return Task.FromResult(aa);
+        }
+
+        public bool SageTest2()
+        {
+            return true;
         }
     }
 }

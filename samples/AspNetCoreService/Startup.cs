@@ -30,7 +30,7 @@ namespace Sample.AspNetCoreService
                               .Build<SampleWingDbFlag>();
             services.AddSingleton(typeof(IFreeSql<SampleWingDbFlag>), serviceProvider => fsql);
             services.AddSingleton<ITracerService, TracerService>();
-            services.AddWing().AddPersistence().AddRabbitMQ().AddJwt(context =>
+            services.AddWing().AddPersistence().AddEventBus().AddJwt(context =>
             {
                 var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
                 return user == "byron";

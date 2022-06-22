@@ -42,6 +42,18 @@ namespace Sample.AspNetCoreService.Controllers
             _tracerService = tracerService;
         }
 
+        [HttpGet("SagaTest")]
+        public Task<bool> SagaTest(bool aa)
+        {
+            return _product.SageTest(aa);
+        }
+
+        [HttpGet("SagaTest2")]
+        public bool SagaTest2()
+        {
+            return _product.SageTest2();
+        }
+
         [HttpGet]
         [Authorize("Wing")]
         public IEnumerable<WeatherForecast> Get()

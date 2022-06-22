@@ -11,7 +11,15 @@ namespace Wing.Persistence
         public WingDbFreeSqlDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<WingDbFreeSqlDiagnosticListener> logger)
             : base(httpContextAccessor, logger)
         {
-            DoNotDiagnostic = sql => sql.ToUpper().Contains("APM_");
+            DoNotDiagnostic = sql =>
+            {
+                if (string.IsNullOrWhiteSpace(sql))
+                {
+                    return false;
+                }
+
+                return sql.ToUpper().Contains("APM_");
+            };
         }
     }
 }
