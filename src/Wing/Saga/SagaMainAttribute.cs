@@ -7,7 +7,7 @@ using Wing.ServiceProvider;
 namespace Wing.Saga
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class SagaAttribute : AbstractInterceptorAttribute
+    public class SagaMainAttribute : AbstractInterceptorAttribute
     {
         /// <summary>
         /// 事务超时时间，默认不超时（单位：毫秒）
@@ -19,12 +19,13 @@ namespace Wing.Saga
         /// </summary>
         public string CancelMethod { get; set; }
 
-        public SagaAttribute()
+        public SagaMainAttribute()
         {
         }
 
         public override async Task Invoke(AspectContext context, AspectDelegate next)
         {
+            context.AdditionalData.Add("SagaMainId", Guid.NewGuid().ToString());
             await next(context);
             var value = context.ReturnValue;
             if (value is Task<bool> task)

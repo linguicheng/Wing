@@ -10,6 +10,9 @@ using Microsoft.Extensions.Configuration;
 using Wing.Auth;
 using Wing.EventBus;
 using System.Net.Http;
+using Wing.Injection;
+using Wing.ServiceProvider;
+using Wing.Saga;
 
 namespace Sample.AspNetCoreService.Controllers
 {
@@ -43,14 +46,22 @@ namespace Sample.AspNetCoreService.Controllers
         }
 
         [HttpGet("SagaTest")]
+        [SagaMain]
         public Task<bool> SagaTest(bool aa)
         {
-            return _product.SageTest(aa);
+            _product.SageTest(aa);
+            _product.SageTest2();
+            return Task.FromResult(true);
         }
 
         [HttpGet("SagaTest2")]
         public bool SagaTest2()
         {
+            var type = GlobalInjection.GetType("Sample.AspNetCoreService.Policy.IProduct");
+            var mi = type.GetMethod("SageTest");
+            var cc = ServiceLocator.GetService(type);
+            var dd = mi.Invoke(cc, new object[] { false });
+
             return _product.SageTest2();
         }
 

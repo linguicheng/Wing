@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
+using Wing.DynamicProxy;
 using Wing.EventBus;
-using Wing.Policy;
 
 namespace Wing.Injection
 {
@@ -63,6 +63,15 @@ namespace Wing.Injection
                 || u == typeof(ITransient))))
             .ToArray())
             {
+                foreach (var method in type.GetMethods())
+                {
+                    var interceptorAttr = method.GetType().GetCustomAttributes().FirstOrDefault(x => x.GetType().BaseType == typeof(InterceptorAttribute));
+                    if (interceptorAttr == null)
+                    {
+                        continue;
+                    }
+                }
+
                 var interfaces = type.GetInterfaces();
                 if (interfaces.Count() == 1)
                 {
@@ -92,6 +101,54 @@ namespace Wing.Injection
                     else if (interfaces[1] == typeof(ITransient))
                     {
                         services.AddTransient(interfaces[0], type);
+                    }
+                    else if (interfaces[0] == typeof(IScoped))
+                    {
+                        services.AddScoped(interfaces[1], type);
+                    }
+                    else if (interfaces[0] == typeof(ISingleton))
+                    {
+                        services.AddSingleton(interfaces[1], type);
+                    }
+                    else if (interfaces[0] == typeof(ITransient))
+                    {
+                        services.AddTransient(interfaces[1], type);
+                    }
+                }
+            }
+        }
+
+        public static void CreateProxy()
+        {
+            foreach (var type in Assemblies.SelectMany(a =>
+           a.GetTypes()
+           .Where(t => t.IsClass))
+           .ToArray())
+            {
+                var interfaces = type.GetInterfaces();
+                foreach (var i in interfaces)
+                {
+                    foreach (var method in i.GetMethods())
+                    {
+                        var interceptorAttr = method.GetType().GetCustomAttributes().FirstOrDefault(x => x.GetType().BaseType == typeof(InterceptorAttribute));
+                        if (interceptorAttr == null)
+                        {
+                            continue;
+                        }
+                    }
+                }
+
+                if (interfaces.Count() > 0)
+                {
+                    continue;
+                }
+
+                foreach (var method in type.GetMethods())
+                {
+                    var interceptorAttr = method.GetType().GetCustomAttributes().FirstOrDefault(x => x.GetType().BaseType == typeof(InterceptorAttribute));
+                    if (interceptorAttr == null)
+                    {
+                        continue;
                     }
                 }
             }
