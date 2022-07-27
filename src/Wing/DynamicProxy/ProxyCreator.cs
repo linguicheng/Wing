@@ -65,6 +65,8 @@ namespace Wing.DynamicProxy
                 ilGen.Emit(OpCodes.Castclass, typeof(MethodInfo));          // 尝试将引用传递的对象转换为指定的类。
                 ilGen.Emit(OpCodes.Callvirt, typeof(AspectContext).GetMethod($"set_{nameof(AspectContext.ProxyMethod)}"));
             }
+
+            return type;
         }
 
         private static void CreateConstructor(Type type, FieldBuilder aspectContextField, TypeBuilder typeBuilder, Dictionary<Type, FieldBuilder> attrFields)
