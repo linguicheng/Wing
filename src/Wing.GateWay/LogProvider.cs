@@ -73,8 +73,10 @@ namespace Wing.GateWay
                 {
                     request.EnableBuffering();
                     request.Body.Position = 0;
-                    using var reader = new StreamReader(request.Body);
-                    log.RequestValue = await reader.ReadToEndAsync();
+                    using (var reader = new StreamReader(request.Body))
+                    {
+                        log.RequestValue = await reader.ReadToEndAsync();
+                    }
                 }
 
                 if (config.UseEventBus)

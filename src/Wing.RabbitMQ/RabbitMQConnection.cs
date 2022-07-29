@@ -15,9 +15,13 @@ namespace Wing.RabbitMQ
 
         public virtual void Create(Action<IModel> channel)
         {
-            using var conn = Connect();
-            using var model = conn.CreateModel();
-            channel(model);
+            using (var conn = Connect())
+            {
+                using (var model = conn.CreateModel())
+                {
+                    channel(model);
+                }
+            }
         }
 
         protected bool IsConnected
