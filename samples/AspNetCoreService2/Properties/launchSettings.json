@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AspNetCoreService": {
+    "AspNetCoreService2": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",

@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "GrpcService": {
+    "GrpcService2": {
       "commandName": "Project",
       "launchBrowser": false,
       "applicationUrl": "http://localhost:5002",
