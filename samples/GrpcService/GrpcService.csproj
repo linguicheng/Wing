@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.APM\Wing.APM.csproj" />
-    <ProjectReference Include="..\..\src\Wing.Auth\Wing.Auth.csproj" />
+	<ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
   </ItemGroup>

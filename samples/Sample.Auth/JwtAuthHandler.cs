@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 
-namespace Wing.Auth
+namespace Sample.Auth
 {
     public class JwtAuthHandler : AuthorizationHandler<JwtAuthRequirement>
     {

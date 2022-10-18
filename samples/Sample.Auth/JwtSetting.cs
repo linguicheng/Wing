@@ -1,4 +1,4 @@
-﻿namespace Wing.Auth
+﻿namespace Sample.Auth
 {
     public class JwtSetting
     {

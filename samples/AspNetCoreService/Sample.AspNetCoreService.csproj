@@ -21,14 +21,13 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj" />
-    <ProjectReference Include="..\..\src\Wing.Auth\Wing.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.APM\Wing.APM.csproj" />
-    <ProjectReference Include="..\..\src\Wing.NLog\Wing.NLog.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing.Redis\Wing.Redis.csproj" />
     <ProjectReference Include="..\..\src\Wing\Wing.csproj" />
     <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
+    <ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
   </ItemGroup>
 
 </Project>

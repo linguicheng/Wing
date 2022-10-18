@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Wing.Auth;
+using Sample.Auth;
 using Wing.Configuration.ServiceBuilder;
 
 namespace Wing

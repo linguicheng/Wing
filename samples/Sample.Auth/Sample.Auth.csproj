@@ -3,7 +3,7 @@
   <Import Project="..\..\build\common.props" />
 
   <ItemGroup>
-    <ProjectReference Include="..\Wing\Wing.csproj" />
+    <ProjectReference Include="..\..\src\Wing\Wing.csproj" />
   </ItemGroup>
 
 </Project>

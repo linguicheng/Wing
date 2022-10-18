@@ -4,7 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Wing.Auth
+namespace Sample.Auth
 {
     public class JwtAuth : IAuth
     {

@@ -36,8 +36,6 @@ namespace Wing.Configuration.ServiceBuilder
             {
                 Services.AddSingleton<IHostedService, ConfigurationHostedService>();
             }
-
-            GlobalInjection.CreateProxy();
         }
 
         public T GetConfig<T>(string key)

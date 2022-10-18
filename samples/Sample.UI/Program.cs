@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Wing.Configuration.HostBuilder;
 using Wing.Consul;
-using Wing.NLog;
 
 namespace Sample.UI
 {
@@ -18,6 +17,6 @@ namespace Sample.UI
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul()).AddNLog();
+                }).AddWing(builder => builder.AddConsul());
     }
 }

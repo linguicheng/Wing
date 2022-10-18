@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
-using Wing.Auth;
+using Sample.Auth;
 
 namespace GrpcService
 {

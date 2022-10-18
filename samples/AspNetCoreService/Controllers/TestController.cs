@@ -7,7 +7,7 @@ using Sample.AspNetCoreService.Policy;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Wing.Auth;
+using Sample.Auth;
 using Wing.EventBus;
 using System.Net.Http;
 using Wing.Injection;
@@ -43,26 +43,6 @@ namespace Sample.AspNetCoreService.Controllers
             _auth = auth;
             _configuration = configuration;
             _tracerService = tracerService;
-        }
-
-        [HttpGet("SagaTest")]
-        [SagaMain]
-        public Task<bool> SagaTest(bool aa)
-        {
-            _product.SageTest(aa);
-            _product.SageTest2();
-            return Task.FromResult(true);
-        }
-
-        [HttpGet("SagaTest2")]
-        public bool SagaTest2()
-        {
-            var type = GlobalInjection.GetType("Sample.AspNetCoreService.Policy.IProduct");
-            var mi = type.GetMethod("SageTest");
-            var cc = ServiceLocator.GetService(type);
-            var dd = mi.Invoke(cc, new object[] { false });
-
-            return _product.SageTest2();
         }
 
         [HttpGet]

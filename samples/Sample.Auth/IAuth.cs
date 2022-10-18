@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace Wing.Auth
+namespace Sample.Auth
 {
     public interface IAuth
     {
