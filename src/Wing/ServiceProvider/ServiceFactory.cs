@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wing.Exceptions;
+using Wing.Injection;
 using Wing.LoadBalancer;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.ServiceProvider
 {
-    public class ServiceFactory : IServiceFactory
+    public class ServiceFactory : IServiceFactory, ISingleton
     {
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
         private readonly ILogger<ServiceFactory> _logger;

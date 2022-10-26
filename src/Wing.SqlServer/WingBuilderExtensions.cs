@@ -20,8 +20,6 @@ namespace Wing
                               .Build<WingDbFlag>().Map();
             WingDbApmBuilder.AddFreeSql(wingBuilder.Services, fsql);
             wingBuilder.Services.AddSingleton(typeof(IFreeSql<WingDbFlag>), serviceProvider => fsql);
-            wingBuilder.Services.AddSingleton<ILogService, LogService>();
-            wingBuilder.Services.AddSingleton<ITracerService, TracerService>();
             wingBuilder.Services.AddFreeRepository();
             return wingBuilder;
         }

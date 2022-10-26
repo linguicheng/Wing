@@ -1,8 +1,9 @@
 ﻿using System.Collections.Generic;
+using Wing.Injection;
 
 namespace Wing.LoadBalancer
 {
-    public class LoadBalancerCache : ILoadBalancerCache
+    public class LoadBalancerCache : ILoadBalancerCache, ISingleton
     {
         private readonly Dictionary<string, LoadBalancerConfig> _loadBalancerConfigs;
 

@@ -12,7 +12,6 @@ using Wing.EventBus;
 using System.Net.Http;
 using Wing.Injection;
 using Wing.ServiceProvider;
-using Wing.Saga;
 
 namespace Sample.AspNetCoreService.Controllers
 {

@@ -20,6 +20,7 @@ namespace Wing.GateWay.EventBus
                 if (result <= 0)
                 {
                     logger.LogError($"数据库保存失败，请求日志：{json.Serialize(log)}");
+                    return false;
                 }
             }
             catch (Exception ex)

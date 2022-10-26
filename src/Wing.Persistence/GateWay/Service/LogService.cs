@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Wing.Injection;
 using Wing.Model;
 using Wing.Result;
 
 namespace Wing.Persistence.GateWay
 {
-    public class LogService : ILogService
+    public class LogService : ILogService, ISingleton
     {
         private readonly IFreeSql<WingDbFlag> _fsql;
 

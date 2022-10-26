@@ -1,5 +1,6 @@
 ﻿using Wing.Persistence.Apm;
 using Wing.Persistence.GateWay;
+using Wing.Persistence.Saga;
 
 namespace Wing.Persistence
 {
@@ -100,6 +101,28 @@ namespace Wing.Persistence
                 eb.Property(x => x.Policy).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.AuthKey).HasColumnType("varchar(8000)");
                 eb.Property(x => x.Token).HasColumnType("varchar(8000)");
+            });
+            #endregion
+
+            #region Saga entity config
+            fsql.CodeFirst.Entity<SagaTran>(eb =>
+            {
+                eb.ToTable("Saga_Tran");
+                eb.HasIndex(x => x.CreatedTime).HasName("IX_CreatedTime");
+                eb.HasIndex(x => x.Name).HasName("IX_Name");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.Description).HasColumnType("nvarchar(800)");
+            });
+            fsql.CodeFirst.Entity<SagaTranUnit>(eb =>
+            {
+                eb.ToTable("Saga_TranUnit");
+                eb.HasIndex(x => x.CreatedTime).HasName("IX_CreatedTime");
+                eb.HasIndex(x => x.Name).HasName("IX_Name");
+                eb.HasIndex(x => x.TranId).HasName("IX_TranId");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.Description).HasColumnType("nvarchar(800)");
             });
             #endregion
             return fsql;

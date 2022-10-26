@@ -1,4 +1,4 @@
-﻿namespace Wing.Saga
+﻿namespace Wing.Saga.Client
 {
     public class SagaResult
     {

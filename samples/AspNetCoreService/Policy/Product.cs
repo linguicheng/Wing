@@ -4,7 +4,6 @@ using GrpcService;
 using System.Threading.Tasks;
 using Wing.Injection;
 using Wing.Policy;
-using Wing.Saga;
 using Wing.ServiceProvider;
 
 namespace Sample.AspNetCoreService.Policy

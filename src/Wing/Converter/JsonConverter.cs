@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Wing.Injection;
 
 namespace Wing.Converter
 {
-    public class JsonConverter : IJson
+    public class JsonConverter : IJson, ISingleton
     {
         public T Deserialize<T>(string value)
         {
