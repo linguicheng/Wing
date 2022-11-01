@@ -112,6 +112,7 @@ namespace Wing.Persistence
                 eb.HasIndex(x => x.Name).HasName("IX_Name");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
                 eb.Property(x => x.Description).HasColumnType("nvarchar(800)");
             });
             fsql.CodeFirst.Entity<SagaTranUnit>(eb =>
@@ -122,7 +123,10 @@ namespace Wing.Persistence
                 eb.HasIndex(x => x.TranId).HasName("IX_TranId");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.ParamsNamespace).HasColumnType("varchar(800)");
+                eb.Property(x => x.ParamsValue).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.Description).HasColumnType("nvarchar(800)");
+                eb.Property(x => x.ErrorMsg).HasColumnType("nvarchar(2000)");
             });
             #endregion
             return fsql;

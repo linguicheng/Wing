@@ -5,10 +5,10 @@
         /// <summary>
         /// http服务
         /// </summary>
-        Http,
+        Http = 0,
         /// <summary>
         /// grpc服务
         /// </summary>
-        Grpc
+        Grpc = 1
     }
 }

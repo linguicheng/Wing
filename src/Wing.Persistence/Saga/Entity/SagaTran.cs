@@ -1,6 +1,7 @@
 ﻿using System;
 using FreeSql.DataAnnotations;
 using Wing.EventBus;
+using Wing.ServiceProvider.Config;
 
 namespace Wing.Persistence.Saga
 {
@@ -9,19 +10,32 @@ namespace Wing.Persistence.Saga
         [Column(IsPrimary = true)]
         public string Id { get; set; }
 
+        /// <summary>
+        /// 事务名称
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// 服务名称
+        /// </summary>
+        public string ServiceName { get; set; }
+
+        /// <summary>
+        /// 服务类别：grpc or http
+        /// </summary>
+        public ServiceOptions ServiceType { get; set; }
 
         public TranStatus Status { get; set; }
 
         public TranPolicy Policy { get; set; }
 
         /// <summary>
-        /// 执行次数
+        /// 向前恢复执行次数
         /// </summary>
         public int ExecutedCount { get; set; }
 
         /// <summary>
-        /// 回滚次数
+        /// 向后恢复回滚次数
         /// </summary>
         public int RollbackCount { get; set; }
 
@@ -41,9 +55,19 @@ namespace Wing.Persistence.Saga
         public DateTime CreatedTime { get; set; }
 
         /// <summary>
-        /// 更新时间
+        /// 开始执行时间
         /// </summary>
-        public DateTime UpdatedTime { get; set; }
+        public DateTime BeginTime { get; set; }
+
+        /// <summary>
+        /// 结束执行时间
+        /// </summary>
+        public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// 耗时(毫秒)
+        /// </summary>
+        public long UsedMillSeconds { get; set; }
 
         public string Description { get; set; }
     }

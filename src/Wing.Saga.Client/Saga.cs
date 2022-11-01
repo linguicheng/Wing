@@ -17,12 +17,16 @@ namespace Wing.Saga.Client
         public static SagaProvider Start(string name, SagaOptions sagaOptions = null)
         {
             name.IsNotNull();
+            var service = ServiceLocator.CurrentService;
             SagaTran sagaTran = new SagaTran
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
-                Status=TranStatus.Executing,
+                ServiceName = service.Name,
+                ServiceType = service.Option,
+                Status = TranStatus.Executing,
                 CreatedTime = DateTime.Now,
+                BeginTime = DateTime.Now,
             };
             if (sagaOptions == null)
             {
@@ -41,7 +45,7 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
             ServiceLocator.GetRequiredService<IEventBus>().Publish(sagaTran);
-            return new SagaProvider(tranId);
+            return new SagaProvider(sagaTran);
         }
     }
 }

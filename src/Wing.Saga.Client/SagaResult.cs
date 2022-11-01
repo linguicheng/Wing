@@ -11,6 +11,6 @@
         /// </summary>
         public string Msg { get; set; }
 
-        public object Data { get; set; }
+        public dynamic Data { get; set; }
     }
 }

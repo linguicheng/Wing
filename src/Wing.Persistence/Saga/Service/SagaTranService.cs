@@ -24,7 +24,11 @@ namespace Wing.Persistence.Saga
 
         public Task<int> UpdateStatus(UpdateStatusDto dto)
         {
-           return _fsql.Update<SagaTran>(dto.Id).Set(x => x.Status, dto.Status).ExecuteAffrowsAsync();
+           return _fsql.Update<SagaTran>(dto.Id)
+                .Set(x => x.Status, dto.Status)
+                .Set(x => x.EndTime, dto.EndTime)
+                .Set(x => x.UsedMillSeconds, dto.UsedMillSeconds)
+                .ExecuteAffrowsAsync();
         }
     }
 }
