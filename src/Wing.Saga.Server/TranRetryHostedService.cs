@@ -5,22 +5,29 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Wing.Persistence.Saga;
 
 namespace Wing.Saga.Server
 {
-    public class SagaTranHostedService : BackgroundService
+    public class TranRetryHostedService : BackgroundService
     {
         private static readonly object _lock = new object();
-        private readonly ILogger<SagaTranHostedService> _logger;
+        private readonly ILogger<TranRetryHostedService> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ISagaTranService _sagaTranService;
+        private readonly ISagaTranUnitService _unitService;
         private Timer _timer;
         private bool _wait = false;
 
-        public SagaTranHostedService(ILogger<SagaTranHostedService> logger,
-            IConfiguration configuration)
+        public TranRetryHostedService(ILogger<TranRetryHostedService> logger,
+            IConfiguration configuration,
+            ISagaTranService sagaTranService,
+            ISagaTranUnitService unitService)
         {
             _logger = logger;
             _configuration = configuration;
+            _sagaTranService = sagaTranService;
+            _unitService = unitService;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -38,8 +45,8 @@ namespace Wing.Saga.Server
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var persistenceSeconds = _configuration["Apm:PersistenceSeconds"];
-            var seconds = string.IsNullOrWhiteSpace(persistenceSeconds) ? 3 : Convert.ToDouble(persistenceSeconds);
+            var retrySeconds = _configuration["Saga:RetrySeconds"];
+            var seconds = string.IsNullOrWhiteSpace(retrySeconds) ? 300 : Convert.ToDouble(retrySeconds);
             _timer = new Timer(x =>
               {
                   lock (_lock)
@@ -50,10 +57,24 @@ namespace Wing.Saga.Server
                       }
 
                       _wait = true;
-                     
+
                       try
                       {
-                         
+                          var failedTrans = _sagaTranService.GetFailedData();
+                          if (failedTrans == null || !failedTrans.Any())
+                          {
+                              return;
+                          }
+
+                          foreach (var tran in failedTrans)
+                          {
+                              var failedUnits = _unitService.GetFailedData(tran.Id);
+                              if (failedUnits == null || !failedUnits.Any())
+                              {
+                                  continue;
+                              }
+                          }
+
                       }
                       catch (Exception ex)
                       {

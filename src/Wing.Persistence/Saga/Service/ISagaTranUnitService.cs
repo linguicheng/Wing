@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Wing.Persistence.Saga
 {
@@ -6,8 +7,10 @@ namespace Wing.Persistence.Saga
     {
         Task<int> Add(SagaTranUnit entity);
 
-        Task<int> UpdateStatus(UpdateStatusDto dto);
+        Task<int> UpdateStatus(UpdateStatusEvent dto);
 
         Task<bool> Any(string id);
+
+        List<SagaTranUnit> GetFailedData(string tranId);
     }
 }

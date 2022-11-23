@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Wing.Injection;
 
 namespace Wing.Persistence.Saga
@@ -22,13 +23,25 @@ namespace Wing.Persistence.Saga
             return _fsql.Select<SagaTran>().AnyAsync(x => x.Id == id);
         }
 
-        public Task<int> UpdateStatus(UpdateStatusDto dto)
+        public List<SagaTran> GetFailedData()
         {
-           return _fsql.Update<SagaTran>(dto.Id)
-                .Set(x => x.Status, dto.Status)
-                .Set(x => x.EndTime, dto.EndTime)
-                .Set(x => x.UsedMillSeconds, dto.UsedMillSeconds)
-                .ExecuteAffrowsAsync();
+            return _fsql.Select<SagaTran>().Where(x => x.Status == TranStatus.Failed).ToList();
+        }
+
+        public Task<int> UpdateStatus(UpdateStatusEvent dto)
+        {
+            return _fsql.Update<SagaTran>(dto.Id)
+                 .Set(x => x.Status, dto.Status)
+                 .Set(x => x.EndTime, dto.EndTime)
+                 .Set(x => x.UsedMillSeconds, dto.UsedMillSeconds)
+                 .ExecuteAffrowsAsync();
+        }
+
+        public Task<int> UpdateStatus(string id, TranStatus status)
+        {
+            return _fsql.Update<SagaTran>(id)
+                 .Set(x => x.Status, status)
+                 .ExecuteAffrowsAsync();
         }
     }
 }

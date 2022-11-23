@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 
@@ -31,6 +32,25 @@ namespace Wing.Converter
             return BuildConfig(bytes)
                 .AsEnumerable()
                 .ToDictionary(p => p.Key, p => p.Value);
+        }
+
+        public static byte[] ObjectToBytes(object obj)
+        {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                var formatter = new BinaryFormatter();
+                formatter.Serialize(ms, obj);
+                return ms.GetBuffer();
+            }
+        }
+
+        public static object BytesToObject(byte[] bytes)
+        {
+            using (MemoryStream ms = new MemoryStream(bytes))
+            {
+                var formatter = new BinaryFormatter();
+                return formatter.Deserialize(ms);
+            }
         }
     }
 }

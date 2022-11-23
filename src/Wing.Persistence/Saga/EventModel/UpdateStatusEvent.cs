@@ -3,7 +3,7 @@ using Wing.EventBus;
 
 namespace Wing.Persistence.Saga
 {
-    public class UpdateStatusDto : EventMessage
+    public class UpdateStatusEvent : EventMessage
     {
         public string Id { get; set; }
 

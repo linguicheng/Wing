@@ -1,8 +1,8 @@
 ﻿using System;
-using Wing.EventBus;
-using Wing.ServiceProvider;
 using Wing.Converter;
+using Wing.EventBus;
 using Wing.Persistence.Saga;
+using Wing.ServiceProvider;
 
 namespace Wing.Saga.Client
 {
@@ -11,8 +11,8 @@ namespace Wing.Saga.Client
         /// <summary>
         /// 开始执行Saga事务，默认向前恢复策略
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
+        /// <param name="name">事务名称</param>
+        /// <param name="sagaOptions">其他选项</param>
         /// <returns></returns>
         public static SagaProvider Start(string name, SagaOptions sagaOptions = null)
         {
@@ -44,8 +44,9 @@ namespace Wing.Saga.Client
                 sagaTran.BreakerCount = sagaOptions.BreakerCount;
                 sagaTran.Description = sagaOptions.Description;
             }
+
             ServiceLocator.GetRequiredService<IEventBus>().Publish(sagaTran);
-            return new SagaProvider(sagaTran);
+            return new SagaProvider(sagaTran, 0, null);
         }
     }
 }

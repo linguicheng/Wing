@@ -13,6 +13,10 @@
         /// <summary>
         /// 执行失败
         /// </summary>
-        Failed = 2
+        Failed = 2,
+        /// <summary>
+        /// 已取消
+        /// </summary>
+        Cancelled = 3
     }
 }

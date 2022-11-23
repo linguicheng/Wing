@@ -19,7 +19,7 @@ namespace Wing.Injection
         {
             return Assemblies.SelectMany(a =>
               a.GetTypes()
-              .Where(t => t.IsInterface && t.FullName == name))
+              .Where(t => t.FullName == name))
               .FirstOrDefault();
         }
 

@@ -9,9 +9,9 @@ using Wing.Persistence.Saga;
 
 namespace Wing.Saga.Server
 {
-    public class UpdateTranStatusConsumer : ISubscribe<UpdateTranStatusDto>
+    public class UpdateTranStatusConsumer : ISubscribe<UpdateTranStatusEvent>
     {
-        public Task<bool> Consume(UpdateTranStatusDto eventMessage)
+        public Task<bool> Consume(UpdateTranStatusEvent eventMessage)
         {
             return Scoped.Create(async scoped =>
             {

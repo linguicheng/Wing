@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
@@ -8,67 +9,109 @@ namespace Wing.Saga.Client
 {
     public class SagaProvider
     {
-        public SagaResult Result { get; set; }
-        private readonly SagaTran Tran;
-        private int PreviousOrder;
+        private readonly SagaTran _tran;
+
         private readonly IEventBus _eventBus;
+
+        private readonly ILogger<SagaProvider> _logger;
+
         private readonly IJson _json;
-        public SagaProvider(SagaTran tran, int previousOrder = 0)
+
+        private SagaResult _previousResult;
+
+        private int _previousOrder;
+
+        public SagaProvider(SagaTran tran, int previousOrder, SagaResult previousResult)
         {
-            Tran = tran;
-            PreviousOrder = previousOrder;
+            _tran = tran;
+            _previousOrder = previousOrder;
             _eventBus = ServiceLocator.GetRequiredService<IEventBus>();
+            _logger = ServiceLocator.GetRequiredService<ILogger<SagaProvider>>();
+            _json = ServiceLocator.GetRequiredService<IJson>();
+            _previousResult = previousResult;
         }
 
         public SagaProvider Then<TSagaUnit, TUnitModel>(TSagaUnit sagaUnit, TUnitModel unitModel)
             where TSagaUnit : SagaUnit<TUnitModel>, new()
             where TUnitModel : UnitModel, new()
         {
-            if (Tran.Status == TranStatus.Failed)
-            {
-                return new SagaProvider(Tran, PreviousOrder);
-            }
-
-            PreviousOrder++;
+            _previousOrder++;
             var tranUnit = new SagaTranUnit
             {
                 Id = Guid.NewGuid().ToString(),
-                TranId = Tran.Id,
+                TranId = _tran.Id,
                 CreatedTime = DateTime.Now,
                 BeginTime = DateTime.Now,
                 Description = unitModel.Description,
                 Name = unitModel.Name,
-                OrderNo = PreviousOrder,
-                ParamsValue = _json.Serialize(unitModel),
-                ParamsNamespace = typeof(TUnitModel).FullName
+                OrderNo = _previousOrder,
+                ParamsValue = DataConverter.ObjectToBytes(unitModel),
+                UnitNamespace = typeof(TSagaUnit).FullName
             };
-            var result = sagaUnit.Commit(unitModel);
-            Tran.Status = tranUnit.Status = result.Success ? TranStatus.Success : TranStatus.Failed;
+
+            if (_tran.Status == TranStatus.Failed)
+            {
+                tranUnit.EndTime = DateTime.Now;
+                tranUnit.UsedMillSeconds = 0;
+                tranUnit.Status = TranStatus.Failed;
+                Publish(tranUnit, "事务单元");
+                return new SagaProvider(_tran, _previousOrder, _previousResult);
+            }
+
+            SagaResult result;
+            try
+            {
+                result = sagaUnit.Commit(unitModel, _previousResult).Result;
+            }
+            catch (Exception ex)
+            {
+                result = new SagaResult
+                {
+                    Success = false,
+                    Msg = ex.Message
+                };
+                _logger.LogError(ex, "Saga提交事务单元异常");
+            }
+
+            _tran.Status = tranUnit.Status = result.Success ? TranStatus.Success : TranStatus.Failed;
             tranUnit.ErrorMsg = result.Msg;
             tranUnit.EndTime = DateTime.Now;
             tranUnit.UsedMillSeconds = Convert.ToInt64((tranUnit.EndTime - tranUnit.BeginTime).TotalMilliseconds);
-            Result = result;
-            _eventBus.Publish(tranUnit);
-            // 保存事务单元执行结果到数据库
-            return new SagaProvider(Tran, PreviousOrder);
+            _previousResult = result;
+            Publish(tranUnit, "事务单元");
+            return new SagaProvider(_tran, _previousOrder, _previousResult);
         }
 
         public SagaResult End()
         {
-            if (Tran.Status == TranStatus.Executing)
+            if (_tran.Status == TranStatus.Executing)
             {
                 return null;
             }
-            Tran.EndTime = DateTime.Now;
-            Tran.UsedMillSeconds = Convert.ToInt64((Tran.EndTime - Tran.BeginTime).TotalMilliseconds);
-            _eventBus.Publish(new UpdateTranStatusDto
+
+            _tran.EndTime = DateTime.Now;
+            _tran.UsedMillSeconds = Convert.ToInt64((_tran.EndTime - _tran.BeginTime).TotalMilliseconds);
+            Publish(new UpdateTranStatusEvent
             {
-                Id = Tran.Id,
+                Id = _tran.Id,
                 EndTime = DateTime.Now,
-                Status = Tran.Status,
-                UsedMillSeconds = Convert.ToInt64((Tran.EndTime - Tran.BeginTime).TotalMilliseconds)
-            });
-            return Result;
+                Status = _tran.Status,
+                UsedMillSeconds = Convert.ToInt64((_tran.EndTime - _tran.BeginTime).TotalMilliseconds)
+            }, "事务");
+            return _previousResult;
+        }
+
+        private void Publish(EventMessage message, string errorMsg)
+        {
+            try
+            {
+                _eventBus.Publish(message);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Saga发布{0}消息异常，内容为：{1}", errorMsg, _json.Serialize(message));
+                throw;
+            }
         }
     }
 }

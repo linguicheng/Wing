@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package Wing.Saga;
+
+service TranRetry {
+  rpc Commit (RetryData) returns (ResponseData);
+  rpc Cancel (RetryData) returns (ResponseData);
+}
+
+message RetryData{
+	string tranId = 1;
+	repeated RetryTranUnit sagaTranUnits=2;
+}
+
+message RetryTranUnit {
+  string id = 1;
+  bytes paramsValue = 2;
+  string unitNamespace = 3;
+}
+
+message ResponseData {
+  bool success = 1;
+  string msg = 2;
+}
+

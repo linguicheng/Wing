@@ -20,12 +20,12 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 向前恢复执行次数
         /// </summary>
-        public int ExecutedCount { get; set; }
+        public int CommittedCount { get; set; }
 
         /// <summary>
         /// 向后恢复回滚次数
         /// </summary>
-        public int RollbackCount { get; set; }
+        public int CancelledCount { get; set; }
 
         /// <summary>
         /// 创建时间
@@ -48,14 +48,14 @@ namespace Wing.Persistence.Saga
         public long UsedMillSeconds { get; set; }
 
         /// <summary>
-        /// 参数命名空间
+        /// 事务单元命名空间
         /// </summary>
-        public string ParamsNamespace { get; set; }
+        public string UnitNamespace { get; set; }
 
         /// <summary>
         /// 参数值
         /// </summary>
-        public string ParamsValue { get; set; }
+        public byte[] ParamsValue { get; set; }
 
         public string Description { get; set; }
 

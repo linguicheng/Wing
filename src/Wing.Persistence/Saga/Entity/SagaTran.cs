@@ -32,12 +32,12 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 向前恢复执行次数
         /// </summary>
-        public int ExecutedCount { get; set; }
+        public int CommittedCount { get; set; }
 
         /// <summary>
         /// 向后恢复回滚次数
         /// </summary>
-        public int RollbackCount { get; set; }
+        public int CancelledCount { get; set; }
 
         /// <summary>
         /// 熔断条件（重试指定次数失败后，则不再重试）
