@@ -1,6 +1,5 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Wing.Configuration.ServiceBuilder
@@ -9,10 +8,6 @@ namespace Wing.Configuration.ServiceBuilder
     {
         IServiceCollection Services { get; }
 
-        IConfiguration Configuration { get; }
-
-        Action<IApplicationBuilder> App { get; set; }
-
-        T GetConfig<T>(string key);
+        Action<IApplicationBuilder> AppBuilder { get; set; }
     }
 }

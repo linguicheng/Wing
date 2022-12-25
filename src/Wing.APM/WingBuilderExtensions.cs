@@ -18,7 +18,7 @@ namespace Wing
             wingBuilder.Services.AddSingleton<IHostedService, TracerHostedService>();
             wingBuilder.Services.AddGrpc(x => x.Interceptors.Add<GrpcInterceptor>());
             wingApmBuilder?.Invoke(new WingApmBuilder(wingBuilder));
-            wingBuilder.App += new WingStartupFilter().Configure();
+            wingBuilder.AppBuilder += new WingStartupFilter().Configure();
             return wingBuilder;
         }
     }

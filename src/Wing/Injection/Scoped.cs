@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Wing.ServiceProvider;
 
 namespace Wing.Injection
 {
@@ -14,7 +13,7 @@ namespace Wing.Injection
                 throw new ArgumentNullException(nameof(func));
             }
 
-            var scoped = ServiceLocator.GetService<IServiceScopeFactory>().CreateScope();
+            var scoped = App.GetService<IServiceScopeFactory>().CreateScope();
             return func(scoped);
         }
 
@@ -25,7 +24,7 @@ namespace Wing.Injection
                 throw new ArgumentNullException(nameof(func));
             }
 
-            var scoped = ServiceLocator.GetService<IServiceScopeFactory>().CreateScope();
+            var scoped = App.GetService<IServiceScopeFactory>().CreateScope();
             return func(scoped);
         }
 
@@ -36,7 +35,7 @@ namespace Wing.Injection
                 throw new ArgumentNullException(nameof(action));
             }
 
-            var scoped = ServiceLocator.GetService<IServiceScopeFactory>().CreateScope();
+            var scoped = App.GetService<IServiceScopeFactory>().CreateScope();
             action(scoped);
         }
 
@@ -47,7 +46,7 @@ namespace Wing.Injection
                 throw new ArgumentNullException(nameof(func));
             }
 
-            var scoped = ServiceLocator.GetService<IServiceScopeFactory>().CreateScope();
+            var scoped = App.GetService<IServiceScopeFactory>().CreateScope();
             return func(scoped);
         }
     }

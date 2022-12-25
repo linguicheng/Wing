@@ -41,7 +41,7 @@ namespace Wing.GateWay.Middleware
             var context = serviceContext.HttpContext;
             try
             {
-                var resMsg = await _serviceFactory.HttpServiceInvoke(serviceContext.ServiceName, async serviceAddr =>
+                var resMsg = await _serviceFactory.HttpServiceInvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
                     var reqMsg = context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);

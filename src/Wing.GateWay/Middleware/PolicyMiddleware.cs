@@ -106,7 +106,7 @@ namespace Wing.GateWay.Middleware
 
             var resMsg = await policy.ExecuteAsync(async () =>
             {
-                return await _serviceFactory.HttpServiceInvoke(serviceContext.ServiceName, async serviceAddr =>
+                return await _serviceFactory.HttpServiceInvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
                     var reqMsg = serviceContext.HttpContext.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);

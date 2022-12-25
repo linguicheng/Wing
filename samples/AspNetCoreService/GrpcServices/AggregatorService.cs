@@ -1,11 +1,4 @@
-﻿using Grpc.Core;
-using GrpcService;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Sample.AspNetCoreService.GrpcServices
+﻿namespace Sample.AspNetCoreService.GrpcServices
 {
     public class AggregatorService
     {

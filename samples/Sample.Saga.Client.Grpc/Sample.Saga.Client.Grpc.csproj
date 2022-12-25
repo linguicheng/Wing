@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\healthCheck.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Grpc.AspNetCore" Version="2.23.1" />
+	</ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\src\Wing.Saga.Client\Wing.Saga.Client.csproj" />
+    <ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
+  </ItemGroup>
+</Project>

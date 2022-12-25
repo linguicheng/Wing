@@ -9,7 +9,7 @@
         /// <summary>
         /// 消息提示
         /// </summary>
-        public string Msg { get; set; }
+        public string Msg { get; set; } = string.Empty;
 
         public dynamic Data { get; set; }
     }

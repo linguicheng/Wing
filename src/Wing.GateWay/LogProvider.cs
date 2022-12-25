@@ -12,7 +12,6 @@ using Wing.Converter;
 using Wing.EventBus;
 using Wing.GateWay.Config;
 using Wing.Persistence.GateWay;
-using Wing.ServiceProvider;
 
 namespace Wing.GateWay
 {
@@ -81,11 +80,11 @@ namespace Wing.GateWay
 
                 if (config.UseEventBus)
                 {
-                    ServiceLocator.GetRequiredService<IEventBus>().Publish(log);
+                    App.GetRequiredService<IEventBus>().Publish(log);
                 }
                 else
                 {
-                    var result = await ServiceLocator.GetRequiredService<ILogService>().Add(log);
+                    var result = await App.GetRequiredService<ILogService>().Add(log);
                     if (result <= 0)
                     {
                         _logger.LogInformation($"数据库保存失败，请求日志：{_json.Serialize(log)}");

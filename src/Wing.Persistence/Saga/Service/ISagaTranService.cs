@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Wing.Model;
+using Wing.Result;
 
 namespace Wing.Persistence.Saga
 {
@@ -13,6 +15,12 @@ namespace Wing.Persistence.Saga
 
         List<SagaTran> GetFailedData();
 
+        Task<int> RetryCommit(RetryCommitTranEvent dto);
+
+        Task<int> RetryCancel(RetryCancelTranEvent dto);
+
         Task<int> UpdateStatus(string id, TranStatus status);
+
+        Task<PageResult<List<SagaTran>>> List(PageModel<SagaTranSearchDto> dto);
     }
 }

@@ -21,7 +21,7 @@ namespace Wing
             {
                 options.SuppressModelStateInvalidFilter = true;
             });
-            wingBuilder.App += new WingStartupFilter().Configure();
+            wingBuilder.AppBuilder += new WingStartupFilter().Configure();
             return wingBuilder;
         }
     }

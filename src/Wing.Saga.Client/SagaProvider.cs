@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
-using Wing.ServiceProvider;
 
 namespace Wing.Saga.Client
 {
@@ -25,9 +24,9 @@ namespace Wing.Saga.Client
         {
             _tran = tran;
             _previousOrder = previousOrder;
-            _eventBus = ServiceLocator.GetRequiredService<IEventBus>();
-            _logger = ServiceLocator.GetRequiredService<ILogger<SagaProvider>>();
-            _json = ServiceLocator.GetRequiredService<IJson>();
+            _eventBus = App.GetRequiredService<IEventBus>();
+            _logger = App.GetRequiredService<ILogger<SagaProvider>>();
+            _json = App.GetRequiredService<IJson>();
             _previousResult = previousResult;
         }
 

@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing.Injection;
-using Wing.ServiceProvider;
 
 namespace Wing.Configuration.ServiceBuilder
 {
@@ -13,9 +12,7 @@ namespace Wing.Configuration.ServiceBuilder
     {
         public IServiceCollection Services { get; }
 
-        public IConfiguration Configuration { get; }
-
-        public Action<IApplicationBuilder> App { get; set; }
+        public Action<IApplicationBuilder> AppBuilder { get; set; }
 
         public WingServiceBuilder(IServiceCollection services)
         {
@@ -24,18 +21,13 @@ namespace Wing.Configuration.ServiceBuilder
             Services.AddHealthChecks();
             Services.AddSingleton<IMemoryCache, MemoryCache>();
             GlobalInjection.Injection(Services);
-            ServiceLocator.ServiceProvider = Services.BuildServiceProvider();
-            Configuration = ServiceLocator.GetRequiredService<IConfiguration>();
-            var configCenterEnabled = Configuration["ConfigCenterEnabled"];
+            App.ServiceProvider = Services.BuildServiceProvider();
+            App.Configuration = App.GetRequiredService<IConfiguration>();
+            var configCenterEnabled = App.Configuration["ConfigCenterEnabled"];
             if (configCenterEnabled != "False")
             {
                 Services.AddSingleton<IHostedService, ConfigurationHostedService>();
             }
-        }
-
-        public T GetConfig<T>(string key)
-        {
-            return Configuration.GetSection(key).Get<T>();
         }
     }
 }

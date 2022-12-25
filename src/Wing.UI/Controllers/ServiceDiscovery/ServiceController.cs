@@ -17,7 +17,7 @@ namespace Wing.UI.Controllers
 
         public ServiceController()
         {
-            _discoveryService = ServiceLocator.DiscoveryService;
+            _discoveryService = App.DiscoveryService;
         }
 
         [HttpGet]

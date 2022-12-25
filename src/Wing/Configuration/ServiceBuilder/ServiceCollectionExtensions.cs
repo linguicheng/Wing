@@ -15,7 +15,7 @@ namespace Wing
             services.AddTransient<IStartupFilter, WingStartupFilter>();
             builder = new WingServiceBuilder(services)
             {
-                App = app => app.UseHealthChecks("/health")
+                AppBuilder = app => app.UseHealthChecks("/health")
             };
             return builder;
         }
@@ -26,7 +26,7 @@ namespace Wing
             {
                 return x =>
                 {
-                    builder.App(x);
+                    builder.AppBuilder(x);
                     next(x);
                 };
             }

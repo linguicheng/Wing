@@ -11,7 +11,7 @@ namespace Wing.RabbitMQ
         {
             return app =>
             {
-                GlobalInjection.CreateSubscribe(eventBus); 
+                GlobalInjection.CreateSubscribe(eventBus);
             };
         }
     }

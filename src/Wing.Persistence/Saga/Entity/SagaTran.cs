@@ -25,7 +25,20 @@ namespace Wing.Persistence.Saga
         /// </summary>
         public ServiceOptions ServiceType { get; set; }
 
+        /// <summary>
+        /// 事务状态
+        /// </summary>
         public TranStatus Status { get; set; }
+
+        /// <summary>
+        /// 重试结果
+        /// </summary>
+        public ExecutedResult? RetryResult { get; set; }
+
+        /// <summary>
+        /// 重试动作
+        /// </summary>
+        public string RetryAction { get; set; }
 
         public TranPolicy Policy { get; set; }
 

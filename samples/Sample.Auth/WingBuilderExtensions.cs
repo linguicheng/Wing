@@ -25,7 +25,7 @@ namespace Wing
 
         private static IWingServiceBuilder AddConfig(IWingServiceBuilder wingBuilder, Func<HttpContext, bool> validatePermission)
         {
-            var config = wingBuilder.GetConfig<JwtSetting>("Jwt");
+            var config = App.GetConfig<JwtSetting>("Jwt");
             if (config == null)
             {
                 throw new ArgumentNullException(nameof(JwtSetting));

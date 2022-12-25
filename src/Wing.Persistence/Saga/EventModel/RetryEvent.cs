@@ -7,8 +7,6 @@ namespace Wing.Persistence.Saga
     {
         public string Id { get; set; }
 
-        public TranStatus Status { get; set; }
-
         /// <summary>
         /// 开始执行时间
         /// </summary>
@@ -18,5 +16,20 @@ namespace Wing.Persistence.Saga
         /// 结束执行时间
         /// </summary>
         public DateTime EndTime { get; set; }
+
+        /// <summary>
+        /// 耗时(毫秒)
+        /// </summary>
+        public long UsedMillSeconds { get; set; }
+
+        /// <summary>
+        /// 重试结果
+        /// </summary>
+        public ExecutedResult RetryResult { get; set; }
+
+        /// <summary>
+        /// 重试动作
+        /// </summary>
+        public string RetryAction { get; set; }
     }
 }

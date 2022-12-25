@@ -9,7 +9,7 @@ namespace Wing.Redis
     {
         public static IWingServiceBuilder AddRedis(this IWingServiceBuilder wingBuilder)
         {
-            return AddConfig(wingBuilder, wingBuilder.GetConfig<Config>("Redis"));
+            return AddConfig(wingBuilder, App.GetConfig<Config>("Redis"));
         }
 
         public static IWingServiceBuilder AddRedis(this IWingServiceBuilder wingBuilder, Config config)

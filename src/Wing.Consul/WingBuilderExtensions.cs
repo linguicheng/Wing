@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Wing.Configuration;
+using Wing.Consul;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
 
-namespace Wing.Consul
+namespace Wing
 {
     public static class WingBuilderExtensions
     {
@@ -17,7 +18,7 @@ namespace Wing.Consul
                 throw new ArgumentNullException(nameof(discoveryConfig));
             }
 
-            ServiceLocator.CurrentService = discoveryConfig.Service;
+            App.CurrentService = discoveryConfig.Service;
             IDiscoveryServiceProvider consulProvider;
             consulProvider = new ConsulProvider(discoveryConfig);
             if (discoveryConfig.Interval.GetValueOrDefault() > 0)
@@ -41,7 +42,7 @@ namespace Wing.Consul
                 consulProvider.Register();
             }
 
-            ServiceLocator.DiscoveryService = consulProvider;
+            App.DiscoveryService = consulProvider;
             var configCenterEnabled = configration["ConfigCenterEnabled"];
             if (configCenterEnabled != "False")
             {

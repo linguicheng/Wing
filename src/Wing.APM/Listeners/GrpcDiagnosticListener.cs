@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;
-using Wing.ServiceProvider;
 
 namespace Wing.APM.Listeners
 {
@@ -62,7 +61,7 @@ namespace Wing.APM.Listeners
                 return;
             }
 
-            var service = ServiceLocator.CurrentService;
+            var service = App.CurrentService;
             TracerDto tracerDto;
             var detailId = Guid.NewGuid().ToString();
             var context = _httpContextAccessor.HttpContext;

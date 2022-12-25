@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package Wing.Saga;
+package Wing.Saga.Grpc;
 
 service TranRetry {
   rpc Commit (RetryData) returns (ResponseData);
@@ -20,6 +20,6 @@ message RetryTranUnit {
 
 message ResponseData {
   bool success = 1;
-  string msg = 2;
+  optional string msg = 2;
 }
 

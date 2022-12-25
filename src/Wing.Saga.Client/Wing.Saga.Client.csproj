@@ -3,10 +3,6 @@
   <Import Project="..\..\build\common.props" />
 
   <ItemGroup>
-    <None Remove="Protos\TranRetry.proto" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.18.0" />
     <PackageReference Include="Grpc.AspNetCore.Server" Version="2.40.0" />
     <PackageReference Include="Grpc.Tools" Version="2.40.0">
@@ -19,7 +15,7 @@
     <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Protobuf Include="Protos\TranRetry.proto" GrpcServices="Server" />
-  </ItemGroup>
+	<ItemGroup>
+		<Protobuf Include="Protos\TranRetry.proto" GrpcServices="Server" />
+	</ItemGroup>
 </Project>

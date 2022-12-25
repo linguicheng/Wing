@@ -1,8 +1,9 @@
 ﻿using System;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
+using Wing.Configuration.HostBuilder;
 
-namespace Wing.Configuration.HostBuilder
+namespace Wing
 {
     public static class HostBuilderExtensions
     {

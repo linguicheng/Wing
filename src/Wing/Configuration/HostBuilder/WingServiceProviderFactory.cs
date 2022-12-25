@@ -2,7 +2,6 @@
 using AspectCore.DependencyInjection;
 using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
-using Wing.ServiceProvider;
 
 namespace Wing.Configuration.HostBuilder
 {
@@ -10,7 +9,7 @@ namespace Wing.Configuration.HostBuilder
     {
         public IServiceContext CreateBuilder(IServiceCollection services)
         {
-            ServiceLocator.ServiceProvider = services.BuildServiceProvider();
+            App.ServiceProvider = services.BuildServiceProvider();
             return services.ToServiceContext();
         }
 

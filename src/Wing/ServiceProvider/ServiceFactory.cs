@@ -17,27 +17,47 @@ namespace Wing.ServiceProvider
 
         public ServiceFactory(ILogger<ServiceFactory> logger, ILoadBalancerCache loadBalancerCache)
         {
-            _discoveryServiceProvider = ServiceLocator.DiscoveryService;
+            _discoveryServiceProvider = App.DiscoveryService;
             _logger = logger;
             _loadBalancerCache = loadBalancerCache;
         }
 
-        public async Task<T> GrpcServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
+        public T GrpcServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
+        {
+            return ServiceInvoke(serviceName, func, ServiceOptions.Grpc);
+        }
+
+        public T HttpServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
+        {
+            return ServiceInvoke(serviceName, func, ServiceOptions.Http);
+        }
+
+        public void GrpcServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        {
+            ServiceInvoke(serviceName, action, ServiceOptions.Grpc).GetAwaiter().GetResult();
+        }
+
+        public void HttpServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        {
+             ServiceInvoke(serviceName, action, ServiceOptions.Http).GetAwaiter().GetResult();
+        }
+
+        public async Task<T> GrpcServiceInvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
             return await ServiceInvoke(serviceName, func, ServiceOptions.Grpc);
         }
 
-        public async Task<T> HttpServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
+        public async Task<T> HttpServiceInvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
             return await ServiceInvoke(serviceName, func, ServiceOptions.Http);
         }
 
-        public async Task GrpcServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        public async Task GrpcServiceInvokeAsync(string serviceName, Action<ServiceAddress> action)
         {
             await ServiceInvoke(serviceName, action, ServiceOptions.Grpc);
         }
 
-        public async Task HttpServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        public async Task HttpServiceInvokeAsync(string serviceName, Action<ServiceAddress> action)
         {
             await ServiceInvoke(serviceName, action, ServiceOptions.Http);
         }
@@ -51,6 +71,27 @@ namespace Wing.ServiceProvider
             {
                 serviceAddress = await GetServices(serviceName, serviceOptions, leastConnection, weightRoundRobin);
                 var result = await func(serviceAddress);
+                weightRoundRobin?.AddWeight(serviceAddress);
+                leastConnection?.ReLease(serviceAddress);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"服务【{serviceName}】调用异常");
+                weightRoundRobin?.ReduceWeight(serviceAddress);
+                throw ex;
+            }
+        }
+
+        private T ServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func, ServiceOptions serviceOptions)
+        {
+            LeastConnection leastConnection = null;
+            WeightRoundRobin weightRoundRobin = null;
+            ServiceAddress serviceAddress = null;
+            try
+            {
+                serviceAddress = GetServices(serviceName, serviceOptions, leastConnection, weightRoundRobin).GetAwaiter().GetResult();
+                var result = func(serviceAddress);
                 weightRoundRobin?.AddWeight(serviceAddress);
                 leastConnection?.ReLease(serviceAddress);
                 return result;

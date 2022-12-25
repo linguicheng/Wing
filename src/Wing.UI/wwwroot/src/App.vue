@@ -64,6 +64,6 @@ export default {
   background-color: #FFFFFF;
 }
 .search{
-  margin-left: 10px;
+  margin-left: 10px !important;
 }
 </style>

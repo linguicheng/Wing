@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using Wing.Injection;
 using Wing.Model;
 using Wing.Persistence.APM;
 using Wing.Result;
 
 namespace Wing.Persistence.Apm
 {
-    public class TracerService : ITracerService, ISingleton
+    public class TracerService : ITracerService
     {
         private readonly IFreeSql<WingDbFlag> _fsql;
 

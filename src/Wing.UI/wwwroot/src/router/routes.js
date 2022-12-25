@@ -84,6 +84,15 @@ const frameIn = [
         },
         component: _import('apm/sql')
       },
+      {
+        path: 'saga',
+        name: 'saga',
+        meta: {
+          title: 'Saga分布式事务',
+          auth: true
+        },
+        component: _import('saga')
+      },
       // 系统 前端日志
       {
         path: 'log',

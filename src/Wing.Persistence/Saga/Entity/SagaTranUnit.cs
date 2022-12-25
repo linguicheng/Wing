@@ -18,6 +18,16 @@ namespace Wing.Persistence.Saga
         public TranStatus Status { get; set; }
 
         /// <summary>
+        /// 重试结果
+        /// </summary>
+        public ExecutedResult? RetryResult { get; set; }
+
+        /// <summary>
+        /// 重试动作
+        /// </summary>
+        public string RetryAction { get; set; }
+
+        /// <summary>
         /// 向前恢复执行次数
         /// </summary>
         public int CommittedCount { get; set; }

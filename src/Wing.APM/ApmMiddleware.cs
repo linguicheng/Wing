@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Wing.APM.Listeners;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;
-using Wing.ServiceProvider;
 
 namespace Wing.APM
 {
@@ -92,7 +91,7 @@ namespace Wing.APM
 
         private async Task Invoke(HttpContext context, string requestType, Func<TracerDto, Task> action)
         {
-            var service = ServiceLocator.CurrentService;
+            var service = App.CurrentService;
             var tracerDto = new TracerDto
             {
                 Tracer = new Tracer

@@ -12,5 +12,13 @@ namespace Wing.Persistence.Saga
         Task<bool> Any(string id);
 
         List<SagaTranUnit> GetFailedData(string tranId);
+
+        List<SagaTranUnit> GetSuccessData(string tranId);
+
+        Task<List<SagaTranUnit>> List(string tranId);
+
+        Task<int> RetryCommit(RetryCommitTranUnitEvent dto);
+
+        Task<int> RetryCancel(RetryCancelTranUnitEvent dto);
     }
 }

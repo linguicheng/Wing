@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,7 +9,7 @@ namespace Wing.Injection
 {
     public class GlobalInjection
     {
-        public static readonly Assembly[] Assemblies;
+        public static readonly IEnumerable<Assembly> Assemblies;
 
         static GlobalInjection()
         {

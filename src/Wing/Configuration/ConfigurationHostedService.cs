@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Wing.ServiceProvider;
 
 namespace Wing.Configuration
 {
@@ -34,7 +33,7 @@ namespace Wing.Configuration
             {
                 try
                 {
-                    await ServiceLocator.DiscoveryService.GetKVData(ConfigurationSubject.Notify)
+                    await App.DiscoveryService.GetKVData(ConfigurationSubject.Notify)
                         .ConfigureAwait(false);
                 }
                 catch (Exception ex)

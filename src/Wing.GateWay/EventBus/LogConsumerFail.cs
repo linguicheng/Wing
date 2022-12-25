@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.GateWay;
-using Wing.ServiceProvider;
 
 namespace Wing.GateWay.EventBus
 {
@@ -13,11 +12,11 @@ namespace Wing.GateWay.EventBus
     {
         public async Task<bool> Consume(Log log)
         {
-            var logger = ServiceLocator.GetRequiredService<ILogger<LogConsumerFail>>();
-            var json = ServiceLocator.GetRequiredService<IJson>();
+            var logger = App.GetRequiredService<ILogger<LogConsumerFail>>();
+            var json = App.GetRequiredService<IJson>();
             try
             {
-                var logService = ServiceLocator.GetRequiredService<ILogService>();
+                var logService = App.GetRequiredService<ILogService>();
                 if (await logService.Any(log.Id))
                 {
                     return true;

@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;
-using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.FreeSql
@@ -27,7 +26,7 @@ namespace Wing.APM.FreeSql
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            service = ServiceLocator.CurrentService;
+            service = App.CurrentService;
             _listenerTracer = new ListenerTracer();
         }
 

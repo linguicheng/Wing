@@ -2,7 +2,6 @@
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
-using Wing.ServiceProvider;
 
 namespace Wing.Saga.Client
 {
@@ -17,7 +16,7 @@ namespace Wing.Saga.Client
         public static SagaProvider Start(string name, SagaOptions sagaOptions = null)
         {
             name.IsNotNull();
-            var service = ServiceLocator.CurrentService;
+            var service = App.CurrentService;
             SagaTran sagaTran = new SagaTran
             {
                 Id = Guid.NewGuid().ToString(),
@@ -45,7 +44,7 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
 
-            ServiceLocator.GetRequiredService<IEventBus>().Publish(sagaTran);
+            App.GetRequiredService<IEventBus>().Publish(sagaTran);
             return new SagaProvider(sagaTran, 0, null);
         }
     }
