@@ -33,5 +33,15 @@ export default ({ request }) => ({
       url: 'Service/List',
       params: data
     })
+  },
+  /**
+   * @description 服务死亡率排行
+   * @returns
+   */
+  SERVICE_CRITICAL_RANKING () {
+    return request({
+      method: 'GET',
+      url: 'Service/CritiCalLvRanking'
+    })
   }
 })

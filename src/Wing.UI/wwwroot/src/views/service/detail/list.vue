@@ -80,6 +80,7 @@
                  :loading="loading"
                  :data="services.items"
                  :mouse-config="{ selected: true }">
+        <vxe-column type="seq" width="60"></vxe-column>
         <vxe-column field="name"
                     title="服务名称"
                     sortable/>

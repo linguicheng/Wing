@@ -31,7 +31,6 @@
 import D2Badge from './components/d2-badge'
 import D2Help from './components/d2-help'
 import D2PageCover from './components/d2-page-cover'
-import * as echarts from 'echarts'
 export default {
   components: {
     D2Badge,

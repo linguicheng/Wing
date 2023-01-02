@@ -124,5 +124,23 @@ namespace Wing.UI.Controllers
 
             return await _discoveryService.Deregister(serviceId);
         }
+
+        [HttpGet]
+        public async Task<List<ServiceCriticalDto>> CritiCalLvRanking()
+        {
+            var serviceDetail = await _discoveryService.Get();
+
+            return serviceDetail.GroupBy(u => new { u.Name })
+                                        .Select(x => new ServiceCriticalDto
+                                        {
+                                            ServiceName = x.Key.Name,
+                                            Total = x.Count(),
+                                            CriticalTotal = x.Count(y => y.Status == HealthStatus.Critical),
+                                            CriticalLv = Math.Round(x.Count(y => y.Status == HealthStatus.Critical) * 100.0 / x.Count(), 2)
+                                        })
+                                        .Where(x => x.CriticalLv > 0)
+                                        .OrderByDescending(x => x.CriticalLv)
+                                        .ToList();
+        }
     }
 }
