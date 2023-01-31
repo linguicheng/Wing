@@ -47,9 +47,7 @@ namespace Wing.Consul
                 var kvResult = await client.KV.List(key, new QueryOptions
                 {
                     Token = _config.Token,
-                    Datacenter = _config.DataCenter,
-                    WaitIndex = LastIndex,
-                    WaitTime = TimeSpan.FromMinutes(_config.WaitTime)
+                    Datacenter = _config.DataCenter
                 }, ct).ConfigureAwait(false);
                 if (kvResult.StatusCode == HttpStatusCode.NotFound)
                 {

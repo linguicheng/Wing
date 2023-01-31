@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Wing.ServiceProvider;
 
-namespace Wing.GateWay
+namespace Wing.Gateway
 {
     public static class HttpExtensions
     {

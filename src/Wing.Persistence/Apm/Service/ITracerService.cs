@@ -21,5 +21,7 @@ namespace Wing.Persistence.Apm
         Task<List<HttpTracerDetail>> HttpDetail(string traceId);
 
         Task<List<SqlTracerDetail>> SqlDetail(string traceId);
+
+        long TimeoutTotal();
     }
 }

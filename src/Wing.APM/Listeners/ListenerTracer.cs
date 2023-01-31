@@ -14,17 +14,17 @@ namespace Wing.APM.Listeners
 
         public static TracerDto Tracer(string id)
         {
-            return Data.Single(x => x.Tracer?.Id == id);
+            return Data.FirstOrDefault(x => x.Tracer?.Id == id);
         }
 
         public static TracerDto SqlTracer(string id)
         {
-            return Data.Single(x => x.SqlTracer?.Id == id);
+            return Data.FirstOrDefault(x => x.SqlTracer?.Id == id);
         }
 
         public static TracerDto HttpTracer(string id)
         {
-            return Data.Single(x => x.HttpTracer?.Id == id);
+            return Data.FirstOrDefault(x => x.HttpTracer?.Id == id);
         }
 
         public static void Remove(List<TracerDto> tracers)

@@ -1,5 +1,5 @@
 ﻿using Wing.Persistence.Apm;
-using Wing.Persistence.GateWay;
+using Wing.Persistence.Gateway;
 using Wing.Persistence.Saga;
 
 namespace Wing.Persistence

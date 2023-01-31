@@ -67,11 +67,9 @@ namespace Wing.APM
                 if (context.Request.Body != null)
                 {
                     context.Request.EnableBuffering();
-                    using (var reader = new StreamReader(context.Request.Body))
-                    {
-                        tracerDto.Tracer.RequestValue = await reader.ReadToEndAsync();
-                        context.Request.Body.Position = 0;
-                    }
+                    var reader = new StreamReader(context.Request.Body);
+                    tracerDto.Tracer.RequestValue = await reader.ReadToEndAsync();
+                    context.Request.Body.Position = 0;
                 }
 
                 var originalResponseStream = context.Response.Body;

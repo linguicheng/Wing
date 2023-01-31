@@ -34,9 +34,9 @@ export const menuAside = supplementPath([
     title: 'APM',
     icon: 'folder-o',
     children: [
-      { path: '/apm', title: '外部请求追踪' },
-      { path: '/apm/http', title: '内部请求追踪' },
-      { path: '/apm/sql', title: '内部Sql追踪' }
+      { path: '/apm', title: '请求追踪' },
+      { path: '/apm/http', title: '作业请求追踪' },
+      { path: '/apm/sql', title: '作业Sql追踪' }
     ]
   },
   { path: '/saga', title: 'Saga分布式事务', icon: 'folder-o' }

@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.AspNetCore.Http;
 
-namespace Wing.GateWay
+namespace Wing.Gateway
 {
     public class ServiceContext
     {

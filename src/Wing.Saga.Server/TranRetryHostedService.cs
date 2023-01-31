@@ -214,7 +214,7 @@ namespace Wing.Saga.Server
                     return null;
                 }
 
-                var grpcResult = _serviceFactory.GrpcServiceInvoke(tran.ServiceName, serviceAddr =>
+                var grpcResult = _serviceFactory.Invoke(tran.ServiceName, serviceAddr =>
                 {
                     var channel = GrpcChannel.ForAddress(serviceAddr.ToString());
                     var client = new TranRetry.TranRetryClient(channel);
@@ -231,7 +231,7 @@ namespace Wing.Saga.Server
                 return null;
             }
 
-            result = _serviceFactory.HttpServiceInvoke(tran.ServiceName, serviceAddr =>
+            result = _serviceFactory.Invoke(tran.ServiceName, serviceAddr =>
             {
                 var client = _httpClientFactory.CreateClient(tran.ServiceName);
                 SetHeaders(client.DefaultRequestHeaders);
@@ -258,7 +258,7 @@ namespace Wing.Saga.Server
                     return null;
                 }
 
-                var grpcResult = _serviceFactory.GrpcServiceInvoke(tran.ServiceName, serviceAddr =>
+                var grpcResult = _serviceFactory.Invoke(tran.ServiceName, serviceAddr =>
                 {
                     var channel = GrpcChannel.ForAddress(serviceAddr.ToString());
                     var client = new TranRetry.TranRetryClient(channel);
@@ -275,7 +275,7 @@ namespace Wing.Saga.Server
                 return null;
             }
 
-            result = _serviceFactory.HttpServiceInvoke(tran.ServiceName, serviceAddr =>
+            result = _serviceFactory.Invoke(tran.ServiceName, serviceAddr =>
             {
                 var client = _httpClientFactory.CreateClient(tran.ServiceName);
                 SetHeaders(client.DefaultRequestHeaders);

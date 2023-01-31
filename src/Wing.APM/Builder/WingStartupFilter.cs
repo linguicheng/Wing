@@ -12,7 +12,7 @@ namespace Wing.APM.Builder
         {
             return app =>
             {
-                DiagnosticListener.AllListeners.Subscribe(app.ApplicationServices.GetRequiredService<DiagnsticListenerObserver>());
+                DiagnosticListener.AllListeners.Subscribe(App.GetRequiredService<DiagnsticListenerObserver>());
                 app.UseMiddleware<ApmMiddleware>();
             };
         }

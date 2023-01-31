@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
-using Wing.GateWay;
+using Wing.Gateway;
 
 namespace Wing
 {

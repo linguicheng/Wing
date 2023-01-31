@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using Wing.GateWay.Config;
+using Wing.Gateway.Config;
 
-namespace Wing.GateWay.Middleware
+namespace Wing.Gateway.Middleware
 {
     public class RouteMapMiddleware
     {
@@ -43,7 +43,7 @@ namespace Wing.GateWay.Middleware
             }
 
             serviceContext.DownstreamPath = "/" + string.Join('/', downstreamPaths);
-            var config = _configuration.GetSection("GateWay:Policy").Get<PolicyConfig>();
+            var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
             if (config != null)
             {
                 if (config.Policies != null && config.Policies.Count > 0)

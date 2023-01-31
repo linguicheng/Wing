@@ -13,16 +13,16 @@
       "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SKYWALKING__SERVICENAME": "Sample.GateWay"
+        "SKYWALKING__SERVICENAME": "Sample.Gateway"
       }
     },
-    "Sample.GateWay": {
+    "Sample.Gateway": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "http://localhost:5088",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "SKYWALKING__SERVICENAME": "Sample.GateWay"
+        "SKYWALKING__SERVICENAME": "Sample.Gateway"
       }
     }
   }

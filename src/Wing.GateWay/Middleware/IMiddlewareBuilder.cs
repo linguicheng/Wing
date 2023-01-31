@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Wing.GateWay.Middleware
+namespace Wing.Gateway.Middleware
 {
     public interface IMiddlewareBuilder
     {

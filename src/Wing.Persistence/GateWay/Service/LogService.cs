@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wing.Model;
 using Wing.Result;
 
-namespace Wing.Persistence.GateWay
+namespace Wing.Persistence.Gateway
 {
     public class LogService : ILogService
     {
@@ -47,6 +49,64 @@ namespace Wing.Persistence.GateWay
                 TotalCount = total,
                 Items = result
             };
+        }
+
+        public long TimeoutTotal()
+        {
+            return _fsql.Select<Log>().Where(x => x.UsedMillSeconds >= Config.GatewayTimeOut && x.RequestTime > Config.SearchTime).Count();
+        }
+
+        /// <summary>
+        /// 查询最近一个月超时请求
+        /// </summary>
+        /// <returns></returns>
+        public Task<List<Log>> TimeoutList()
+        {
+            return _fsql.Select<Log>()
+                .Where(x => x.UsedMillSeconds >= Config.GatewayTimeOut && x.RequestTime > Config.SearchTime)
+                .OrderByDescending(x => x.UsedMillSeconds)
+                .ToListAsync();
+        }
+
+        public async Task<List<MonthCountDto>> TimeoutMonth()
+        {
+            var beginDate = Convert.ToDateTime(DateTime.Now.AddYears(-1).ToString("yyyy-MM") + "-01");
+            var endDate = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM") + "-01");
+            var result = await _fsql.Select<Log>()
+                .Where(x => x.UsedMillSeconds >= Config.GatewayTimeOut && x.RequestTime >= beginDate && x.RequestTime < endDate)
+                .GroupBy(x => new { Month = x.RequestTime.ToString("yyyy-MM") })
+                .ToListAsync(x => new MonthCountDto
+                {
+                    Month = x.Key.Month,
+                    Count = x.Count(),
+                });
+            var data = new List<MonthCountDto>
+            {
+                new MonthCountDto { Month = beginDate.ToString("yyyy-MM"), Count = 0 }
+            };
+
+            for (var i = 1; i < 12; i++)
+            {
+                data.Add(new MonthCountDto { Month = beginDate.AddMonths(i).ToString("yyyy-MM"), Count = 0 });
+            }
+
+            if (result == null)
+            {
+                return data;
+            }
+
+            if (result.Count != 12)
+            {
+                data.ForEach(x =>
+                {
+                    if (!result.Any(m => m.Month == x.Month))
+                    {
+                        result.Add(x);
+                    }
+                });
+            }
+            result = result.OrderBy(x => x.Month).ToList();
+            return result;
         }
     }
 }

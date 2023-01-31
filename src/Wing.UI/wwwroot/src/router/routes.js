@@ -61,7 +61,7 @@ const frameIn = [
         path: 'apm',
         name: 'tracer',
         meta: {
-          title: '外部请求追踪',
+          title: '请求追踪',
           auth: true
         },
         component: _import('apm')
@@ -70,7 +70,7 @@ const frameIn = [
         path: 'apm/http',
         name: 'http-tracer',
         meta: {
-          title: '内部请求追踪',
+          title: '作业请求追踪',
           auth: true
         },
         component: _import('apm/http')
@@ -79,7 +79,7 @@ const frameIn = [
         path: 'apm/sql',
         name: 'sql-tracer',
         meta: {
-          title: '内部Sql追踪',
+          title: '作业Sql追踪',
           auth: true
         },
         component: _import('apm/sql')

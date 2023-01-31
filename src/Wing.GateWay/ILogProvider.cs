@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
 
-namespace Wing.GateWay
+namespace Wing.Gateway
 {
     public interface ILogProvider
     {

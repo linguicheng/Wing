@@ -31,8 +31,6 @@ namespace Wing
                 throw new ArgumentNullException(nameof(JwtSetting));
             }
 
-            wingBuilder.Services.AddHttpContextAccessor();
-
             wingBuilder.Services.AddAuthorization(options =>
             {
                 if (validatePermission == null)

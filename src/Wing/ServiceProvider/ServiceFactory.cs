@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using Wing.Converter;
 using Wing.Exceptions;
 using Wing.Injection;
 using Wing.LoadBalancer;
@@ -22,54 +23,34 @@ namespace Wing.ServiceProvider
             _loadBalancerCache = loadBalancerCache;
         }
 
-        public T GrpcServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
+        public T Invoke<T>(string serviceName, Func<ServiceAddress, T> func)
         {
-            return ServiceInvoke(serviceName, func, ServiceOptions.Grpc);
+            return ServiceInvoke(serviceName, func);
         }
 
-        public T HttpServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
+        public void Invoke(string serviceName, Action<ServiceAddress> action)
         {
-            return ServiceInvoke(serviceName, func, ServiceOptions.Http);
+            ServiceInvoke(serviceName, action).GetAwaiter().GetResult();
         }
 
-        public void GrpcServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        public async Task<T> InvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
-            ServiceInvoke(serviceName, action, ServiceOptions.Grpc).GetAwaiter().GetResult();
+            return await ServiceInvoke(serviceName, func);
         }
 
-        public void HttpServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        public async Task InvokeAsync(string serviceName, Action<ServiceAddress> action)
         {
-             ServiceInvoke(serviceName, action, ServiceOptions.Http).GetAwaiter().GetResult();
+            await ServiceInvoke(serviceName, action);
         }
 
-        public async Task<T> GrpcServiceInvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
-        {
-            return await ServiceInvoke(serviceName, func, ServiceOptions.Grpc);
-        }
-
-        public async Task<T> HttpServiceInvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
-        {
-            return await ServiceInvoke(serviceName, func, ServiceOptions.Http);
-        }
-
-        public async Task GrpcServiceInvokeAsync(string serviceName, Action<ServiceAddress> action)
-        {
-            await ServiceInvoke(serviceName, action, ServiceOptions.Grpc);
-        }
-
-        public async Task HttpServiceInvokeAsync(string serviceName, Action<ServiceAddress> action)
-        {
-            await ServiceInvoke(serviceName, action, ServiceOptions.Http);
-        }
-
-        private async Task<T> ServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func, ServiceOptions serviceOptions)
+        private async Task<T> ServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
             LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = await GetServices(serviceName, serviceOptions, leastConnection, weightRoundRobin);
+                serviceAddress = await GetServices(serviceName, leastConnection, weightRoundRobin);
                 var result = await func(serviceAddress);
                 weightRoundRobin?.AddWeight(serviceAddress);
                 leastConnection?.ReLease(serviceAddress);
@@ -83,14 +64,14 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private T ServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func, ServiceOptions serviceOptions)
+        private T ServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
         {
             LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = GetServices(serviceName, serviceOptions, leastConnection, weightRoundRobin).GetAwaiter().GetResult();
+                serviceAddress = GetServices(serviceName, leastConnection, weightRoundRobin).GetAwaiter().GetResult();
                 var result = func(serviceAddress);
                 weightRoundRobin?.AddWeight(serviceAddress);
                 leastConnection?.ReLease(serviceAddress);
@@ -104,14 +85,14 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private async Task ServiceInvoke(string serviceName, Action<ServiceAddress> action, ServiceOptions serviceOptions)
+        private async Task ServiceInvoke(string serviceName, Action<ServiceAddress> action)
         {
             LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = await GetServices(serviceName, serviceOptions, leastConnection, weightRoundRobin);
+                serviceAddress = await GetServices(serviceName, leastConnection, weightRoundRobin);
                 action(serviceAddress);
                 weightRoundRobin?.AddWeight(serviceAddress);
                 leastConnection?.ReLease(serviceAddress);
@@ -124,17 +105,10 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private async Task<ServiceAddress> GetServices(string serviceName, ServiceOptions serviceOptions, LeastConnection leastConnection, WeightRoundRobin weightRoundRobin)
+        private async Task<ServiceAddress> GetServices(string serviceName, LeastConnection leastConnection, WeightRoundRobin weightRoundRobin)
         {
-            List<Service> services;
-            if (serviceOptions == ServiceOptions.Grpc)
-            {
-                services = await _discoveryServiceProvider.GetGrpcServices(serviceName, HealthStatus.Healthy);
-            }
-            else
-            {
-                services = await _discoveryServiceProvider.GetHttpServices(serviceName, HealthStatus.Healthy);
-            }
+            serviceName.IsNotNull();
+            var services = await _discoveryServiceProvider.Get(serviceName, HealthStatus.Healthy);
 
             if (services.Count == 0)
             {
@@ -175,24 +149,23 @@ namespace Wing.ServiceProvider
                 }
 
                 _loadBalancerCache.Add(serviceName, loadBalancerConfig);
+                return serviceAddress;
             }
-            else
+
+            switch (loadBalancerOptions)
             {
-                switch (loadBalancerOptions)
-                {
-                    case LoadBalancerOptions.LeastConnection:
-                        leastConnection = loadBalancerConfig.LoadBalancer as LeastConnection;
-                        serviceAddress = GetServiceAddress(leastConnection, services);
-                        break;
-                    case LoadBalancerOptions.WeightRoundRobin:
-                        weightRoundRobin = loadBalancerConfig.LoadBalancer as WeightRoundRobin;
-                        serviceAddress = GetServiceAddress(weightRoundRobin, services);
-                        break;
-                    default:
-                        var roundRobin = loadBalancerConfig.LoadBalancer as RoundRobin;
-                        serviceAddress = GetServiceAddress(roundRobin, services);
-                        break;
-                }
+                case LoadBalancerOptions.LeastConnection:
+                    leastConnection = loadBalancerConfig.LoadBalancer as LeastConnection;
+                    serviceAddress = GetServiceAddress(leastConnection, services);
+                    break;
+                case LoadBalancerOptions.WeightRoundRobin:
+                    weightRoundRobin = loadBalancerConfig.LoadBalancer as WeightRoundRobin;
+                    serviceAddress = GetServiceAddress(weightRoundRobin, services);
+                    break;
+                default:
+                    var roundRobin = loadBalancerConfig.LoadBalancer as RoundRobin;
+                    serviceAddress = GetServiceAddress(roundRobin, services);
+                    break;
             }
 
             return serviceAddress;

@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
-using Wing.GateWay.Middleware;
+using Wing.Gateway.Middleware;
 
-namespace Wing.GateWay
+namespace Wing.Gateway
 {
     internal class WingStartupFilter
     {

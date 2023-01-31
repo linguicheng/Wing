@@ -19,7 +19,6 @@
 	<ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
-    <ProjectReference Include="..\..\src\Wing.Redis\Wing.Redis.csproj" />
     <ProjectReference Include="..\..\src\Wing\Wing.csproj" />
   </ItemGroup>
 

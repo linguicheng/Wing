@@ -3,7 +3,7 @@
   <Import Project="..\..\build\common.props" />
 
   <ItemGroup>
-    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.500" />
+    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.687" />
   </ItemGroup>
 
   <ItemGroup>

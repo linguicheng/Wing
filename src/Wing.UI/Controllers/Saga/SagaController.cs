@@ -29,5 +29,11 @@ namespace Wing.UI.Controllers
         {
             return _tranUnitService.List(tranId);
         }
+
+        [HttpGet]
+        public Task<object> GetTop5FailedData()
+        {
+            return _tranService.GetTop5FailedData();
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Wing.Model;
 using Wing.Result;
 
-namespace Wing.Persistence.GateWay
+namespace Wing.Persistence.Gateway
 {
     public interface ILogService
     {
@@ -14,5 +14,11 @@ namespace Wing.Persistence.GateWay
         Task<bool> Any(string id);
 
         Task<PageResult<List<Log>>> List(PageModel<LogSearchDto> model);
+
+        long TimeoutTotal();
+
+        Task<List<Log>> TimeoutList();
+
+        Task<List<MonthCountDto>> TimeoutMonth();
     }
 }

@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.EventBus;
-using Wing.Persistence.GateWay;
+using Wing.Persistence.Gateway;
 
-namespace Wing.GateWay.EventBus
+namespace Wing.Gateway.EventBus
 {
     [Subscribe(QueueMode.DLX)]
     public class LogConsumerFail : ISubscribe<Log>

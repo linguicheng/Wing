@@ -10,7 +10,7 @@ using Polly.Timeout;
 using Wing.Exceptions;
 using Wing.ServiceProvider;
 
-namespace Wing.GateWay.Middleware
+namespace Wing.Gateway.Middleware
 {
     public class PolicyMiddleware
     {
@@ -106,7 +106,7 @@ namespace Wing.GateWay.Middleware
 
             var resMsg = await policy.ExecuteAsync(async () =>
             {
-                return await _serviceFactory.HttpServiceInvokeAsync(serviceContext.ServiceName, async serviceAddr =>
+                return await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
                     var reqMsg = serviceContext.HttpContext.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);

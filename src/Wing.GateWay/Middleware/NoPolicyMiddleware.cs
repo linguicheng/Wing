@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Wing.Exceptions;
 using Wing.ServiceProvider;
 
-namespace Wing.GateWay.Middleware
+namespace Wing.Gateway.Middleware
 {
     public class NoPolicyMiddleware
     {
@@ -41,7 +41,7 @@ namespace Wing.GateWay.Middleware
             var context = serviceContext.HttpContext;
             try
             {
-                var resMsg = await _serviceFactory.HttpServiceInvokeAsync(serviceContext.ServiceName, async serviceAddr =>
+                var resMsg = await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
                     var reqMsg = context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);

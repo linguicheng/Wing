@@ -12,6 +12,7 @@ namespace Wing
 
         public static IWingServiceBuilder AddWing(this IServiceCollection services)
         {
+            services.AddHttpContextAccessor();
             services.AddTransient<IStartupFilter, WingStartupFilter>();
             builder = new WingServiceBuilder(services)
             {

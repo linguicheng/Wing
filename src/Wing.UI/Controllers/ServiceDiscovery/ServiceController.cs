@@ -125,6 +125,10 @@ namespace Wing.UI.Controllers
             return await _discoveryService.Deregister(serviceId);
         }
 
+        /// <summary>
+        /// 服务死亡率排行
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<List<ServiceCriticalDto>> CritiCalLvRanking()
         {

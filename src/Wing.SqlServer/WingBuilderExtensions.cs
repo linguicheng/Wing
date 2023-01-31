@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Persistence;
 using Wing.Persistence.Apm;
-using Wing.Persistence.GateWay;
+using Wing.Persistence.Gateway;
 using Wing.Persistence.Saga;
 
 namespace Wing
@@ -23,6 +23,7 @@ namespace Wing
             wingBuilder.Services.AddSingleton(typeof(IFreeSql<WingDbFlag>), serviceProvider => fsql);
             wingBuilder.Services.AddSingleton<ILogService, LogService>();
             wingBuilder.Services.AddSingleton<ITracerService, TracerService>();
+            wingBuilder.Services.AddSingleton<ITracerWorkService, TracerWorkService>();
             wingBuilder.Services.AddScoped<ISagaTranService, SagaTranService>();
             wingBuilder.Services.AddScoped<ISagaTranUnitService, SagaTranUnitService>();
             wingBuilder.Services.AddFreeRepository();

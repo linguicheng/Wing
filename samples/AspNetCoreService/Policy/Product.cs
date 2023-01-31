@@ -23,13 +23,13 @@ namespace Sample.AspNetCoreService.Policy
 
         public async Task<string> InvokeHello(string name)
         {
-            //var token = await _serviceFactory.GrpcServiceInvokeAsync("grpctest", async serviceAddr =>
+            //var token = await _serviceFactory.InvokeAsync("grpctest", async serviceAddr =>
             //{
             //    var channel = GrpcChannel.ForAddress(serviceAddr.ToString());
             //    var greeterClient = new Greeter.GreeterClient(channel);
             //    return await greeterClient.GetTokenAsync(new TokenRequest { Name = name });
             //});
-            return await _serviceFactory.GrpcServiceInvokeAsync("Sample.Saga.Client.Grpc", async serviceAddr =>
+            return await _serviceFactory.InvokeAsync("Sample.Saga.Client.Grpc", async serviceAddr =>
             {
                 //var headers = new Metadata
                 //{

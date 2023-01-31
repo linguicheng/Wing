@@ -10,10 +10,10 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Wing.Converter;
 using Wing.EventBus;
-using Wing.GateWay.Config;
-using Wing.Persistence.GateWay;
+using Wing.Gateway.Config;
+using Wing.Persistence.Gateway;
 
-namespace Wing.GateWay
+namespace Wing.Gateway
 {
     public class LogProvider : ILogProvider
     {
@@ -32,7 +32,7 @@ namespace Wing.GateWay
 
         public async Task Add(ServiceContext serviceContext)
         {
-            var config = _configuration.GetSection("GateWay:Log").Get<LogConfig>();
+            var config = _configuration.GetSection("Gateway:Log").Get<LogConfig>();
             if (!config.IsEnabled)
             {
                 return;

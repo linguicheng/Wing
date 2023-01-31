@@ -5,7 +5,7 @@
             <el-input v-model="serviceName"
                       clearable
                       @change="search"
-                      placeholder="请输入服务名称"
+                      placeholder="请输入配置Key"
                       style="width:200px"/>
             <el-button class="search"
                        type="primary"
@@ -148,10 +148,14 @@ export default {
       this.loading = false
       console.log('服务配置', result)
       this.totalCount = result.totalCount
+      this.configData = []
       if (!result.items) {
+        this.currentRow = {
+          key: '',
+          value: ''
+        }
         return
       }
-      this.configData = []
       for (const i in result.items) {
         this.configData.push({ key: i, value: result.items[i] })
       }

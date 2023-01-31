@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Wing.Persistence.GateWay
+namespace Wing.Persistence.Gateway
 {
     public class LogSearchDto
     {

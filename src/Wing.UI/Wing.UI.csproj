@@ -231,7 +231,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
-    <ProjectReference Include="..\Wing\Wing.csproj" />
   </ItemGroup>
 
 </Project>

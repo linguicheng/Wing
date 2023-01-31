@@ -2,7 +2,7 @@
 using FreeSql.DataAnnotations;
 using Wing.EventBus;
 
-namespace Wing.Persistence.GateWay
+namespace Wing.Persistence.Gateway
 {
     public class Log : EventMessage
     {

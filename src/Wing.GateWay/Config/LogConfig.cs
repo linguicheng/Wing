@@ -1,4 +1,4 @@
-﻿namespace Wing.GateWay.Config
+﻿namespace Wing.Gateway.Config
 {
     public class LogConfig
     {

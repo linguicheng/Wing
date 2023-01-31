@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing;
 
-namespace Sample.GateWay
+namespace Sample.Gateway
 {
     public class Startup
     {

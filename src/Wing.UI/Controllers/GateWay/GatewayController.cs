@@ -2,16 +2,16 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Wing.Model;
-using Wing.Persistence.GateWay;
+using Wing.Persistence.Gateway;
 using Wing.Result;
 
 namespace Wing.UI.Controllers
 {
-    public class LogController : BaseController
+    public class GatewayController : BaseController
     {
         private readonly ILogService _logService;
 
-        public LogController(ILogService logService)
+        public GatewayController(ILogService logService)
         {
             _logService = logService;
         }
@@ -20,6 +20,18 @@ namespace Wing.UI.Controllers
         public Task<PageResult<List<Log>>> List([FromQuery] PageModel<LogSearchDto> dto)
         {
            return _logService.List(dto);
+        }
+
+        [HttpGet]
+        public Task<List<Log>> TimeoutList()
+        {
+            return _logService.TimeoutList();
+        }
+
+        [HttpGet]
+        public Task<List<MonthCountDto>> TimeoutMonth()
+        {
+            return _logService.TimeoutMonth();
         }
     }
 }

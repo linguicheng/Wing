@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Wing.Model;
 using Wing.Result;
@@ -87,6 +88,34 @@ namespace Wing.Persistence.Saga
                 TotalCount = total,
                 Items = result
             };
+        }
+
+        public long GetFailedTotal()
+        {
+            return _fsql.Select<SagaTran>().Where(x => x.Status == TranStatus.Failed).Count();
+        }
+
+        public async Task<object> GetTop5FailedData()
+        {
+            var result = await _fsql.Select<SagaTran>()
+                .GroupBy(a => new { a.Name })
+                .WithTempQuery(a => new
+                {
+                    a.Value.Name,
+                    FailedLv = Math.Round(_fsql.Select<SagaTran>().Where(b => b.Name == a.Value.Name && b.Status == TranStatus.Failed).Count() * 1.0 / a.Count(), 2)
+                })
+                .OrderByDescending(a => a.FailedLv)
+                .Take(5)
+                .From<SagaTran>()
+                .InnerJoin((a, b) => a.Name == b.Name)
+                .GroupBy((a, b) => new { b.Name, b.Status })
+                .ToListAsync(x => new
+                {
+                    x.Value.Item2.Name,
+                    x.Value.Item2.Status,
+                    Count = x.Count()
+                });
+            return result;
         }
     }
 }

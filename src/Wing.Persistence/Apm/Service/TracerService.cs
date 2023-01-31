@@ -103,5 +103,12 @@ namespace Wing.Persistence.Apm
                 .Where(u => u.TraceId == traceId)
                 .ToListAsync();
         }
+
+        public long TimeoutTotal()
+        {
+            return _fsql.Select<Tracer>()
+                .Where(x => x.UsedMillSeconds >= Config.ApmTimeOut && x.RequestTime > Config.SearchTime)
+                .Count();
+        }
     }
 }

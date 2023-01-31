@@ -22,5 +22,9 @@ namespace Wing.Persistence.Saga
         Task<int> UpdateStatus(string id, TranStatus status);
 
         Task<PageResult<List<SagaTran>>> List(PageModel<SagaTranSearchDto> dto);
+
+        long GetFailedTotal();
+
+        Task<object> GetTop5FailedData();
     }
 }

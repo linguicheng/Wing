@@ -39,7 +39,10 @@ namespace Wing
                     AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
                 }
 
-                consulProvider.Register();
+                if (!string.IsNullOrWhiteSpace(service.Host))
+                {
+                    consulProvider.Register();
+                }
             }
 
             App.DiscoveryService = consulProvider;

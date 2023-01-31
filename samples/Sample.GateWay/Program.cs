@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Wing;
 
-namespace Sample.GateWay
+namespace Sample.Gateway
 {
     public class Program
     {

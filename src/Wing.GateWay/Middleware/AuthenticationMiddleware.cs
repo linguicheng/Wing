@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 
-namespace Wing.GateWay.Middleware
+namespace Wing.Gateway.Middleware
 {
     public class AuthenticationMiddleware
     {
