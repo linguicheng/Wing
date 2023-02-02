@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wing.Model;
 using Wing.Persistence.APM;
@@ -21,8 +22,8 @@ namespace Wing.Persistence.Apm
             await uow.Orm.Insert(tracerDto.Tracer).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.HttpTracer).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.SqlTracer).ExecuteAffrowsAsync();
-            await uow.Orm.Insert(tracerDto.HttpTracerDetails).ExecuteAffrowsAsync();
-            await uow.Orm.Insert(tracerDto.SqlTracerDetails).ExecuteAffrowsAsync();
+            await uow.Orm.Insert(tracerDto.HttpTracerDetails?.Values.ToList()).ExecuteAffrowsAsync();
+            await uow.Orm.Insert(tracerDto.SqlTracerDetails?.Values.ToList()).ExecuteAffrowsAsync();
             uow.Commit();
         }
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Wing.Persistence.Apm;
 
@@ -17,9 +18,9 @@ namespace Wing.Persistence.APM
 
         public SqlTracer SqlTracer { get; set; }
 
-        public List<HttpTracerDetail> HttpTracerDetails { get; set; }
+        public ConcurrentDictionary<string, HttpTracerDetail> HttpTracerDetails { get; set; }
 
-        public List<SqlTracerDetail> SqlTracerDetails { get; set; }
+        public ConcurrentDictionary<string, SqlTracerDetail> SqlTracerDetails { get; set; }
 
         public DateTime BeginTime { get; private set; }
 

@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using FreeSql.Aop;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -16,7 +18,6 @@ namespace Wing.APM.FreeSql
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<FreeSqlDiagnosticListener> _logger;
         private readonly ServiceData service;
-        private readonly ListenerTracer _listenerTracer;
 
         public virtual string Name => "FreeSqlDiagnosticListener";
 
@@ -27,7 +28,6 @@ namespace Wing.APM.FreeSql
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
             service = App.CurrentService;
-            _listenerTracer = new ListenerTracer();
         }
 
         public void OnCompleted()
@@ -68,6 +68,7 @@ namespace Wing.APM.FreeSql
         private void CurdBefore(KeyValuePair<string, object> value)
         {
             var data = ListenerTracer.GetProperty<CurdBeforeEventArgs>(value, "Value");
+            var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
@@ -76,7 +77,7 @@ namespace Wing.APM.FreeSql
                 {
                     SqlTracer = new SqlTracer
                     {
-                        Id = data.Identifier.ToString(),
+                        Id = id,
                         Action = GetCurdType(data.CurdType),
                         BeginTime = DateTime.Now,
                         ServerIp = Tools.LocalIp,
@@ -84,19 +85,15 @@ namespace Wing.APM.FreeSql
                         ServiceUrl = ApmTools.GetServiceUrl(service)
                     }
                 };
-                ListenerTracer.Data.Add(tracerDto);
+                ListenerTracer.Data.TryAdd(tracerDto.SqlTracer.Id, tracerDto);
                 return;
             }
 
-            tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
-            if (tracerDto.SqlTracerDetails == null)
+            tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            tracerDto.SqlTracerDetails ??= new ConcurrentDictionary<string, SqlTracerDetail>();
+            tracerDto.SqlTracerDetails.TryAdd(id, new SqlTracerDetail
             {
-                tracerDto.SqlTracerDetails = new List<SqlTracerDetail>();
-            }
-
-            tracerDto.SqlTracerDetails.Add(new SqlTracerDetail
-            {
-                Id = data.Identifier.ToString(),
+                Id = id,
                 TraceId = tracerDto.Tracer.Id,
                 Action = GetCurdType(data.CurdType),
                 BeginTime = DateTime.Now
@@ -106,14 +103,15 @@ namespace Wing.APM.FreeSql
         private void CurdAfter(KeyValuePair<string, object> value)
         {
             var data = ListenerTracer.GetProperty<CurdAfterEventArgs>(value, "Value");
+            var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
-                tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());
+                tracerDto = ListenerTracer.Data[id];
                 if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
                 {
-                    ListenerTracer.Data.Remove(tracerDto);
+                    ListenerTracer.Data.TryRemove(id, out _);
                     return;
                 }
 
@@ -126,11 +124,11 @@ namespace Wing.APM.FreeSql
                 return;
             }
 
-            tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
-            var traceDetail = tracerDto.SqlTracerDetails.Where(x => x.Id == data.Identifier.ToString()).Single();
+            tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            var traceDetail = tracerDto.SqlTracerDetails[id];
             if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
             {
-                tracerDto.SqlTracerDetails.Remove(traceDetail);
+                tracerDto.SqlTracerDetails.TryRemove(id, out _);
                 return;
             }
 
@@ -145,6 +143,7 @@ namespace Wing.APM.FreeSql
         private void SyncStructureBefore(KeyValuePair<string, object> value)
         {
             var data = ListenerTracer.GetProperty<SyncStructureBeforeEventArgs>(value, "Value");
+            var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
@@ -153,7 +152,7 @@ namespace Wing.APM.FreeSql
                 {
                     SqlTracer = new SqlTracer
                     {
-                        Id = data.Identifier.ToString(),
+                        Id = id,
                         Action = ApmTools.Sql_Action_SyncStructure,
                         BeginTime = DateTime.Now,
                         ServerIp = Tools.LocalIp,
@@ -161,19 +160,15 @@ namespace Wing.APM.FreeSql
                         ServiceUrl = ApmTools.GetServiceUrl(service)
                     }
                 };
-                ListenerTracer.Data.Add(tracerDto);
+                ListenerTracer.Data.TryAdd(tracerDto.SqlTracer.Id, tracerDto);
                 return;
             }
 
-            tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
-            if (tracerDto.SqlTracerDetails == null)
+            tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            tracerDto.SqlTracerDetails ??= new ConcurrentDictionary<string, SqlTracerDetail>();
+            tracerDto.SqlTracerDetails.TryAdd(id, new SqlTracerDetail
             {
-                tracerDto.SqlTracerDetails = new List<SqlTracerDetail>();
-            }
-
-            tracerDto.SqlTracerDetails.Add(new SqlTracerDetail
-            {
-                Id = data.Identifier.ToString(),
+                Id = id,
                 TraceId = tracerDto.Tracer.Id,
                 Action = ApmTools.Sql_Action_SyncStructure,
                 BeginTime = DateTime.Now
@@ -183,14 +178,15 @@ namespace Wing.APM.FreeSql
         private void SyncStructureAfter(KeyValuePair<string, object> value)
         {
             var data = ListenerTracer.GetProperty<SyncStructureAfterEventArgs>(value, "Value");
+            var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
-                tracerDto = ListenerTracer.SqlTracer(data.Identifier.ToString());
+                tracerDto = ListenerTracer.Data[id];
                 if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
                 {
-                    ListenerTracer.Data.Remove(tracerDto);
+                    ListenerTracer.Data.TryRemove(id, out _);
                     return;
                 }
 
@@ -203,11 +199,11 @@ namespace Wing.APM.FreeSql
                 return;
             }
 
-            tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
-            var traceDetail = tracerDto.SqlTracerDetails.Where(x => x.Id == data.Identifier.ToString()).Single();
+            tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            var traceDetail = tracerDto.SqlTracerDetails[id];
             if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
             {
-                tracerDto.SqlTracerDetails.Remove(traceDetail);
+                tracerDto.SqlTracerDetails.Remove(id, out _);
                 return;
             }
 

@@ -32,8 +32,11 @@ namespace Wing.APM.Listeners
                     var context = _httpContextAccessor.HttpContext;
                     if (context != null && exception != null)
                     {
-                        var tracerDto = new ListenerTracer()[context.Items[ApmTools.TraceId].ToString()];
-                        tracerDto.Tracer.Exception = exception.ToString();
+                        var tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+                        if (tracerDto != null && tracerDto.Tracer != null)
+                        {
+                            tracerDto.Tracer.Exception = exception.ToString();
+                        }
                     }
                 }
             }

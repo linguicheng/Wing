@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -13,7 +14,6 @@ namespace Wing.APM.Listeners
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ILogger<HttpDiagnosticListener> _logger;
-        private readonly ListenerTracer _listenerTracer;
 
         public string Name => "HttpHandlerDiagnosticListener";
 
@@ -21,7 +21,6 @@ namespace Wing.APM.Listeners
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
-            _listenerTracer = new ListenerTracer();
         }
 
         public void OnCompleted()
@@ -88,19 +87,15 @@ namespace Wing.APM.Listeners
                                                 .GetResult()
                     }
                 };
-                ListenerTracer.Data.Add(tracerDto);
+                ListenerTracer.Data.TryAdd(detailId, tracerDto);
                 request.Headers.Add(ApmTools.TraceId, tracerDto.HttpTracer.Id);
                 request.Properties.Add(ApmTools.TraceId, tracerDto.HttpTracer.Id);
                 return;
             }
 
-            tracerDto = _listenerTracer[context.Items[ApmTools.TraceId].ToString()];
-            if (tracerDto.HttpTracerDetails == null)
-            {
-                tracerDto.HttpTracerDetails = new List<HttpTracerDetail>();
-            }
-
-            tracerDto.HttpTracerDetails.Add(new HttpTracerDetail
+            tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            tracerDto.HttpTracerDetails ??= new ConcurrentDictionary<string, HttpTracerDetail>();
+            tracerDto.HttpTracerDetails.TryAdd(detailId, new HttpTracerDetail
             {
                 Id = detailId,
                 TraceId = tracerDto.Tracer.Id,
@@ -131,15 +126,14 @@ namespace Wing.APM.Listeners
             TracerDto tracerDto;
             if (request.Properties.ContainsKey(ApmTools.TraceDetailId))
             {
-                tracerDto = _listenerTracer[traceId];
-                var traceDetail = tracerDto.HttpTracerDetails.Where(x => x.Id == request.Properties[ApmTools.TraceDetailId].ToString()).Single();
+                tracerDto = ListenerTracer.Data[traceId];
+                var traceDetail = tracerDto.HttpTracerDetails[request.Properties[ApmTools.TraceDetailId].ToString()];
                 traceDetail.Exception = exception.ToString();
+                return;
             }
-            else
-            {
-                tracerDto = ListenerTracer.HttpTracer(traceId);
-                tracerDto.HttpTracer.Exception = exception.ToString();
-            }
+
+            tracerDto = ListenerTracer.Data[traceId];
+            tracerDto.HttpTracer.Exception = exception.ToString();
         }
 
         private void Stop(object value)
@@ -166,22 +160,21 @@ namespace Wing.APM.Listeners
 
             if (request.Properties.ContainsKey(ApmTools.TraceDetailId))
             {
-                tracerDto = _listenerTracer[traceId];
-                var traceDetail = tracerDto.HttpTracerDetails.Where(x => x.Id == request.Properties[ApmTools.TraceDetailId].ToString()).Single();
+                tracerDto = ListenerTracer.Data[traceId];
+                var traceDetail = tracerDto.HttpTracerDetails[request.Properties[ApmTools.TraceDetailId].ToString()];
                 traceDetail.ResponseTime = DateTime.Now;
                 traceDetail.ResponseValue = responseValue;
                 traceDetail.StatusCode = statusCode;
                 traceDetail.UsedMillSeconds = ApmTools.UsedMillSeconds(traceDetail.RequestTime, traceDetail.ResponseTime);
+                return;
             }
-            else
-            {
-                tracerDto = ListenerTracer.HttpTracer(traceId);
-                tracerDto.HttpTracer.ResponseTime = DateTime.Now;
-                tracerDto.HttpTracer.ResponseValue = responseValue;
-                tracerDto.HttpTracer.StatusCode = statusCode;
-                tracerDto.HttpTracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.HttpTracer.RequestTime, tracerDto.HttpTracer.ResponseTime);
-                tracerDto.IsStop = true;
-            }
+
+            tracerDto = ListenerTracer.Data[traceId];
+            tracerDto.HttpTracer.ResponseTime = DateTime.Now;
+            tracerDto.HttpTracer.ResponseValue = responseValue;
+            tracerDto.HttpTracer.StatusCode = statusCode;
+            tracerDto.HttpTracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.HttpTracer.RequestTime, tracerDto.HttpTracer.ResponseTime);
+            tracerDto.IsStop = true;
         }
     }
 }

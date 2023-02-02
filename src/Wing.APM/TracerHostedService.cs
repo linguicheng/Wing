@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
@@ -15,17 +15,14 @@ namespace Wing.APM
         private static readonly object _lock = new object();
         private readonly ILogger<TracerHostedService> _logger;
         private readonly ITracerService _tracerService;
-        private readonly IConfiguration _configuration;
         private Timer _timer;
         private bool _wait = false;
 
         public TracerHostedService(ILogger<TracerHostedService> logger,
-            ITracerService tracerService,
-            IConfiguration configuration)
+            ITracerService tracerService)
         {
             _logger = logger;
             _tracerService = tracerService;
-            _configuration = configuration;
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -43,7 +40,7 @@ namespace Wing.APM
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var persistenceSeconds = _configuration["Apm:PersistenceSeconds"];
+            var persistenceSeconds = App.Configuration["Apm:PersistenceSeconds"];
             var seconds = string.IsNullOrWhiteSpace(persistenceSeconds) ? 3 : Convert.ToDouble(persistenceSeconds);
             _timer = new Timer(x =>
               {
@@ -55,13 +52,13 @@ namespace Wing.APM
                       }
 
                       _wait = true;
-                      var tracers = ListenerTracer.Data.Where(x => !x.IsStop && (DateTime.Now - x.BeginTime).TotalHours > 12).ToList();
+                      var tracers = ListenerTracer.Data.Where(x => !x.Value.IsStop && (DateTime.Now - x.Value.BeginTime).TotalHours > 12).ToList();
                       if (tracers != null && tracers.Any())
                       {
                           ListenerTracer.Remove(tracers);
                       }
 
-                      tracers = ListenerTracer.Data.Where(x => x.IsStop).ToList();
+                      tracers = ListenerTracer.Data.Where(x => x.Value.IsStop).ToList();
                       if (tracers == null || !tracers.Any())
                       {
                           _wait = false;
@@ -69,24 +66,20 @@ namespace Wing.APM
                       }
 
                       // Http请求
-                      var toListenerUrlStr = _configuration["Apm:ToListenerUrl"];
-                      var toListenerUrls = string.IsNullOrWhiteSpace(toListenerUrlStr) ? null : toListenerUrlStr.Split(',');
-                      var doNotListenerUrlStr = _configuration["Apm:DoNotListenerUrl"];
-                      var doNotListenerUrls = string.IsNullOrWhiteSpace(doNotListenerUrlStr) ? null : doNotListenerUrlStr.Split(',');
+                      var toListenerUrls = App.GetConfig<List<string>>("Apm:ToListenerUrl");
+                      var doNotListenerUrls = App.GetConfig<List<string>>("Apm:DoNotListenerUrl");
 
                       // 执行Sql
-                      var toListenerSqlStr = _configuration["Apm:ToListenerSql"];
-                      var toListenerSqls = string.IsNullOrWhiteSpace(toListenerSqlStr) ? null : toListenerSqlStr.Split(',');
-                      var doNotListenerSqlStr = _configuration["Apm:DoNotListenerSql"];
-                      var doNotListenerSqls = string.IsNullOrWhiteSpace(doNotListenerSqlStr) ? null : doNotListenerSqlStr.Split(',');
+                      var toListenerSqls = App.GetConfig<List<string>>("Apm:ToListenerSql");
+                      var doNotListenerSqls = App.GetConfig<List<string>>("Apm:DoNotListenerSql");
                       try
                       {
-                          foreach (var tracer in tracers)
+                          foreach (var item in tracers)
                           {
-                              ListenerTracer.Data.Remove(tracer);
+                              var tracer = item.Value;
                               if (tracer.Tracer != null)
                               {
-                                  if (toListenerUrls != null && toListenerUrls.Length > 0)
+                                  if (toListenerUrls != null && toListenerUrls.Count > 0)
                                   {
                                       foreach (var url in toListenerUrls)
                                       {
@@ -100,7 +93,7 @@ namespace Wing.APM
                                       continue;
                                   }
 
-                                  if (doNotListenerUrls != null && doNotListenerUrls.Length > 0)
+                                  if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
                                   {
                                       var isAdd = true;
                                       foreach (var url in doNotListenerUrls)
@@ -126,7 +119,7 @@ namespace Wing.APM
 
                               if (tracer.HttpTracer != null)
                               {
-                                  if (toListenerUrls != null && toListenerUrls.Length > 0)
+                                  if (toListenerUrls != null && toListenerUrls.Count > 0)
                                   {
                                       foreach (var url in toListenerUrls)
                                       {
@@ -140,7 +133,7 @@ namespace Wing.APM
                                       continue;
                                   }
 
-                                  if (doNotListenerUrls != null && doNotListenerUrls.Length > 0)
+                                  if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
                                   {
                                       var isAdd = true;
                                       foreach (var url in doNotListenerUrls)
@@ -171,7 +164,7 @@ namespace Wing.APM
                                       continue;
                                   }
 
-                                  if (toListenerSqls != null && toListenerSqls.Length > 0)
+                                  if (toListenerSqls != null && toListenerSqls.Count > 0)
                                   {
                                       foreach (var sql in toListenerSqls)
                                       {
@@ -185,7 +178,7 @@ namespace Wing.APM
                                       continue;
                                   }
 
-                                  if (doNotListenerSqls != null && doNotListenerSqls.Length > 0)
+                                  if (doNotListenerSqls != null && doNotListenerSqls.Count > 0)
                                   {
                                       var isAdd = true;
                                       foreach (var sql in doNotListenerSqls)
@@ -207,6 +200,8 @@ namespace Wing.APM
                                   _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
                               }
                           }
+
+                          ListenerTracer.Remove(tracers);
                       }
                       catch (Exception ex)
                       {

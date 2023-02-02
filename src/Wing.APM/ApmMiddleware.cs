@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
+using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;
@@ -110,7 +111,7 @@ namespace Wing.APM
             }
 
             context.Items.Add(ApmTools.TraceId, tracerDto.Tracer.Id);
-            ListenerTracer.Data.Add(tracerDto);
+            ListenerTracer.Data.TryAdd(tracerDto.Tracer.Id, tracerDto);
             await action?.Invoke(tracerDto);
             tracerDto.Tracer.ResponseTime = DateTime.Now;
             tracerDto.Tracer.UsedMillSeconds = ApmTools.UsedMillSeconds(tracerDto.Tracer.RequestTime, tracerDto.Tracer.ResponseTime);

@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Wing.Persistence.APM;
@@ -8,30 +8,13 @@ namespace Wing.APM.Listeners
 {
     public class ListenerTracer
     {
-        public static readonly List<TracerDto> Data = new List<TracerDto>();
+        public static readonly ConcurrentDictionary<string, TracerDto> Data = new ConcurrentDictionary<string, TracerDto>();
 
-        public TracerDto this[string traceId] => Tracer(traceId);
-
-        public static TracerDto Tracer(string id)
+        public static void Remove(List<KeyValuePair<string, TracerDto>> trancers)
         {
-            return Data.FirstOrDefault(x => x.Tracer?.Id == id);
-        }
-
-        public static TracerDto SqlTracer(string id)
-        {
-            return Data.FirstOrDefault(x => x.SqlTracer?.Id == id);
-        }
-
-        public static TracerDto HttpTracer(string id)
-        {
-            return Data.FirstOrDefault(x => x.HttpTracer?.Id == id);
-        }
-
-        public static void Remove(List<TracerDto> tracers)
-        {
-            foreach (var tracer in tracers)
+            foreach (var item in trancers)
             {
-                Data.Remove(tracer);
+                Data.TryRemove(item.Key, out _);
             }
         }
 
@@ -58,7 +41,7 @@ namespace Wing.APM.Listeners
             string content = string.Empty;
             if (resMsg.Content != null)
             {
-                   content = await resMsg.Content.ReadAsStringAsync();
+                content = await resMsg.Content.ReadAsStringAsync();
             }
 
             return content;
