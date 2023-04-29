@@ -130,6 +130,14 @@ namespace Wing.Persistence
                 eb.Property(x => x.ErrorMsg).HasColumnType("nvarchar(2000)");
                 eb.Property(x => x.RetryAction).HasColumnType("varchar(50)");
             });
+            fsql.CodeFirst.Entity<SagaTranStatusCount>(eb =>
+            {
+                eb.ToTable("Saga_TranStatusCount");
+                eb.HasIndex(x => x.Name).HasName("IX_Name");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
+            });
             #endregion
             return fsql;
         }

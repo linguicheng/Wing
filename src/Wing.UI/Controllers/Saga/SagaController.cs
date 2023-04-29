@@ -31,9 +31,9 @@ namespace Wing.UI.Controllers
         }
 
         [HttpGet]
-        public Task<object> GetTop5FailedData()
+        public Task<List<SagaTranStatusCount>> FailedDataRanking()
         {
-            return _tranService.GetTop5FailedData();
+            return _tranService.FailedDataRanking();
         }
     }
 }

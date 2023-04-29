@@ -120,6 +120,11 @@
           <div id="gatewayMonth" style="margin-top:20px;height:385px;"></div>
       </el-col>
     </el-row>
+    <el-row :gutter="20" style="margin-top:10px;">
+      <el-col el-col :span="24">
+          <div id="sagaFaildData" style="margin-top:20px;height:385px;"></div>
+      </el-col>
+    </el-row>
   </d2-container>
 </template>
 
@@ -152,8 +157,10 @@ export default {
       this.gatewayTimeOut(),
       this.getTargetCount()])
   },
-  mounted () {
-    this.gatewayTimeoutMonth()
+  async mounted () {
+    await Promise.all([
+      this.gatewayTimeoutMonth(),
+      this.sagaFaildData()])
   },
   methods: {
     toGateway () {
@@ -224,6 +231,60 @@ export default {
             name: '超时总数',
             type: 'line',
             data: yData
+          }
+        ]
+      })
+    },
+    async sagaFaildData () {
+      const result = await this.$api.SAGA_FailedData()
+      const xData = []
+      const ySuccess = []
+      const yExecuting = []
+      const yFaild = []
+      const yCancelled = []
+      result.forEach(item => {
+        xData.push(`${item.name}(${item.serviceName})`)
+        ySuccess.push(item.successCount)
+        yExecuting.push(item.executingCount)
+        yFaild.push(item.faildCount)
+        yCancelled.push(item.cancelledCount)
+      })
+      // 基于准备好的dom，初始化echarts实例
+      const myChart = echarts.init(document.getElementById('sagaFaildData'))
+      // 绘制图表
+      myChart.setOption({
+        title: {
+          text: 'Saga事务失败率统计'
+        },
+        tooltip: {},
+        xAxis: {
+          data: xData
+        },
+        yAxis: {},
+        series: [
+          {
+            name: '失败总数',
+            type: 'bar',
+            data: yFaild,
+            stack: 'x'
+          },
+          {
+            name: '取消总数',
+            type: 'bar',
+            data: yCancelled,
+            stack: 'x'
+          },
+          {
+            name: '成功总数',
+            type: 'bar',
+            data: ySuccess,
+            stack: 'x'
+          },
+          {
+            name: '执行中总数',
+            type: 'bar',
+            data: yExecuting,
+            stack: 'x'
           }
         ]
       })

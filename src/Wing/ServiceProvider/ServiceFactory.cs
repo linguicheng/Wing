@@ -45,15 +45,26 @@ namespace Wing.ServiceProvider
 
         private async Task<T> ServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
-            LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = await GetServices(serviceName, leastConnection, weightRoundRobin);
+                var serviceInfo = await GetServices(serviceName);
+                serviceAddress = serviceInfo.Item1;
+                var loadBalancer = serviceInfo.Item2;
                 var result = await func(serviceAddress);
-                weightRoundRobin?.AddWeight(serviceAddress);
-                leastConnection?.ReLease(serviceAddress);
+                if (loadBalancer is WeightRoundRobin)
+                {
+                    weightRoundRobin = loadBalancer as WeightRoundRobin;
+                    weightRoundRobin.AddWeight(serviceAddress);
+                    return result;
+                }
+
+                if (loadBalancer is LeastConnection)
+                {
+                    (loadBalancer as LeastConnection).ReLease(serviceAddress);
+                }
+
                 return result;
             }
             catch (Exception ex)
@@ -66,15 +77,26 @@ namespace Wing.ServiceProvider
 
         private T ServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
         {
-            LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = GetServices(serviceName, leastConnection, weightRoundRobin).GetAwaiter().GetResult();
+                var serviceInfo = GetServices(serviceName).GetAwaiter().GetResult();
+                serviceAddress = serviceInfo.Item1;
+                var loadBalancer = serviceInfo.Item2;
                 var result = func(serviceAddress);
-                weightRoundRobin?.AddWeight(serviceAddress);
-                leastConnection?.ReLease(serviceAddress);
+                if (loadBalancer is WeightRoundRobin)
+                {
+                    weightRoundRobin = loadBalancer as WeightRoundRobin;
+                    weightRoundRobin.AddWeight(serviceAddress);
+                    return result;
+                }
+
+                if (loadBalancer is LeastConnection)
+                {
+                    (loadBalancer as LeastConnection).ReLease(serviceAddress);
+                }
+
                 return result;
             }
             catch (Exception ex)
@@ -87,15 +109,25 @@ namespace Wing.ServiceProvider
 
         private async Task ServiceInvoke(string serviceName, Action<ServiceAddress> action)
         {
-            LeastConnection leastConnection = null;
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                serviceAddress = await GetServices(serviceName, leastConnection, weightRoundRobin);
+                var serviceInfo = await GetServices(serviceName);
+                serviceAddress = serviceInfo.Item1;
+                var loadBalancer = serviceInfo.Item2;
                 action(serviceAddress);
-                weightRoundRobin?.AddWeight(serviceAddress);
-                leastConnection?.ReLease(serviceAddress);
+                if (loadBalancer is WeightRoundRobin)
+                {
+                    weightRoundRobin = loadBalancer as WeightRoundRobin;
+                    weightRoundRobin.AddWeight(serviceAddress);
+                    return;
+                }
+
+                if (loadBalancer is LeastConnection)
+                {
+                    (loadBalancer as LeastConnection).ReLease(serviceAddress);
+                }
             }
             catch (Exception ex)
             {
@@ -105,7 +137,7 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private async Task<ServiceAddress> GetServices(string serviceName, LeastConnection leastConnection, WeightRoundRobin weightRoundRobin)
+        private async Task<(ServiceAddress, ILoadBalancer)> GetServices(string serviceName)
         {
             serviceName.IsNotNull();
             var services = await _discoveryServiceProvider.Get(serviceName, HealthStatus.Healthy);
@@ -117,58 +149,24 @@ namespace Wing.ServiceProvider
 
             if (services.Count == 1)
             {
-                return services[0].ServiceAddress;
+                return (services[0].ServiceAddress, null);
             }
 
-            LoadBalancerOptions loadBalancerOptions = LoadBalancerOptions.RoundRobin;
             var loadBalancerConfig = _loadBalancerCache.Get(serviceName);
-            ServiceAddress serviceAddress;
             if (loadBalancerConfig == null || loadBalancerConfig.LoadBalancerOptions != services[0].LoadBalancer)
             {
                 loadBalancerConfig = new LoadBalancerConfig
                 {
-                    LoadBalancerOptions = loadBalancerOptions
+                    LoadBalancerOptions = LoadBalancerOptions.RoundRobin,
+                    LoadBalancer = new RoundRobin(services)
                 };
-                switch (loadBalancerOptions)
-                {
-                    case LoadBalancerOptions.LeastConnection:
-                        leastConnection = new LeastConnection(services);
-                        loadBalancerConfig.LoadBalancer = leastConnection;
-                        serviceAddress = leastConnection.GetServiceAddress();
-                        break;
-                    case LoadBalancerOptions.WeightRoundRobin:
-                        weightRoundRobin = new WeightRoundRobin(services);
-                        loadBalancerConfig.LoadBalancer = weightRoundRobin;
-                        serviceAddress = weightRoundRobin.GetServiceAddress();
-                        break;
-                    default:
-                        var roundRobin = new RoundRobin(services);
-                        loadBalancerConfig.LoadBalancer = roundRobin;
-                        serviceAddress = roundRobin.GetServiceAddress();
-                        break;
-                }
+                var serviceAddress = loadBalancerConfig.LoadBalancer.GetServiceAddress();
 
                 _loadBalancerCache.Add(serviceName, loadBalancerConfig);
-                return serviceAddress;
+                return (serviceAddress, loadBalancerConfig.LoadBalancer);
             }
 
-            switch (loadBalancerOptions)
-            {
-                case LoadBalancerOptions.LeastConnection:
-                    leastConnection = loadBalancerConfig.LoadBalancer as LeastConnection;
-                    serviceAddress = GetServiceAddress(leastConnection, services);
-                    break;
-                case LoadBalancerOptions.WeightRoundRobin:
-                    weightRoundRobin = loadBalancerConfig.LoadBalancer as WeightRoundRobin;
-                    serviceAddress = GetServiceAddress(weightRoundRobin, services);
-                    break;
-                default:
-                    var roundRobin = loadBalancerConfig.LoadBalancer as RoundRobin;
-                    serviceAddress = GetServiceAddress(roundRobin, services);
-                    break;
-            }
-
-            return serviceAddress;
+            return (GetServiceAddress(loadBalancerConfig.LoadBalancer, services), loadBalancerConfig.LoadBalancer);
         }
 
         private ServiceAddress GetServiceAddress(ILoadBalancer loadBalancer, List<Service> services)

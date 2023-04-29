@@ -25,6 +25,8 @@ namespace Wing.Persistence.Saga
 
         long GetFailedTotal();
 
-        Task<object> GetTop5FailedData();
+        int AddStatusCount();
+
+        Task<List<SagaTranStatusCount>> FailedDataRanking();
     }
 }

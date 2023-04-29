@@ -21,6 +21,7 @@ namespace Wing
                 sagaOptions?.Invoke(wingBuilder.Services.BuildServiceProvider()));
 
             wingBuilder.Services.AddSingleton(typeof(IHostedService), tranRetryService);
+            wingBuilder.Services.AddSingleton<IHostedService, TranReportHostedService>();
             return wingBuilder;
         }
     }

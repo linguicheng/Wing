@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Wing.Model;
 using Wing.Result;
@@ -95,27 +96,56 @@ namespace Wing.Persistence.Saga
             return _fsql.Select<SagaTran>().Where(x => x.Status == TranStatus.Failed).Count();
         }
 
-        public async Task<object> GetTop5FailedData()
+        public Task<List<SagaTranStatusCount>> FailedDataRanking()
         {
-            var result = await _fsql.Select<SagaTran>()
-                .GroupBy(a => new { a.Name })
-                .WithTempQuery(a => new
+            return _fsql.Select<SagaTranStatusCount>()
+                .OrderByDescending(a => a.FaildCount * 1.0 / (a.SuccessCount + a.FaildCount + a.CancelledCount + a.ExecutingCount))
+                .Take(5)
+                .ToListAsync();
+        }
+
+        public int AddStatusCount()
+        {
+            var data = _fsql.Select<SagaTran>()
+                .GroupBy(a => new { a.Name, a.ServiceName, a.Status })
+                .ToList(a => new
                 {
                     a.Value.Name,
-                    FailedLv = Math.Round(_fsql.Select<SagaTran>().Where(b => b.Name == a.Value.Name && b.Status == TranStatus.Failed).Count() * 1.0 / a.Count(), 2)
-                })
-                .OrderByDescending(a => a.FailedLv)
-                .Take(5)
-                .From<SagaTran>()
-                .InnerJoin((a, b) => a.Name == b.Name)
-                .GroupBy((a, b) => new { b.Name, b.Status })
-                .ToListAsync(x => new
-                {
-                    x.Value.Item2.Name,
-                    x.Value.Item2.Status,
-                    Count = x.Count()
+                    a.Value.ServiceName,
+                    a.Value.Status,
+                    Count = a.Count()
                 });
-            return result;
+            if (data == null || data.Count == 0)
+            {
+                return 0;
+            }
+
+            var result = new List<SagaTranStatusCount>();
+            data.ForEach(a =>
+            {
+                var item = result.Where(b => b.Name == a.Name && b.ServiceName == a.ServiceName).FirstOrDefault();
+                if (item == null)
+                {
+                    item = new SagaTranStatusCount
+                    {
+                        Id = Guid.NewGuid().ToString("N"),
+                        Name = a.Name,
+                        ServiceName = a.ServiceName,
+                        CreatedTime = DateTime.Now
+                    };
+                    result.Add(item);
+                }
+
+                switch (a.Status)
+                {
+                    case TranStatus.Success: item.SuccessCount = a.Count; break;
+                    case TranStatus.Failed: item.FaildCount = a.Count; break;
+                    case TranStatus.Cancelled: item.CancelledCount = a.Count; break;
+                    case TranStatus.Executing: item.ExecutingCount = a.Count; break;
+                }
+            });
+            _fsql.Delete<SagaTranStatusCount>().Where("1=1").ExecuteAffrows();
+            return _fsql.Insert(result).ExecuteAffrows();
         }
     }
 }

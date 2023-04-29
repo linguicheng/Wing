@@ -23,5 +23,15 @@ export default ({ request }) => ({
       url: 'Saga/Detail',
       params: { tranId }
     })
+  },
+  /**
+   * @description 指标统计
+   * @returns
+   */
+  SAGA_FailedData () {
+    return request({
+      method: 'GET',
+      url: 'Saga/FailedDataRanking'
+    })
   }
 })

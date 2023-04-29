@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -36,12 +38,26 @@ namespace Wing
 
         public static T DeepCopy<T>(T value)
         {
-            using var ms = new MemoryStream();
-            BinaryFormatter bf = new BinaryFormatter();
-            bf.Serialize(ms, value);
-            ms.Seek(0, SeekOrigin.Begin);
-            var result = bf.Deserialize(ms);
-            return (T)result;
+            using (var ms = new MemoryStream())
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                bf.Serialize(ms, value);
+                ms.Seek(0, SeekOrigin.Begin);
+                var result = bf.Deserialize(ms);
+                return (T)result;
+            }
+        }
+
+        public static TimeSpan DueTime(string startTime, TimeSpan period)
+        {
+            var now = TimeSpan.Parse(DateTime.Now.TimeOfDay.ToString(@"hh\:mm"));
+            string[] formats = { @"hh\:mm\:ss", @"hh\:mm" };
+            if (TimeSpan.TryParseExact(startTime, formats, CultureInfo.InvariantCulture, out TimeSpan executeTime))
+            {
+                return executeTime >= now ? executeTime - now : period - now + executeTime;
+            }
+
+            throw new Exception("时间格式设置错误，支持格式：hh:mm:ss或hh:mm");
         }
     }
 }
