@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using Wing;
 
-namespace AspNetCoreService
+namespace Sample.AspNetCoreService2
 {
     public class Startup
     {

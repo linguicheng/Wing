@@ -1,6 +1,6 @@
 using System;
 
-namespace AspNetCoreService
+namespace Sample.AspNetCoreService2
 {
     public class WeatherForecast
     {

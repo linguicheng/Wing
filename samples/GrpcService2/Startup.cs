@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Wing;
 
-namespace GrpcService
+namespace Sample.GrpcService2
 {
     public class Startup
     {

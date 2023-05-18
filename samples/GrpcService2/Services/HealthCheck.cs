@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Health.V1;
 
-namespace GrpcService
+namespace Sample.GrpcService2
 {
     public class HealthCheck : Health.HealthBase
     {

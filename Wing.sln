@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{98EA2F9D-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService", "samples\AspNetCoreService\Sample.AspNetCoreService.csproj", "{0469F1B1-C0F5-4B61-B04B-861FE568B055}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcService", "samples\GrpcService\GrpcService.csproj", "{99F41381-0D00-4169-BA96-E36DDA813200}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService", "samples\GrpcService\Sample.GrpcService.csproj", "{99F41381-0D00-4169-BA96-E36DDA813200}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing", "src\Wing\Wing.csproj", "{BCB6FCD0-06EA-4339-956B-3425BC83F07D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GrpcService2", "samples\GrpcService2\GrpcService2.csproj", "{ADDCD34D-52F7-4ECA-80B3-D317982ACD3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService2", "samples\GrpcService2\Sample.GrpcService2.csproj", "{ADDCD34D-52F7-4ECA-80B3-D317982ACD3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Saga.Client.Grpc", "samples\Sample.Saga.Client.Grpc\Sample.Saga.Client.Grpc.csproj", "{7553CFCC-BFBD-41D0-91FC-EB7A73FDD3E7}"
 EndProject
@@ -34,7 +34,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Auth", "samples\Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Gateway", "samples\Sample.GateWay\Sample.Gateway.csproj", "{1BF719F2-AB15-43BF-BB1A-36B3A2235729}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNetCoreService2", "samples\AspNetCoreService2\AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService2", "samples\AspNetCoreService2\Sample.AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Persistence", "src\Wing.Persistence\Wing.Persistence.csproj", "{F76FC8A5-87A4-4697-85B1-C045AF78386D}"
 EndProject

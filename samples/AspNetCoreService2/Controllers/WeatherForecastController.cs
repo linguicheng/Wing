@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Sample.Auth;
 
-namespace AspNetCoreService.Controllers
+namespace Sample.AspNetCoreService2.Controllers
 {
     [ApiController]
     [Route("[controller]")]

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Grpc.Core;
 using Grpc.Health.V1;
 
-namespace GrpcService
+namespace Sample.GrpcService
 {
     public class HealthCheck : Health.HealthBase
     {

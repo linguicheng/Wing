@@ -1,9 +1,10 @@
 using System.Threading.Tasks;
 using Grpc.Core;
+using GrpcService;
 using Microsoft.AspNetCore.Authorization;
 using Sample.Auth;
 
-namespace GrpcService
+namespace Sample.GrpcService
 {
     public class GreeterService : Greeter.GreeterBase
     {
