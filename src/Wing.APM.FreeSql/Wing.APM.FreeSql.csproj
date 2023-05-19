@@ -1,7 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	
+	<PropertyGroup>
+		<PackageId>Wing.APM.FreeSql</PackageId>
+		<Title>Wing.APM.FreeSql</Title>
+		<Version>0.8.0</Version>
+		<Authors>linguicheng</Authors>
+		<Product>Wing.APM.FreeSql</Product>
+		<Description>.NET微服务框架-APM</Description>
+		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
+		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
+		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+		<PackageTags>Wing;Wing.APM.FreeSql;微服务</PackageTags>
+		<IncludeSymbols>False</IncludeSymbols>
+		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+		<PackageOutputPath>..\..\packages</PackageOutputPath>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>
   <Import Project="..\..\build\common.props" />
-
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />
   </ItemGroup>

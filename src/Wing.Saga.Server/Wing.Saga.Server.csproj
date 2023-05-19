@@ -1,7 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
-
+	<PropertyGroup>
+		<PackageId>Wing.Saga.Server</PackageId>
+		<Title>Wing.Saga.Server</Title>
+		<Version>0.8.0</Version>
+		<Authors>linguicheng</Authors>
+		<Product>Wing.Saga.Server</Product>
+		<Description>.NET微服务框架-Saga分布式事务服务端</Description>
+		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
+		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
+		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+		<PackageTags>Wing;Wing.Saga;微服务;分布式事务</PackageTags>
+		<IncludeSymbols>False</IncludeSymbols>
+		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+		<PackageOutputPath>..\..\packages</PackageOutputPath>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>
   <Import Project="..\..\build\common.props" />
-
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
   <ItemGroup>
     <None Remove="Protos\TranRetry.proto" />
   </ItemGroup>

@@ -1,7 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
-	
+	<PropertyGroup>
+		<PackageId>Wing.Persistence</PackageId>
+		<Title>Wing.Persistence</Title>
+		<Version>0.8.0</Version>
+		<Authors>linguicheng</Authors>
+		<Product>Wing.Persistence</Product>
+		<Description>.NET微服务框架</Description>
+		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
+		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
+		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+		<PackageTags>Wing;Wing.Persistence;微服务;</PackageTags>
+		<IncludeSymbols>False</IncludeSymbols>
+		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+		<PackageOutputPath>..\..\packages</PackageOutputPath>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+	</PropertyGroup>	
   <Import Project="..\..\build\common.props" />
-	
+	<ItemGroup>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
   <ItemGroup>
 	<PackageReference Include="FreeSql" Version="3.2.687" />
 	<PackageReference Include="FreeSql.Repository" Version="3.2.687" />
