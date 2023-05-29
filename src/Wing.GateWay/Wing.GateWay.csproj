@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<PackageId>Wing.Gateway</PackageId>
 		<Title>Wing.Gateway</Title>
-		<Version>0.8.0</Version>
+		<Version>0.8.2</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.Gateway</Product>
 		<Description>.NET微服务框架-服务网关</Description>

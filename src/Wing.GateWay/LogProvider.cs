@@ -67,7 +67,11 @@ namespace Wing.Gateway
                     log.AuthKey = request.Headers["AuthKey"].ToString();
                 }
 
-                log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                if (App.GetService<IAuthenticationService>() != null)
+                {
+                    log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                }
+
                 if (request.Body != null)
                 {
                     request.EnableBuffering();

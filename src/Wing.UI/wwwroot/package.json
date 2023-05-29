@@ -1,6 +1,6 @@
 {
-  "name": "d2-admin",
-  "version": "1.20.1",
+  "name": "Wing.UI",
+  "version": "0.8.0",
   "scripts": {
     "serve": "vue-cli-service serve --open",
     "start": "npm run serve",
@@ -73,6 +73,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/d2-projects/d2-admin.git"
+    "url": "https://gitee.com/linguicheng/Wing.git"
   }
 }
+

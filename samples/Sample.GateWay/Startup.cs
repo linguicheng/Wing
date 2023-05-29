@@ -13,10 +13,10 @@ namespace Sample.Gateway
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddWing()
-                    .AddJwt()
+                    //.AddJwt()
                     .AddPersistence()
-                    .AddGateWay()
-                    .AddEventBus();    
+                    .AddGateWay();
+                    //.AddEventBus();    
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

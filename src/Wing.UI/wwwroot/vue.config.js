@@ -2,8 +2,8 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin')
 const VueFilenameInjector = require('@d2-projects/vue-filename-injector')
 const ThemeColorReplacer = require('webpack-theme-color-replacer')
 const forElementUI = require('webpack-theme-color-replacer/forElementUI')
-const cdnDependencies = require('./dependencies-cdn')
-const { chain, set, each } = require('lodash')
+// const cdnDependencies = require('./dependencies-cdn')
+// const { chain, set, each } = require('lodash')
 
 // 拼接路径
 const resolve = dir => require('path').join(__dirname, dir)
@@ -16,14 +16,14 @@ process.env.VUE_APP_BUILD_TIME = require('dayjs')().format('YYYY-M-D HH:mm:ss')
 const publicPath = process.env.VUE_APP_PUBLIC_PATH || '/'
 
 // 设置不参与构建的库
-const externals = {}
-cdnDependencies.forEach(pkg => { externals[pkg.name] = pkg.library })
+// const externals = {}
+// cdnDependencies.forEach(pkg => { externals[pkg.name] = pkg.library })
 
 // 引入文件的 cdn 链接
-const cdn = {
-  css: cdnDependencies.map(e => e.css).filter(e => e),
-  js: cdnDependencies.map(e => e.js).filter(e => e)
-}
+// const cdn = {
+//   css: cdnDependencies.map(e => e.css).filter(e => e),
+//   js: cdnDependencies.map(e => e.js).filter(e => e)
+// }
 
 // 多页配置，默认未开启，如需要请参考 https://cli.vuejs.org/zh/config/#pages
 const pages = undefined
@@ -52,7 +52,7 @@ module.exports = {
   configureWebpack: config => {
     const configNew = {}
     if (process.env.NODE_ENV === 'production') {
-      configNew.externals = externals
+      // configNew.externals = externals
       configNew.plugins = [
         // gzip
         new CompressionWebpackPlugin({
@@ -72,14 +72,14 @@ module.exports = {
      * 添加 CDN 参数到 htmlWebpackPlugin 配置中
      * 已适配多页
      */
-    const htmlPluginNames = chain(pages).keys().map(page => 'html-' + page).value()
-    const targetHtmlPluginNames = htmlPluginNames.length ? htmlPluginNames : ['html']
-    each(targetHtmlPluginNames, name => {
-      config.plugin(name).tap(options => {
-        set(options, '[0].cdn', process.env.NODE_ENV === 'production' ? cdn : [])
-        return options
-      })
-    })
+    // const htmlPluginNames = chain(pages).keys().map(page => 'html-' + page).value()
+    // const targetHtmlPluginNames = htmlPluginNames.length ? htmlPluginNames : ['html']
+    // each(targetHtmlPluginNames, name => {
+    //   config.plugin(name).tap(options => {
+    //     set(options, '[0].cdn', process.env.NODE_ENV === 'production' ? cdn : [])
+    //     return options
+    //   })
+    // })
 
     /**
      * 删除懒加载模块的 prefetch preload，降低带宽压力
