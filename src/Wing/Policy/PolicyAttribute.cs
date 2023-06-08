@@ -27,62 +27,57 @@ namespace Wing.Policy
             FallBackMethod = fallBackMethod;
         }
 
-        private static readonly ConcurrentDictionary<MethodInfo, WingAsyncPolicy> Policies = new ConcurrentDictionary<MethodInfo, WingAsyncPolicy>();
+        private static readonly ConcurrentDictionary<MethodInfo, WingPolicy> Policies = new ConcurrentDictionary<MethodInfo, WingPolicy>();
 
         public async override Task Invoke(AspectContext context, AspectDelegate next)
         {
             var config = context.ServiceProvider.GetRequiredService<IConfiguration>().GetSection(ConfigKey).Get<PolicyConfig>();
             FallBackMethod = string.IsNullOrWhiteSpace(FallBackMethod) ? $"{context.ServiceMethod.Name}Fallback" : FallBackMethod;
-            Policies.TryGetValue(context.ServiceMethod, out WingAsyncPolicy wingPolicy);
-            AsyncPolicy policy;
+            Policies.TryGetValue(context.ServiceMethod, out WingPolicy wingPolicy);
+            Policy<Task> policy;
             if (wingPolicy == null || wingPolicy.Config != config)
             {
-                policy = Polly.Policy.NoOpAsync();
+                policy = Polly.Policy.NoOp<Task>();
                 if (config.IsEnableBreaker)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().CircuitBreakerAsync(config.ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(config.MillisecondsOfBreak)));
+                    policy = policy.Wrap(Polly.Policy.Handle<Exception>().CircuitBreaker(config.ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(config.MillisecondsOfBreak)));
                 }
 
                 if (config.TimeOutMilliseconds > 0)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.TimeoutAsync(() => TimeSpan.FromMilliseconds(config.TimeOutMilliseconds), Polly.Timeout.TimeoutStrategy.Pessimistic));
+                    policy = policy.Wrap(Polly.Policy.Timeout(() => TimeSpan.FromMilliseconds(config.TimeOutMilliseconds), Polly.Timeout.TimeoutStrategy.Pessimistic));
                 }
 
                 if (config.MaxRetryTimes > 0)
                 {
-                    policy = policy.WrapAsync(Polly.Policy.Handle<Exception>().WaitAndRetryAsync(config.MaxRetryTimes, i => TimeSpan.FromMilliseconds(config.RetryIntervalMilliseconds)));
+                    policy = policy.Wrap(Polly.Policy.Handle<Exception>().WaitAndRetry(config.MaxRetryTimes, i => TimeSpan.FromMilliseconds(config.RetryIntervalMilliseconds)));
                 }
 
                 var logger = context.ServiceProvider.GetService<ILogger<PolicyAttribute>>();
-                var policyFallBack = Polly.Policy
+                var policyFallBack = Policy<Task>
                     .Handle<Exception>()
-                    .FallbackAsync(
-                        async (ctx, t) =>
+                    .Fallback(
+                    ctx =>
                     {
-                        await Task.Run(() =>
+                        AspectContext aspectContext = (AspectContext)ctx["aspectContext"];
+                        var fallBackMethod = context.ServiceMethod.DeclaringType.GetMethod(FallBackMethod);
+                        if (fallBackMethod == null)
                         {
-                            AspectContext aspectContext = (AspectContext)ctx["aspectContext"];
-                            var fallBackMethod = context.ServiceMethod.DeclaringType.GetMethod(FallBackMethod);
-                            if (fallBackMethod == null)
-                            {
-                                throw new Exception($"找不到异常降级方法【{FallBackMethod}】");
-                            }
+                            throw new Exception($"找不到异常降级方法【{FallBackMethod}】");
+                        }
 
-                            var fallBackResult = fallBackMethod.Invoke(context.Implementation, context.Parameters);
-                            aspectContext.ReturnValue = fallBackResult;
-                        });
-                    }, async (ex, t) =>
+                        var fallBackResult = fallBackMethod.Invoke(context.Implementation, context.Parameters);
+                        aspectContext.ReturnValue = fallBackResult;
+                        return Task.CompletedTask;
+                    }, (dr, ctx) =>
                     {
-                        await Task.Run(() =>
-                        {
-                            logger.LogError(ex, "触发异常降级，方法为：{0}", $"{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}");
-                        });
+                        logger.LogError(dr.Exception, "触发异常降级，方法为：{0}", $"{context.ServiceMethod.DeclaringType}.{context.ServiceMethod}.{string.Join("_", context.Parameters)}");
                     });
 
-                policy = policyFallBack.WrapAsync(policy);
+                policy = policyFallBack.Wrap(policy);
                 Policies.AddOrUpdate(context.ServiceMethod,
-                    new WingAsyncPolicy { Policy = policy, Config = config },
-                    (key, value) => new WingAsyncPolicy { Policy = policy, Config = config });
+                    new WingPolicy { Policy = policy, Config = config },
+                    (key, value) => new WingPolicy { Policy = policy, Config = config });
             }
             else
             {
@@ -104,12 +99,12 @@ namespace Wing.Policy
                     return;
                 }
 
-                await policy.ExecuteAsync(ctx => next(context), pollyCtx);
+                await policy.Execute(ctx => next(context), pollyCtx);
                 cacheProvider.Set(cacheKey, context.ReturnValue, TimeSpan.FromMilliseconds(config.CacheMilliseconds));
                 return;
             }
 
-            await policy.ExecuteAsync(ctx => next(context), pollyCtx);
+            await policy.Execute(ctx => next(context), pollyCtx);
         }
     }
 }

@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<PackageId>Wing.Consul</PackageId>
 		<Title>Wing.Consul</Title>
-		<Version>0.8.0</Version>
+		<Version>0.8.2</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.Consul</Product>
 		<Description>.NET微服务框架</Description>
