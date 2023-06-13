@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Wing.APM.FreeSql;
 
-namespace Wing.Persistence
+namespace Wing.APM.FreeSql
 {
     public class WingDbFreeSqlDiagnosticListener : FreeSqlDiagnosticListener
     {

@@ -32,7 +32,12 @@ namespace Wing.Gateway.Middleware
                 return;
             }
 
-            if (!(serviceContext.Policy is null) && (serviceContext.Policy.IsEnableBreaker || serviceContext.Policy.MaxRetryTimes > 0 || serviceContext.Policy.TimeOutMilliseconds > 0))
+            if (serviceContext.Policy != null &&
+                ((serviceContext.Policy.Breaker != null && serviceContext.Policy.Breaker.IsEnabled)
+                || (serviceContext.Policy.RateLimit != null && serviceContext.Policy.RateLimit.IsEnabled)
+                || (serviceContext.Policy.BulkHead != null && serviceContext.Policy.BulkHead.IsEnabled)
+                || (serviceContext.Policy.Retry != null && serviceContext.Policy.Retry.IsEnabled)
+                || (serviceContext.Policy.TimeOut != null && serviceContext.Policy.TimeOut.IsEnabled)))
             {
                 await _next(serviceContext);
                 return;

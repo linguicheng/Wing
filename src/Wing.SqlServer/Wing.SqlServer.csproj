@@ -2,10 +2,10 @@
 	<PropertyGroup>
 		<PackageId>Wing.SqlServer</PackageId>
 		<Title>Wing.SqlServer</Title>
-		<Version>0.8.0</Version>
+		<Version>0.8.1</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.SqlServer</Product>
-		<Description>.NET微服务框架</Description>
+		<Description>Wing微服务框架-SqlServer持久化</Description>
 		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
 		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
 		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
@@ -24,11 +24,10 @@
 		</None>
 	</ItemGroup>
   <ItemGroup>
-    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.687" />
+    <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.697" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Wing.Persistence\Wing.Persistence.csproj" />
     <ProjectReference Include="..\Wing.APM.FreeSql\Wing.APM.FreeSql.csproj" />
   </ItemGroup>
 

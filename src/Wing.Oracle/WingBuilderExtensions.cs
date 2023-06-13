@@ -12,7 +12,7 @@ namespace Wing
             Builder.Add(wingBuilder.Services, (conn, autoSyncStructure) =>
             {
                 var fsql = new FreeSqlBuilder()
-                           .UseConnectionString(DataType.SqlServer, conn)
+                           .UseConnectionString(DataType.Oracle, conn)
                            .UseAutoSyncStructure(autoSyncStructure) // 自动同步实体结构到数据库，FreeSql不会扫描程序集，只有CRUD时才会生成表。
                            .Build<WingDbFlag>().Map();
                 WingDbApmBuilder.AddFreeSql(wingBuilder.Services, fsql);

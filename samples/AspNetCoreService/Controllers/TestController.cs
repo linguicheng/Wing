@@ -12,6 +12,7 @@ using Wing.EventBus;
 using System.Net.Http;
 using Wing.Injection;
 using Wing.ServiceProvider;
+using System.Threading;
 
 namespace Sample.AspNetCoreService.Controllers
 {
@@ -45,7 +46,7 @@ namespace Sample.AspNetCoreService.Controllers
         }
 
         [HttpGet]
-        [Authorize("Wing")]
+        //[Authorize("Wing")]
         public IEnumerable<WeatherForecast> Get()
         {
             var rng = new Random();
@@ -75,7 +76,7 @@ namespace Sample.AspNetCoreService.Controllers
             string result = await client.GetStringAsync("/api/values");
             return Ok(result);
         }
-        [HttpGet("Hello")]
+        [HttpGet("Hello/{name}")]
         public async Task<string> Hello(string name)
         {
             return await _product.InvokeHello(name);

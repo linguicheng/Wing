@@ -62,6 +62,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Saga.Server", "sampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Saga.Client.Http", "samples\Sample.Saga.Client.Http\Sample.Saga.Client.Http.csproj", "{98BBA376-4030-4AFE-BDC5-498E82A6E9BB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.Oracle", "src\Wing.Oracle\Wing.Oracle.csproj", "{DE430DF1-1315-43C3-A3DF-DE0B507EA82A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -152,6 +154,10 @@ Global
 		{98BBA376-4030-4AFE-BDC5-498E82A6E9BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{98BBA376-4030-4AFE-BDC5-498E82A6E9BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{98BBA376-4030-4AFE-BDC5-498E82A6E9BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -181,6 +187,7 @@ Global
 		{2EB86E0A-91AD-4228-B855-CE227DDD50F0} = {1145D1A6-2FDA-420F-95E7-6B24DD291754}
 		{1A147718-84E8-4736-A57F-ADA6C4FFA047} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
 		{98BBA376-4030-4AFE-BDC5-498E82A6E9BB} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
+		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4E7060C-278C-4789-8857-13E1D41F6AD6}

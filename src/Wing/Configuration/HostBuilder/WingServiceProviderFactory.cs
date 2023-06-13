@@ -1,21 +1,18 @@
 ﻿using System;
-using AspectCore.DependencyInjection;
-using AspectCore.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Wing.Configuration.HostBuilder
 {
-    public class WingServiceProviderFactory : IServiceProviderFactory<IServiceContext>
+    public class WingServiceProviderFactory : IServiceProviderFactory<IServiceProvider>
     {
-        public IServiceContext CreateBuilder(IServiceCollection services)
+        public IServiceProvider CreateBuilder(IServiceCollection services)
         {
-            App.ServiceProvider = services.BuildServiceProvider();
-            return services.ToServiceContext();
+           return App.ServiceProvider = services.BuildServiceProvider();
         }
 
-        public IServiceProvider CreateServiceProvider(IServiceContext contextBuilder)
+        public IServiceProvider CreateServiceProvider(IServiceProvider containerBuilder)
         {
-            return contextBuilder.Build();
+            return containerBuilder;
         }
     }
 }

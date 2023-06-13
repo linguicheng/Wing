@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -36,19 +37,60 @@ namespace Wing.Gateway.Middleware
             }
 
             serviceContext.ServiceName = serviceName;
-            string[] downstreamPaths = new string[paths.Length - 2];
-            for (var i = 0; i < downstreamPaths.Length; i++)
+            string[] upstreamPaths = new string[paths.Length - 2];
+            for (var i = 0; i < upstreamPaths.Length; i++)
             {
-                downstreamPaths[i] = paths[i + 2];
+                upstreamPaths[i] = paths[i + 2];
             }
 
-            serviceContext.DownstreamPath = "/" + string.Join('/', downstreamPaths);
+            serviceContext.DownstreamPath = "/" + string.Join('/', upstreamPaths);
             var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
             if (config != null)
             {
                 if (config.Policies != null && config.Policies.Count > 0)
                 {
-                    serviceContext.Policy = config.Policies.Where(p => p.ServiceName == serviceContext.ServiceName).FirstOrDefault();
+                    // 服务策略
+                    serviceContext.Policy = config.Policies.Where(p => p.Key == serviceContext.ServiceName).FirstOrDefault();
+                    if (serviceContext.Policy != null
+                        && serviceContext.Policy.MethodPolicies != null
+                        && serviceContext.Policy.MethodPolicies.Count > 0)
+                    {
+                        // 服务方法策略
+                        Policy methodPolicy = null;
+                        foreach (var p in serviceContext.Policy.MethodPolicies)
+                        {
+                            var keys = p.Key.Split('/');
+                            if (keys.Length == upstreamPaths.Length)
+                            {
+                                int count = 0;
+                                for (var i = 0; i < keys.Length; i++)
+                                {
+                                    if (keys[i].StartsWith("{") && keys[i].EndsWith("}"))
+                                    {
+                                        count++;
+                                        continue;
+                                    }
+
+                                    if (keys[i].ToLower() == upstreamPaths[i].ToLower())
+                                    {
+                                        count++;
+                                        continue;
+                                    }
+                                }
+
+                                if (count == keys.Length)
+                                {
+                                    methodPolicy = p;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (methodPolicy != null)
+                        {
+                            serviceContext.Policy = methodPolicy;
+                        }
+                    }
                 }
 
                 serviceContext.Policy ??= config.Global;

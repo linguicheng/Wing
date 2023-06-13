@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<PackageId>Wing.APM</PackageId>
 		<Title>Wing.APM</Title>
-		<Version>0.8.0</Version>
+		<Version>0.8.1</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.APM</Product>
 		<Description>.NET微服务框架-APM</Description>

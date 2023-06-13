@@ -6,8 +6,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\src\Wing.Oracle\Wing.Oracle.csproj" />
     <ProjectReference Include="..\..\src\Wing.UI\Wing.UI.csproj" />
-    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
   </ItemGroup>
 
 

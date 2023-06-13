@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<PackageId>Wing.UI</PackageId>
 		<Title>Wing.UI</Title>
-		<Version>0.8.2</Version>
+		<Version>0.8.3</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.UI</Product>
 		<Description>.NET微服务框架-UI</Description>

@@ -3,14 +3,12 @@ using Sample.Saga.Client.Grpc;
 using System.Threading;
 using System.Threading.Tasks;
 using Wing.Injection;
-using Wing.Policy;
 using Wing.ServiceProvider;
 
 namespace Sample.AspNetCoreService.Policy
 {
     public interface IProduct
     {
-        [Policy]
         Task<string> InvokeHello(string name);
         Task<string> InvokeHelloFallback(string name);
     }
@@ -30,7 +28,6 @@ namespace Sample.AspNetCoreService.Policy
             //    var greeterClient = new Greeter.GreeterClient(channel);
             //    return await greeterClient.GetTokenAsync(new TokenRequest { Name = name });
             //});
-            Thread.Sleep(1000);
             return await _serviceFactory.InvokeAsync("Sample.Saga.Client.Grpc", async serviceAddr =>
             {
                 //var headers = new Metadata

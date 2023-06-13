@@ -6,6 +6,8 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Polly;
+using Polly.Bulkhead;
+using Polly.RateLimit;
 using Polly.Timeout;
 using Wing.Exceptions;
 using Wing.ServiceProvider;
@@ -53,25 +55,52 @@ namespace Wing.Gateway.Middleware
             if (policy == null || policyPair.Key != config)
             {
                 policy = Polly.Policy.NoOpAsync<HttpResponseMessage>();
-                if (config.TimeOutMilliseconds > 0)
+                if (config.TimeOut != null && config.TimeOut.IsEnabled)
                 {
                     policy = Policy<HttpResponseMessage>
                    .Handle<TimeoutRejectedException>()
                    .Or<TimeoutException>()
                    .FallbackAsync(t =>
                    {
+                       _logger.LogError("触发超时异常降级");
                        return Task.FromResult(new HttpResponseMessage(HttpStatusCode.GatewayTimeout));
-                   }).WrapAsync<HttpResponseMessage>(Polly.Policy.TimeoutAsync<HttpResponseMessage>(() => TimeSpan.FromMilliseconds(config.TimeOutMilliseconds), TimeoutStrategy.Pessimistic));
+                   }).WrapAsync<HttpResponseMessage>(Polly.Policy.TimeoutAsync<HttpResponseMessage>(() => TimeSpan.FromMilliseconds(config.TimeOut.TimeOutMilliseconds), TimeoutStrategy.Pessimistic));
                 }
 
-                if (config.IsEnableBreaker)
+                if (config.Breaker != null && config.Breaker.IsEnabled)
                 {
-                    policy = policy.WrapAsync<HttpResponseMessage>(Polly.Policy.Handle<ServiceNotFoundException>().Or<Exception>().CircuitBreakerAsync(config.ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(config.MillisecondsOfBreak)));
+                    policy = policy.WrapAsync<HttpResponseMessage>(Polly.Policy.Handle<ServiceNotFoundException>().Or<Exception>().CircuitBreakerAsync(config.Breaker.ExceptionsAllowedBeforeBreaking, TimeSpan.FromMilliseconds(config.Breaker.MillisecondsOfBreak)));
                 }
 
-                if (config.MaxRetryTimes > 0)
+                if (config.BulkHead != null && config.BulkHead.IsEnabled)
                 {
-                    policy = policy.WrapAsync<HttpResponseMessage>(Polly.Policy.Handle<ServiceNotFoundException>().Or<Exception>().WaitAndRetryAsync(config.MaxRetryTimes, i => TimeSpan.FromMilliseconds(config.RetryIntervalMilliseconds)));
+                    policy = Policy<HttpResponseMessage>
+                   .Handle<BulkheadRejectedException>()
+                   .FallbackAsync(t =>
+                   {
+                       _logger.LogError("触发舱壁异常降级");
+                       return Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
+                   })
+                   .WrapAsync<HttpResponseMessage>(Polly.Policy.BulkheadAsync<HttpResponseMessage>(config.BulkHead.MaxParallelization, config.BulkHead.MaxQueuingActions))
+                   .WrapAsync(policy);
+                }
+
+                if (config.RateLimit != null && config.RateLimit.IsEnabled)
+                {
+                    policy = Policy<HttpResponseMessage>
+                   .Handle<RateLimitRejectedException>()
+                   .FallbackAsync(t =>
+                   {
+                       _logger.LogError("触发限流异常降级");
+                       return Task.FromResult(new HttpResponseMessage(HttpStatusCode.TooManyRequests));
+                   })
+                   .WrapAsync<HttpResponseMessage>(Polly.Policy.RateLimitAsync<HttpResponseMessage>(config.RateLimit.NumberOfExecutions, TimeSpan.FromSeconds(config.RateLimit.PerSeconds), config.RateLimit.MaxBurst))
+                   .WrapAsync(policy);
+                }
+
+                if (config.Retry != null && config.Retry.IsEnabled)
+                {
+                    policy = policy.WrapAsync<HttpResponseMessage>(Polly.Policy.Handle<ServiceNotFoundException>().Or<Exception>().WaitAndRetryAsync(config.Retry.MaxTimes, i => TimeSpan.FromMilliseconds(config.Retry.IntervalMilliseconds)));
                 }
 
                 var unknownErrorFallBack = Policy<HttpResponseMessage>

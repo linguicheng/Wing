@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
 using FreeSql.Aop;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;

@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<PackageId>Wing.Saga.Server</PackageId>
 		<Title>Wing.Saga.Server</Title>
-		<Version>0.8.0</Version>
+		<Version>0.8.1</Version>
 		<Authors>linguicheng</Authors>
 		<Product>Wing.Saga.Server</Product>
 		<Description>.NET微服务框架-Saga分布式事务服务端</Description>
