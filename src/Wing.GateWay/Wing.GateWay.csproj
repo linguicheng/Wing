@@ -2,19 +2,9 @@
 	<PropertyGroup>
 		<PackageId>Wing.Gateway</PackageId>
 		<Title>Wing.Gateway</Title>
-		<Version>0.8.3</Version>
-		<Authors>linguicheng</Authors>
 		<Product>Wing.Gateway</Product>
-		<Description>.NET微服务框架-服务网关</Description>
-		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
-		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
-		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+		<Description>Wing微服务框架-服务网关</Description>
 		<PackageTags>Wing;Wing.Gateway;微服务;Gateway;网关</PackageTags>
-		<IncludeSymbols>False</IncludeSymbols>
-		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-		<PackageOutputPath>..\..\packages</PackageOutputPath>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
   <Import Project="..\..\build\common.props" />
 	<ItemGroup>

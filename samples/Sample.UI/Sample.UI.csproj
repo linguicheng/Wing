@@ -6,7 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
-    <ProjectReference Include="..\..\src\Wing.Oracle\Wing.Oracle.csproj" />
+    <ProjectReference Include="..\..\src\Wing.MySql\Wing.MySql.csproj" />
     <ProjectReference Include="..\..\src\Wing.UI\Wing.UI.csproj" />
   </ItemGroup>
 

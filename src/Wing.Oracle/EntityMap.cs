@@ -25,8 +25,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.ClientIp).HasColumnType("VARCHAR2(50)");
                 eb.Property(x => x.ResponseValue).HasColumnType("NCLOB");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
-                eb.Property(x => x.RequestTime).HasColumnType("DATE");
-                eb.Property(x => x.ResponseTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<HttpTracer>(eb =>
             {
@@ -43,8 +41,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.ServerIp).HasColumnType("VARCHAR2(50)");
                 eb.Property(x => x.ResponseValue).HasColumnType("NCLOB");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
-                eb.Property(x => x.RequestTime).HasColumnType("DATE");
-                eb.Property(x => x.ResponseTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<SqlTracer>(eb =>
             {
@@ -58,8 +54,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Sql).HasColumnType("NCLOB");
                 eb.Property(x => x.ServerIp).HasColumnType("VARCHAR2(50)");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
-                eb.Property(x => x.BeginTime).HasColumnType("DATE");
-                eb.Property(x => x.EndTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<HttpTracerDetail>(eb =>
             {
@@ -74,8 +68,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestValue).HasColumnType("NCLOB");
                 eb.Property(x => x.ResponseValue).HasColumnType("NCLOB");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
-                eb.Property(x => x.RequestTime).HasColumnType("DATE");
-                eb.Property(x => x.ResponseTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<SqlTracerDetail>(eb =>
             {
@@ -87,8 +79,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Action).HasColumnType("NVARCHAR2(50)");
                 eb.Property(x => x.Sql).HasColumnType("NCLOB");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
-                eb.Property(x => x.BeginTime).HasColumnType("DATE");
-                eb.Property(x => x.EndTime).HasColumnType("DATE");
             });
             #endregion
 
@@ -111,8 +101,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Policy).HasColumnType("NCLOB");
                 eb.Property(x => x.AuthKey).HasColumnType("VARCHAR2(4000)");
                 eb.Property(x => x.Token).HasColumnType("VARCHAR2(4000)");
-                eb.Property(x => x.RequestTime).HasColumnType("DATE");
-                eb.Property(x => x.ResponseTime).HasColumnType("DATE");
             });
             #endregion
 
@@ -127,9 +115,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.ServiceName).HasColumnType("NVARCHAR2(200)");
                 eb.Property(x => x.Description).HasColumnType("NVARCHAR2(800)");
                 eb.Property(x => x.RetryAction).HasColumnType("VARCHAR2(50)");
-                eb.Property(x => x.BeginTime).HasColumnType("DATE");
-                eb.Property(x => x.EndTime).HasColumnType("DATE");
-                eb.Property(x => x.CreatedTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<SagaTranUnit>(eb =>
             {
@@ -144,9 +129,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Description).HasColumnType("NVARCHAR2(800)");
                 eb.Property(x => x.ErrorMsg).HasColumnType("NVARCHAR2(2000)");
                 eb.Property(x => x.RetryAction).HasColumnType("VARCHAR2(50)");
-                eb.Property(x => x.BeginTime).HasColumnType("DATE");
-                eb.Property(x => x.EndTime).HasColumnType("DATE");
-                eb.Property(x => x.CreatedTime).HasColumnType("DATE");
             });
             fsql.CodeFirst.Entity<SagaTranStatusCount>(eb =>
             {
@@ -155,7 +137,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Id).HasColumnType("VARCHAR2(50)");
                 eb.Property(x => x.Name).HasColumnType("NVARCHAR2(200)");
                 eb.Property(x => x.ServiceName).HasColumnType("NVARCHAR2(200)");
-                eb.Property(x => x.CreatedTime).HasColumnType("DATE");
             });
             #endregion
             return fsql;

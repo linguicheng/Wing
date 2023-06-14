@@ -2,19 +2,9 @@
 	<PropertyGroup>
 		<PackageId>Wing.APM</PackageId>
 		<Title>Wing.APM</Title>
-		<Version>0.8.1</Version>
-		<Authors>linguicheng</Authors>
 		<Product>Wing.APM</Product>
-		<Description>.NET微服务框架-APM</Description>
-		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
-		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
-		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
-		<PackageTags>Wing;Wing.APM;微服务</PackageTags>
-		<IncludeSymbols>False</IncludeSymbols>
-		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-		<PackageOutputPath>..\..\packages</PackageOutputPath>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<Description>Wing微服务框架-服务链路追踪</Description>
+		<PackageTags>Wing;Wing.APM;APM;微服务</PackageTags>
 	</PropertyGroup>
 	<Import Project="..\..\build\common.props" />
 	<ItemGroup>

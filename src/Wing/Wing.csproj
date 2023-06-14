@@ -3,19 +3,9 @@
   <PropertyGroup>
     <PackageId>Wing</PackageId>
     <Title>Wing</Title>
-    <Version>0.8.5</Version>
-    <Authors>linguicheng</Authors>
     <Product>Wing</Product>
-    <Description>.NET微服务框架</Description>
-    <PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
-    <Copyright>https://gitee.com/linguicheng/Wing</Copyright>
-    <RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+    <Description>基于MIT协议，开源、永久免费、简单易用的.NET微服务框架</Description>
     <PackageTags>Wing;微服务</PackageTags>
-    <IncludeSymbols>False</IncludeSymbols>
-    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-    <PackageOutputPath>..\..\packages</PackageOutputPath>
-    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-    <PackageLicenseFile>LICENSE</PackageLicenseFile>
   </PropertyGroup>
 
   <Import Project="..\..\build\common.props" />

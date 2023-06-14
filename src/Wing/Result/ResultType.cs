@@ -6,6 +6,7 @@
         /// 成功
         /// </summary>
         Success = 0,
+
         /// <summary>
         /// 异常
         /// </summary>

@@ -2,19 +2,9 @@
 	<PropertyGroup>
 		<PackageId>Wing.RabbitMQ</PackageId>
 		<Title>Wing.RabbitMQ</Title>
-		<Version>0.8.1</Version>
-		<Authors>linguicheng</Authors>
 		<Product>Wing.RabbitMQ</Product>
-		<Description>.NET微服务框架-消息总线</Description>
-		<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
-		<Copyright>https://gitee.com/linguicheng/Wing</Copyright>
-		<RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
+		<Description>Wing微服务框架-消息总线</Description>
 		<PackageTags>Wing;Wing.RabbitMQ;微服务;消息总线</PackageTags>
-		<IncludeSymbols>False</IncludeSymbols>
-		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
-		<PackageOutputPath>..\..\packages</PackageOutputPath>
-		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
   <Import Project="..\..\build\common.props" />
 	<ItemGroup>
