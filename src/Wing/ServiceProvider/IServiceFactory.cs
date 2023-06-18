@@ -11,6 +11,6 @@ namespace Wing.ServiceProvider
 
         Task<T> InvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func);
 
-        Task InvokeAsync(string serviceName, Action<ServiceAddress> action);
+        Task InvokeAsync(string serviceName, Func<ServiceAddress, Task> func);
     }
 }

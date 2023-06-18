@@ -28,7 +28,7 @@ namespace Sample.AspNetCoreService.Policy
             //    var greeterClient = new Greeter.GreeterClient(channel);
             //    return await greeterClient.GetTokenAsync(new TokenRequest { Name = name });
             //});
-            return await _serviceFactory.InvokeAsync("Sample.Saga.Client.Grpc", async serviceAddr =>
+            return await _serviceFactory.InvokeAsync("Sample.GrpcService", async serviceAddr =>
             {
                 //var headers = new Metadata
                 //{

@@ -13,7 +13,7 @@ namespace Sample.GrpcService
         {
             _auth = auth;
         }
-        [Authorize]
+        //[Authorize]
         public override Task<HelloReply> SayHello(HelloRequest request, ServerCallContext context)
         {
             return Task.FromResult(new HelloReply

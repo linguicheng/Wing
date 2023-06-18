@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using Microsoft.Extensions.Logging;
 using Wing.Exceptions;
 using Wing.ServiceProvider;
 
@@ -48,14 +48,6 @@ namespace Wing.LoadBalancer
         {
             lock (_lock)
             {
-                var item = Services.Where(s => s.ServiceAddress == serviceAddress).FirstOrDefault();
-                if (item == null)
-                {
-                    return;
-                }
-
-                Services.Remove(item);
-
                 var matchingLease = _leases.FirstOrDefault(l => l.ServiceAddress == serviceAddress);
 
                 if (matchingLease != null)
