@@ -43,6 +43,21 @@ namespace Wing
                 {
                     consulProvider.Register();
                 }
+
+                service.HealthCheck ??= new Healthcheck();
+                if (string.IsNullOrWhiteSpace(service.HealthCheck.Url))
+                {
+                    if (service.Option == ServiceOptions.Http)
+                    {
+                        service.HealthCheck.Url = $"{service.Scheme}://{service.Host}:{service.Port}/health";
+                    }
+                    else
+                    {
+                        service.HealthCheck.Url = $"{service.Host}:{service.Port}";
+                    }
+                }
+                service.HealthCheck.Interval ??= 10;
+                service.HealthCheck.Timeout ??= 10;
             }
 
             App.DiscoveryService = consulProvider;
