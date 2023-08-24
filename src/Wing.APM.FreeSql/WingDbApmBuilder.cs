@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using FreeSql.Aop;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.APM.Listeners;
 using Wing.Persistence;

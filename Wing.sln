@@ -66,7 +66,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Oracle", "src\Wing.Ora
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.MySql", "src\Wing.MySql\Wing.MySql.csproj", "{C9A704CF-99E2-4832-BEDD-B3104C8CE341}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Wing.PostgreSQL", "src\Wing.PostgreSQL\Wing.PostgreSQL.csproj", "{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.PostgreSQL", "src\Wing.PostgreSQL\Wing.PostgreSQL.csproj", "{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.SqlSugar", "src\Wing.APM.SqlSugar\Wing.APM.SqlSugar.csproj", "{9D5E9175-36ED-4E99-8998-767CDC7A69B2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -170,6 +172,10 @@ Global
 		{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -202,6 +208,7 @@ Global
 		{DE430DF1-1315-43C3-A3DF-DE0B507EA82A} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
 		{C9A704CF-99E2-4832-BEDD-B3104C8CE341} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
 		{9E473333-F43F-4FFF-8D46-40D2BF7F40EC} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
+		{9D5E9175-36ED-4E99-8998-767CDC7A69B2} = {17A8768A-2F64-40AE-AA08-912AD8FD2C71}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4E7060C-278C-4789-8857-13E1D41F6AD6}

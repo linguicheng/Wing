@@ -16,6 +16,7 @@ namespace Wing.APM
         public const string Sql_Action_Delete = "删除";
         public const string Sql_Action_Update = "修改";
         public const string Sql_Action_Insert = "新增";
+        public const string Sql_Action_UnKnown = "未知";
         public const string Sql_Action_InsertOrUpdate = "新增或修改";
         public const string Http = "http";
         public const string Grpc = "grpc";

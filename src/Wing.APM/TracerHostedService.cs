@@ -205,7 +205,7 @@ namespace Wing.APM
                       }
                       catch (Exception ex)
                       {
-                          _logger.LogError(ex, "APM链路跟踪平台持久化异常");
+                          _logger.LogError(ex, "Wing.APM链路跟踪平台持久化异常");
                       }
                       finally
                       {

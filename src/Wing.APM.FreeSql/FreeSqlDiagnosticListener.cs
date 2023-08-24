@@ -58,7 +58,7 @@ namespace Wing.APM.FreeSql
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "FreeSql监听异常");
+                _logger.LogError(ex, "Wing.APM-FreeSql监听异常");
             }
         }
 

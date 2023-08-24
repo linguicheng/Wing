@@ -50,7 +50,7 @@ namespace Wing.APM.Listeners
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "http监听异常");
+                _logger.LogError(ex, "Wing.APM-http监听异常");
             }
         }
 

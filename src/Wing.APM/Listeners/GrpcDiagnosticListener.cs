@@ -48,7 +48,7 @@ namespace Wing.APM.Listeners
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "grpc监听异常");
+                _logger.LogError(ex, "Wing.APM-grpc监听异常");
             }
         }
 
