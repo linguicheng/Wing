@@ -70,7 +70,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.SqlSugar", "src\Wi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.APM.SqlSugar", "samples\Sample.APM.SqlSugar\Sample.APM.SqlSugar.csproj", "{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.EFCore", "src\Wing.APM.EntityFramework\Wing.APM.EFCore.csproj", "{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.EFCore", "src\Wing.APM.EFCore\Wing.APM.EFCore.csproj", "{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.APM.EFCore", "samples\Sample.APM.EFCore\Sample.APM.EFCore.csproj", "{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}"
 EndProject
