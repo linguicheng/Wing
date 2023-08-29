@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data.Common;
+using System.Reflection.Metadata;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM
@@ -16,7 +17,6 @@ namespace Wing.APM
         public const string Sql_Action_Delete = "删除";
         public const string Sql_Action_Update = "修改";
         public const string Sql_Action_Insert = "新增";
-        public const string Sql_Action_UnKnown = "未知";
         public const string Sql_Action_InsertOrUpdate = "新增或修改";
         public const string Http = "http";
         public const string Grpc = "grpc";
@@ -25,27 +25,17 @@ namespace Wing.APM
         {
             for (var i = parameters.Length - 1; i >= 0; i--)
             {
-                if (parameters[i].DbType == System.Data.DbType.String
-                    || parameters[i].DbType == System.Data.DbType.DateTime
-                    || parameters[i].DbType == System.Data.DbType.Date
-                    || parameters[i].DbType == System.Data.DbType.Time
-                    || parameters[i].DbType == System.Data.DbType.DateTime2
-                    || parameters[i].DbType == System.Data.DbType.DateTimeOffset
-                    || parameters[i].DbType == System.Data.DbType.Guid
-                    || parameters[i].DbType == System.Data.DbType.AnsiStringFixedLength
-                    || parameters[i].DbType == System.Data.DbType.AnsiString
-                    || parameters[i].DbType == System.Data.DbType.StringFixedLength)
-                {
-                    sql = sql.Replace(parameters[i].ParameterName, "'" + parameters[i].Value?.ToString() + "'");
-                }
-                else if (parameters[i].DbType == System.Data.DbType.Boolean)
-                {
-                    sql = sql.Replace(parameters[i].ParameterName, Convert.ToBoolean(parameters[i].Value) ? "1" : "0");
-                }
-                else
-                {
-                    sql = sql.Replace(parameters[i].ParameterName, parameters[i].Value?.ToString());
-                }
+                SqlFormat(ref sql, parameters[i]);
+            }
+
+            return sql;
+        }
+
+        public static string SqlFormat(string sql, DbParameterCollection parameters)
+        {
+            foreach (DbParameter parameter in parameters)
+            {
+                SqlFormat(ref sql, parameter);
             }
 
             return sql;
@@ -59,6 +49,31 @@ namespace Wing.APM
         public static string GetServiceUrl(ServiceData service)
         {
             return $"{service.Scheme}://{service.Host}:{service.Port}";
+        }
+
+        private static void SqlFormat(ref string sql, DbParameter parameter)
+        {
+            if (parameter.DbType == System.Data.DbType.String
+                   || parameter.DbType == System.Data.DbType.DateTime
+                   || parameter.DbType == System.Data.DbType.Date
+                   || parameter.DbType == System.Data.DbType.Time
+                   || parameter.DbType == System.Data.DbType.DateTime2
+                   || parameter.DbType == System.Data.DbType.DateTimeOffset
+                   || parameter.DbType == System.Data.DbType.Guid
+                   || parameter.DbType == System.Data.DbType.AnsiStringFixedLength
+                   || parameter.DbType == System.Data.DbType.AnsiString
+                   || parameter.DbType == System.Data.DbType.StringFixedLength)
+            {
+                sql = sql.Replace(parameter.ParameterName, "'" + parameter.Value?.ToString() + "'");
+            }
+            else if (parameter.DbType == System.Data.DbType.Boolean)
+            {
+                sql = sql.Replace(parameter.ParameterName, Convert.ToBoolean(parameter.Value) ? "1" : "0");
+            }
+            else
+            {
+                sql = sql.Replace(parameter.ParameterName, parameter.Value?.ToString());
+            }
         }
     }
 }

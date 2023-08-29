@@ -2,25 +2,25 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
-using SqlSugar;
-using Wing.APM.FreeSql;
 using Wing.APM.Listeners;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;
 using Wing.ServiceProvider.Config;
 
-namespace Wing.APM.SqlSugar
+namespace Wing.APM.EFCore
 {
-    public class SqlSugarDiagnosticListener : IDiagnosticListener
+    public class EFCoreDiagnosticListener : IDiagnosticListener
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly ILogger<SqlSugarDiagnosticListener> _logger;
+        private readonly ILogger<EFCoreDiagnosticListener> _logger;
         private readonly ServiceData service;
 
-        public virtual string Name => "SqlSugarDiagnosticListener";
+        public virtual string Name => DbLoggerCategory.Name;
 
-        public SqlSugarDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<SqlSugarDiagnosticListener> logger)
+        public EFCoreDiagnosticListener(IHttpContextAccessor httpContextAccessor, ILogger<EFCoreDiagnosticListener> logger)
         {
             _httpContextAccessor = httpContextAccessor;
             _logger = logger;
@@ -41,27 +41,26 @@ namespace Wing.APM.SqlSugar
             {
                 switch (value.Key)
                 {
-                    case SqlSugarKey.OnLogExecuting:
-                        OnLogExecuting(value);
+                    case EFCoreKey.CommandExecuting:
+                        CommandExecuting(value);
                         break;
-                    case SqlSugarKey.OnLogExecuted:
-                        OnLogExecuted(value);
+                    case EFCoreKey.CommandExecuted:
+                        CommandExecuted(value);
                         break;
-                    case SqlSugarKey.OnError:
-                        OnError(value);
+                    case EFCoreKey.CommandError:
                         break;
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Wing.APM.SqlSugar监听异常");
+                _logger.LogError(ex, "Wing.APM.EFCore监听异常");
             }
         }
 
-        private void OnLogExecuting(KeyValuePair<string, object> value)
+        private void CommandExecuting(KeyValuePair<string, object> value)
         {
-            var data = (OnLogExecutingModel)value.Value;
-            var id = data.Id;
+            var data = (CommandEventData)value.Value;
+            var id = data.CommandId.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
@@ -71,8 +70,9 @@ namespace Wing.APM.SqlSugar
                     SqlTracer = new SqlTracer
                     {
                         Id = id,
-                        Action = GetAction(data.ActionType),
-                        BeginTime = data.BeginTime,
+                        Sql = ApmTools.SqlFormat(data.Command.CommandText, data.Command.Parameters),
+                        Action = GetAction(data.Command.CommandText),
+                        BeginTime = data.StartTime.LocalDateTime,
                         ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
                         ServiceUrl = ApmTools.GetServiceUrl(service)
@@ -88,38 +88,38 @@ namespace Wing.APM.SqlSugar
             {
                 Id = id,
                 TraceId = tracerDto.Tracer.Id,
-                Action = GetAction(data.ActionType),
-                BeginTime = data.BeginTime,
-                Sql = data.Sql
+                Action = GetAction(data.Command.CommandText),
+                BeginTime = data.StartTime.LocalDateTime,
+                Sql = ApmTools.SqlFormat(data.Command.CommandText, data.Command.Parameters)
             });
         }
 
-        private void OnLogExecuted(KeyValuePair<string, object> value)
+        private void CommandExecuted(KeyValuePair<string, object> value)
         {
-            var data = (OnLogExecutedModel)value.Value;
-            var id = data.Id;
+            var data = (CommandExecutedEventData)value.Value;
+            var id = data.CommandId.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
             {
                 tracerDto = ListenerTracer.Data[id];
                 var sqlTracer = tracerDto.SqlTracer;
-                sqlTracer.EndTime = data.EndTime;
-                sqlTracer.UsedMillSeconds = Convert.ToInt64(data.ExecutionTime.TotalMilliseconds);
+                sqlTracer.EndTime = DateTime.Now;
+                sqlTracer.UsedMillSeconds = Convert.ToInt64(data.Duration.TotalMilliseconds);
                 tracerDto.IsStop = true;
                 return;
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             var traceDetail = tracerDto.SqlTracerDetails[id];
-            traceDetail.EndTime = data.EndTime;
-            traceDetail.UsedMillSeconds = Convert.ToInt64(data.ExecutionTime.TotalMilliseconds);
+            traceDetail.EndTime = DateTime.Now;
+            traceDetail.UsedMillSeconds = Convert.ToInt64(data.Duration.TotalMilliseconds);
         }
 
         private void OnError(KeyValuePair<string, object> value)
         {
-            var data = (OnErrorModel)value.Value;
-            var id = data.Id;
+            var data = (CommandErrorEventData)value.Value;
+            var id = data.CommandId.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
             if (context == null)
@@ -136,21 +136,29 @@ namespace Wing.APM.SqlSugar
             traceDetail.Exception = data.Exception.ToString();
         }
 
-        private string GetAction(SugarActionType actionType)
+        private string GetAction(string sql)
         {
-            switch (actionType)
+            if (sql.Contains("INSERT INTO"))
             {
-                case SugarActionType.Query:
-                    return ApmTools.Sql_Action_Select;
-                case SugarActionType.Delete:
-                    return ApmTools.Sql_Action_Delete;
-                case SugarActionType.Update:
-                    return ApmTools.Sql_Action_Update;
-                case SugarActionType.Insert:
-                    return ApmTools.Sql_Action_Insert;
-                default:
-                    return string.Empty;
+                return ApmTools.Sql_Action_Insert;
             }
+
+            if (sql.Contains("UPDATE"))
+            {
+                return ApmTools.Sql_Action_Update;
+            }
+
+            if (sql.Contains("DELETE"))
+            {
+                return ApmTools.Sql_Action_Delete;
+            }
+
+            if (sql.Contains("SELECT"))
+            {
+                return ApmTools.Sql_Action_Select;
+            }
+
+            return string.Empty;
         }
     }
 }

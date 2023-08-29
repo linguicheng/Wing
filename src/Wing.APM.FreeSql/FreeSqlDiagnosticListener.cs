@@ -58,14 +58,14 @@ namespace Wing.APM.FreeSql
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Wing.APM-FreeSql监听异常");
+                _logger.LogError(ex, "Wing.APM.FreeSql监听异常");
             }
         }
 
         #region Curd
         private void CurdBefore(KeyValuePair<string, object> value)
         {
-            var data = ListenerTracer.GetProperty<CurdBeforeEventArgs>(value, "Value");
+            var data = (CurdBeforeEventArgs)value.Value;
             var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
@@ -100,7 +100,7 @@ namespace Wing.APM.FreeSql
 
         private void CurdAfter(KeyValuePair<string, object> value)
         {
-            var data = ListenerTracer.GetProperty<CurdAfterEventArgs>(value, "Value");
+            var data = (CurdAfterEventArgs)value.Value;
             var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
@@ -140,7 +140,7 @@ namespace Wing.APM.FreeSql
         #region SyncStructure
         private void SyncStructureBefore(KeyValuePair<string, object> value)
         {
-            var data = ListenerTracer.GetProperty<SyncStructureBeforeEventArgs>(value, "Value");
+            var data = (SyncStructureBeforeEventArgs)value.Value;
             var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;
@@ -175,7 +175,7 @@ namespace Wing.APM.FreeSql
 
         private void SyncStructureAfter(KeyValuePair<string, object> value)
         {
-            var data = ListenerTracer.GetProperty<SyncStructureAfterEventArgs>(value, "Value");
+            var data = (SyncStructureAfterEventArgs)value.Value;
             var id = data.Identifier.ToString();
             TracerDto tracerDto;
             var context = _httpContextAccessor.HttpContext;

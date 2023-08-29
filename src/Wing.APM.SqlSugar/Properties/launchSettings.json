@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Wing.APM.SqlSugar": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54461;http://localhost:54462"
+    }
+  }
+}

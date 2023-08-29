@@ -1,10 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<PackageId>Wing.APM.SqlSugar</PackageId>
-		<Title>Wing.APM.SqlSugar</Title>
-		<Product>Wing.APM.SqlSugar</Product>
-		<Description>Wing微服务框架-支持SqlSugar ORM框架链路追踪</Description>
-		<PackageTags>Wing;Wing.APM.SqlSugar;APM;SqlSugar;微服务</PackageTags>
+		<PackageId>Wing.APM.EFCore</PackageId>
+		<Title>Wing.APM.EFCore</Title>
+		<Product>Wing.APM.EFCore</Product>
+		<Description>Wing微服务框架-支持EFCore ORM框架链路追踪</Description>
+		<PackageTags>Wing;Wing.APM.EFCore;APM;EFCore;微服务</PackageTags>
 	</PropertyGroup>
   <Import Project="..\..\build\common.props" />
 	<ItemGroup>
@@ -14,7 +14,7 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="SqlSugarCore" Version="5.1.4.102" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.32" />
 	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />

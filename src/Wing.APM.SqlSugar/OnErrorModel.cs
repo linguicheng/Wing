@@ -5,7 +5,7 @@ namespace Wing.APM.SqlSugar
 {
     public class OnErrorModel
     {
-        public Guid ContextID { get; set; }
+        public string Id { get; set; }
 
         public SqlSugarException Exception { get; set; }
     }

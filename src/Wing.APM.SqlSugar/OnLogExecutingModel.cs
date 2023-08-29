@@ -1,11 +1,11 @@
-﻿using SqlSugar;
-using System;
+﻿using System;
+using SqlSugar;
 
 namespace Wing.APM.SqlSugar
 {
     public class OnLogExecutingModel
     {
-        public Guid ContextID { get; set; }
+        public string Id { get; set; }
 
         public string Sql { get; set; }
 

@@ -4,7 +4,7 @@ namespace Wing.APM.SqlSugar
 {
     public class OnLogExecutedModel
     {
-        public Guid ContextID { get; set; }
+        public string Id { get; set; }
 
         public DateTime EndTime { get; set; }
 

@@ -1,12 +1,12 @@
-﻿{
+{
   "profiles": {
-    "GrpcService2": {
+    "Wing.Gateway": {
       "commandName": "Project",
-      "launchBrowser": false,
-      "applicationUrl": "http://localhost:5002",
+      "launchBrowser": true,
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+      },
+      "applicationUrl": "https://localhost:54439;http://localhost:54441"
     }
   }
 }

@@ -9,15 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Consul", "src\Wing.Con
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{E70A0BB1-8418-4F80-A4A5-47461D35D368}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{98EA2F9D-CB38-457B-941F-D3E98C2922D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService", "samples\Sample.AspNetCoreService\Sample.AspNetCoreService.csproj", "{0469F1B1-C0F5-4B61-B04B-861FE568B055}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService", "samples\AspNetCoreService\Sample.AspNetCoreService.csproj", "{0469F1B1-C0F5-4B61-B04B-861FE568B055}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService", "samples\GrpcService\Sample.GrpcService.csproj", "{99F41381-0D00-4169-BA96-E36DDA813200}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService", "samples\Sample.GrpcService\Sample.GrpcService.csproj", "{99F41381-0D00-4169-BA96-E36DDA813200}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing", "src\Wing\Wing.csproj", "{BCB6FCD0-06EA-4339-956B-3425BC83F07D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService2", "samples\GrpcService2\Sample.GrpcService2.csproj", "{ADDCD34D-52F7-4ECA-80B3-D317982ACD3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.GrpcService2", "samples\Sample.GrpcService2\Sample.GrpcService2.csproj", "{ADDCD34D-52F7-4ECA-80B3-D317982ACD3B}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Saga.Client.Grpc", "samples\Sample.Saga.Client.Grpc\Sample.Saga.Client.Grpc.csproj", "{7553CFCC-BFBD-41D0-91FC-EB7A73FDD3E7}"
 EndProject
@@ -34,7 +32,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Auth", "samples\Samp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Gateway", "samples\Sample.GateWay\Sample.Gateway.csproj", "{1BF719F2-AB15-43BF-BB1A-36B3A2235729}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService2", "samples\AspNetCoreService2\Sample.AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.AspNetCoreService2", "samples\Sample.AspNetCoreService2\Sample.AspNetCoreService2.csproj", "{D946CF51-B376-4313-90EB-F168A484E4AA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Persistence", "src\Wing.Persistence\Wing.Persistence.csproj", "{F76FC8A5-87A4-4697-85B1-C045AF78386D}"
 EndProject
@@ -69,6 +67,12 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.PostgreSQL", "src\Wing.PostgreSQL\Wing.PostgreSQL.csproj", "{9E473333-F43F-4FFF-8D46-40D2BF7F40EC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.SqlSugar", "src\Wing.APM.SqlSugar\Wing.APM.SqlSugar.csproj", "{9D5E9175-36ED-4E99-8998-767CDC7A69B2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.APM.SqlSugar", "samples\Sample.APM.SqlSugar\Sample.APM.SqlSugar.csproj", "{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.EFCore", "src\Wing.APM.EntityFramework\Wing.APM.EFCore.csproj", "{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.APM.EFCore", "samples\Sample.APM.EFCore\Sample.APM.EFCore.csproj", "{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -176,6 +180,18 @@ Global
 		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9D5E9175-36ED-4E99-8998-767CDC7A69B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +225,9 @@ Global
 		{C9A704CF-99E2-4832-BEDD-B3104C8CE341} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
 		{9E473333-F43F-4FFF-8D46-40D2BF7F40EC} = {B50660C3-98D8-41CE-A48E-E408A37724B7}
 		{9D5E9175-36ED-4E99-8998-767CDC7A69B2} = {17A8768A-2F64-40AE-AA08-912AD8FD2C71}
+		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
+		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647} = {17A8768A-2F64-40AE-AA08-912AD8FD2C71}
+		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4E7060C-278C-4789-8857-13E1D41F6AD6}

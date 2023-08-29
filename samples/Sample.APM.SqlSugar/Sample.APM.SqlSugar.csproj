@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Wing.APM.SqlSugar\Wing.APM.SqlSugar.csproj" />
+    <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
+  </ItemGroup>
+
+
+</Project>

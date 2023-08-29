@@ -4,7 +4,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:5009",
+      "applicationUrl": "http://localhost:36425",
       "sslPort": 0
     }
   },
@@ -17,11 +17,11 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "AspNetCoreService2": {
+    "Sample.APM.EFCore": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "weatherforecast",
-      "applicationUrl": "http://localhost:5009",
+      "applicationUrl": "http://localhost:36425",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
