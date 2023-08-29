@@ -1,13 +1,14 @@
 ﻿<Project>
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
-	<Version>0.8.8</Version>
+	<Version>0.9.0</Version>
 	<Authors>linguicheng</Authors>
 	<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
     <Copyright>https://gitee.com/linguicheng/Wing</Copyright>
     <RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
-	<IncludeSymbols>False</IncludeSymbols>
-    <SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+	<IncludeSymbols>True</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>..\..\packages</PackageOutputPath>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>

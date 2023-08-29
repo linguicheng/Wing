@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Wing.APM.EntityFramework\Wing.APM.EFCore.csproj" />
+    <ProjectReference Include="..\..\src\Wing.APM.EFCore\Wing.APM.EFCore.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
   </ItemGroup>
