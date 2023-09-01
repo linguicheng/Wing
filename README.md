@@ -14,4 +14,4 @@
 
  <img src="samples/%E6%8D%90%E8%B5%A0/wechat.jpg" width = "400" height = "500" align=center />
 
- ![输入图片说明](samples/%E6%8D%90%E8%B5%A0/alipay.jpg)
+ <img src="samples/%E6%8D%90%E8%B5%A0/alipay.jpg" width = "400" height = "550" align=center />
