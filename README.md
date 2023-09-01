@@ -12,6 +12,6 @@
 
 献出一份爱心，托起一份希望。开源不易，且行且珍惜！
 
- ![输入图片说明](samples/%E6%8D%90%E8%B5%A0/wechat.jpg)
+ ![输入图片说明](samples/%E6%8D%90%E8%B5%A0/wechat.jpg =200x300)
 
  ![输入图片说明](samples/%E6%8D%90%E8%B5%A0/alipay.jpg)
