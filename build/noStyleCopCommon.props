@@ -6,7 +6,7 @@
 	<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
     <Copyright>https://gitee.com/linguicheng/Wing</Copyright>
     <RepositoryUrl>https://gitee.com/linguicheng/Wing</RepositoryUrl>
-	<IncludeSymbols>True</IncludeSymbols>
+	<IncludeSymbols>False</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
 	<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <PackageOutputPath>..\..\packages</PackageOutputPath>
