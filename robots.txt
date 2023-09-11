@@ -2,4 +2,4 @@
 User-agent:*
 Disallow:
 
-Sitemap: https://gitee.com/linguicheng/Wing/sitemap.xml
+Sitemap: https://gitee.com/linguicheng/Wing/wing/sitemap.xml
