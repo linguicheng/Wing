@@ -12,7 +12,8 @@ namespace Wing.Persistence
         {
             connectionString = string.IsNullOrWhiteSpace(connectionString) ? App.Configuration["ConnectionStrings:Wing"] : connectionString;
             var autoSyncStructure = !string.IsNullOrWhiteSpace(App.Configuration["UseAutoSyncStructure"]) && Convert.ToBoolean(App.Configuration["UseAutoSyncStructure"]);
-            services.AddSingleton(typeof(IFreeSql<WingDbFlag>), serviceProvider => addFreeSql(connectionString, autoSyncStructure));
+            var fsql = addFreeSql(connectionString, autoSyncStructure);
+            services.AddSingleton(typeof(IFreeSql<WingDbFlag>), serviceProvider => fsql);
             services.AddSingleton<ILogService, LogService>();
             services.AddSingleton<ITracerService, TracerService>();
             services.AddSingleton<ITracerWorkService, TracerWorkService>();
