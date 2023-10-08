@@ -9,6 +9,8 @@ namespace Wing.Persistence.Saga
 
         Task<int> UpdateStatus(UpdateStatusEvent dto);
 
+        Task<int> UpdateStatus(string tranId, TranStatus status);
+
         Task<bool> Any(string id);
 
         List<SagaTranUnit> GetFailedData(string tranId);

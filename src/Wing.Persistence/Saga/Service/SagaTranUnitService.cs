@@ -71,6 +71,14 @@ namespace Wing.Persistence.Saga
             return _fsql.Update<SagaTranUnit>(dto.Id).Set(x => x.Status, dto.Status).ExecuteAffrowsAsync();
         }
 
+        public Task<int> UpdateStatus(string tranId, TranStatus status)
+        {
+            return _fsql.Update<SagaTranUnit>()
+                 .Set(x => x.Status, status)
+                 .Where(x => x.TranId == tranId)
+                 .ExecuteAffrowsAsync();
+        }
+
         public Task<List<SagaTranUnit>> List(string tranId)
         {
             return _fsql.Select<SagaTranUnit>()

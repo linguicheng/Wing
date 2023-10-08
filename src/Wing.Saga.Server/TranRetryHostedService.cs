@@ -95,7 +95,7 @@ namespace Wing.Saga.Server
                                               continue;
                                           }
 
-                                          result = Commit(tran, unitService);
+                                          result = Commit(tran, unitService, sagaTranService);
                                       }
                                       else if (tran.Policy == TranPolicy.Backward)
                                       {
@@ -104,7 +104,7 @@ namespace Wing.Saga.Server
                                               continue;
                                           }
 
-                                          result = Cancel(tran, unitService);
+                                          result = Cancel(tran, unitService, sagaTranService);
                                       }
                                       else if (tran.Policy == TranPolicy.Custom)
                                       {
@@ -115,11 +115,11 @@ namespace Wing.Saga.Server
 
                                           if (tran.CustomCount > tran.CommittedCount)
                                           {
-                                              result = Commit(tran, unitService);
+                                              result = Commit(tran, unitService, sagaTranService);
                                           }
                                           else
                                           {
-                                              result = Cancel(tran, unitService);
+                                              result = Cancel(tran, unitService, sagaTranService);
                                           }
                                       }
                                   }
@@ -143,20 +143,13 @@ namespace Wing.Saga.Server
             return Task.CompletedTask;
         }
 
-        private Grpc.RetryData BuildGrpcRetryData(string tranId, ISagaTranUnitService unitService, bool isCommit)
+        private Grpc.RetryData BuildGrpcRetryData(string tranId, ISagaTranUnitService unitService, ISagaTranService sagaTranService, bool isCommit)
         {
-            List<SagaTranUnit> failedUnits;
-            if (isCommit)
-            {
-                failedUnits = unitService.GetFailedData(tranId);
-            }
-            else
-            {
-                failedUnits = unitService.GetSuccessData(tranId);
-            }
+            var failedUnits = GetTranUnit(tranId, unitService, isCommit);
 
             if (failedUnits == null || !failedUnits.Any())
             {
+                UpdateStatus(tranId, unitService, sagaTranService, isCommit);
                 return null;
             }
 
@@ -176,20 +169,13 @@ namespace Wing.Saga.Server
             return retryData;
         }
 
-        private Persistence.Saga.RetryData BuildRetryData(string tranId, ISagaTranUnitService unitService, bool isCommit)
+        private Persistence.Saga.RetryData BuildRetryData(string tranId, ISagaTranUnitService unitService, ISagaTranService sagaTranService, bool isCommit)
         {
-            List<SagaTranUnit> failedUnits;
-            if (isCommit)
-            {
-                failedUnits = unitService.GetFailedData(tranId);
-            }
-            else
-            {
-                failedUnits = unitService.GetSuccessData(tranId);
-            }
+            var failedUnits = GetTranUnit(tranId, unitService, isCommit);
 
             if (failedUnits == null || !failedUnits.Any())
             {
+                UpdateStatus(tranId, unitService, sagaTranService, isCommit);
                 return null;
             }
 
@@ -210,12 +196,35 @@ namespace Wing.Saga.Server
             return retryData;
         }
 
-        private Persistence.Saga.ResponseData Commit(SagaTran tran, ISagaTranUnitService unitService)
+        private List<SagaTranUnit> GetTranUnit(string tranId, ISagaTranUnitService unitService, bool isCommit)
+        {
+            if (isCommit)
+            {
+                return unitService.GetFailedData(tranId);
+            }
+
+            return unitService.GetSuccessData(tranId);
+        }
+
+        private void UpdateStatus(string tranId, ISagaTranUnitService unitService, ISagaTranService sagaTranService, bool isCommit)
+        {
+            if (isCommit)
+            {
+                sagaTranService.UpdateStatus(tranId, TranStatus.Success).ConfigureAwait(false).GetAwaiter().GetResult();
+                unitService.UpdateStatus(tranId, TranStatus.Success).ConfigureAwait(false).GetAwaiter().GetResult();
+                return;
+            }
+
+            sagaTranService.UpdateStatus(tranId, TranStatus.Cancelled).ConfigureAwait(false).GetAwaiter().GetResult();
+            unitService.UpdateStatus(tranId, TranStatus.Cancelled).ConfigureAwait(false).GetAwaiter().GetResult();
+        }
+
+        private Persistence.Saga.ResponseData Commit(SagaTran tran, ISagaTranUnitService unitService, ISagaTranService sagaTranService)
         {
             Persistence.Saga.ResponseData result = new Persistence.Saga.ResponseData();
             if (tran.ServiceType == ServiceOptions.Grpc)
             {
-                var grpcRetryData = BuildGrpcRetryData(tran.Id, unitService, true);
+                var grpcRetryData = BuildGrpcRetryData(tran.Id, unitService, sagaTranService, true);
                 if (grpcRetryData == null)
                 {
                     return null;
@@ -232,7 +241,7 @@ namespace Wing.Saga.Server
                 return result;
             }
 
-            var retryData = BuildRetryData(tran.Id, unitService, true);
+            var retryData = BuildRetryData(tran.Id, unitService, sagaTranService, true);
             if (retryData == null)
             {
                 return null;
@@ -254,12 +263,12 @@ namespace Wing.Saga.Server
             return result;
         }
 
-        private Persistence.Saga.ResponseData Cancel(SagaTran tran, ISagaTranUnitService unitService)
+        private Persistence.Saga.ResponseData Cancel(SagaTran tran, ISagaTranUnitService unitService, ISagaTranService sagaTranService)
         {
             Persistence.Saga.ResponseData result = new Persistence.Saga.ResponseData();
             if (tran.ServiceType == ServiceOptions.Grpc)
             {
-                var grpcRetryData = BuildGrpcRetryData(tran.Id, unitService, false);
+                var grpcRetryData = BuildGrpcRetryData(tran.Id, unitService, sagaTranService, false);
                 if (grpcRetryData == null)
                 {
                     return null;
@@ -276,7 +285,7 @@ namespace Wing.Saga.Server
                 return result;
             }
 
-            var retryData = BuildRetryData(tran.Id, unitService, false);
+            var retryData = BuildRetryData(tran.Id, unitService, sagaTranService, false);
             if (retryData == null)
             {
                 return null;

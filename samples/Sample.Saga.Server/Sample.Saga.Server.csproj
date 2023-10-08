@@ -6,9 +6,9 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
-    <ProjectReference Include="..\..\src\Wing.Oracle\Wing.Oracle.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing.Saga.Server\Wing.Saga.Server.csproj" />
+    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
     <ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
   </ItemGroup>
 
