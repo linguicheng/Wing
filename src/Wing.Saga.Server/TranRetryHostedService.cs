@@ -85,40 +85,47 @@ namespace Wing.Saga.Server
 
                               foreach (var tran in failedTrans)
                               {
-                                  Persistence.Saga.ResponseData result;
-                                  if (tran.Policy == TranPolicy.Forward)
+                                  try
                                   {
-                                      if (tran.BreakerCount > 0 && tran.CommittedCount >= tran.BreakerCount)
+                                      Persistence.Saga.ResponseData result;
+                                      if (tran.Policy == TranPolicy.Forward)
                                       {
-                                          continue;
-                                      }
+                                          if (tran.BreakerCount > 0 && tran.CommittedCount >= tran.BreakerCount)
+                                          {
+                                              continue;
+                                          }
 
-                                      result = Commit(tran, unitService);
-                                  }
-                                  else if (tran.Policy == TranPolicy.Backward)
-                                  {
-                                      if (tran.BreakerCount > 0 && tran.CancelledCount >= tran.BreakerCount)
-                                      {
-                                          continue;
-                                      }
-
-                                      result = Cancel(tran, unitService);
-                                  }
-                                  else if (tran.Policy == TranPolicy.Custom)
-                                  {
-                                      if (tran.BreakerCount > 0 && tran.CancelledCount >= tran.BreakerCount)
-                                      {
-                                          continue;
-                                      }
-
-                                      if (tran.CustomCount > tran.CommittedCount)
-                                      {
                                           result = Commit(tran, unitService);
                                       }
-                                      else
+                                      else if (tran.Policy == TranPolicy.Backward)
                                       {
+                                          if (tran.BreakerCount > 0 && tran.CancelledCount >= tran.BreakerCount)
+                                          {
+                                              continue;
+                                          }
+
                                           result = Cancel(tran, unitService);
                                       }
+                                      else if (tran.Policy == TranPolicy.Custom)
+                                      {
+                                          if (tran.BreakerCount > 0 && tran.CancelledCount >= tran.BreakerCount)
+                                          {
+                                              continue;
+                                          }
+
+                                          if (tran.CustomCount > tran.CommittedCount)
+                                          {
+                                              result = Commit(tran, unitService);
+                                          }
+                                          else
+                                          {
+                                              result = Cancel(tran, unitService);
+                                          }
+                                      }
+                                  }
+                                  catch (Exception ex)
+                                  {
+                                      _logger.LogError(ex, "Saga重试服务执行异常");
                                   }
                               }
                           }

@@ -69,7 +69,13 @@ namespace Wing.Gateway
 
                 if (App.GetService<IAuthenticationService>() != null)
                 {
-                    log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                    try
+                    {
+                        log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                    }
+                    catch
+                    {
+                    }
                 }
 
                 if (request.Body != null)
