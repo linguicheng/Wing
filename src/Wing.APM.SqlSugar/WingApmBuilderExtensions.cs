@@ -20,10 +20,11 @@ namespace Wing
             return wingApmBuilder;
         }
 
-        public static ISqlSugarClient AddWingAPM(this ISqlSugarClient db)
+        public static ISqlSugarClient AddWingAPM(this ISqlSugarClient db, Action<string, SugarParameter[]> onLogExecuting = null, Action<string, SugarParameter[]> onLogExecuted = null, Action<SqlSugarException> onError = null)
         {
             db.Aop.OnLogExecuting = (sql, pars) =>
             {
+                onLogExecuting?.Invoke(sql, pars);
                 if (db.TempItems == null)
                 {
                     db.TempItems = new Dictionary<string, object>();
@@ -50,6 +51,7 @@ namespace Wing
             };
             db.Aop.OnLogExecuted = (sql, pars) =>
             {
+                onLogExecuted?.Invoke(sql, pars);
                 var contextId = db.ContextID.ToString();
                 if (!db.TempItems.ContainsKey(contextId))
                 {
@@ -68,6 +70,7 @@ namespace Wing
 
             db.Aop.OnError = x =>
             {
+                onError?.Invoke(x);
                 var contextId = db.ContextID.ToString();
                 if (!db.TempItems.ContainsKey(contextId))
                 {
