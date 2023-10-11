@@ -11,7 +11,7 @@
 
 ### 捐赠
 
-献出一份爱心，托起一份希望。开源不易，且行且珍惜！
+如果你觉得好用，就请我喝一杯咖啡！
 
 <div><img src="samples/%E6%8D%90%E8%B5%A0/wechat.jpg" width = "400" height = "500" align=center /></div>
 
