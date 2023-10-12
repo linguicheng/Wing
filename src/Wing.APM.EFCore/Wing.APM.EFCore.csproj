@@ -14,7 +14,7 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.32" />
+	  <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="6.0.23" />
 	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />

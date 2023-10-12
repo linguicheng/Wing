@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using Wing.Persistence.Apm;
 
 namespace Wing.Persistence.APM

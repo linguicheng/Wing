@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
 using Wing.Gateway.Middleware;
 
 namespace Wing.Gateway
@@ -16,11 +17,13 @@ namespace Wing.Gateway
                 middlewareBuilder.UseMiddleware<NoPolicyMiddleware>();
                 middlewareBuilder.UseMiddleware<PolicyMiddleware>();
                 var firstDelegate = middlewareBuilder.Build();
-                app.Use(async (context, task) =>
+                async Task Middleware(HttpContext context, Func<Task> next)
                 {
                     var serviceContext = new ServiceContext(context);
                     await firstDelegate.Invoke(serviceContext);
-                });
+                }
+
+                app.Use(Middleware);
             };
         }
     }

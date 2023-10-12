@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Wing.Persistence.Apm
+﻿namespace Wing.Persistence.Apm
 {
     public class HttpTracerSearchDto
     {

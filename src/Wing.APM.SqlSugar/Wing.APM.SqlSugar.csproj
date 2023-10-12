@@ -14,7 +14,7 @@
 		</None>
 	</ItemGroup>
 	<ItemGroup>
-	  <PackageReference Include="SqlSugarCore" Version="5.1.4.102" />
+	  <PackageReference Include="SqlSugarCore" Version="5.1.4.110" />
 	</ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />

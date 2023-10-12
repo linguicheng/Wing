@@ -1,21 +1,22 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Wing;
 
-namespace Sample.Saga.Client.Http
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul());
-    }
-}
+builder.Services.AddControllers();
+builder.Host.AddWing(builder => builder.AddConsul());
+
+builder.Services.AddWing().AddSaga().AddJwt().AddEventBus();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.UseHttpsRedirection();
+
+app.UseAuthentication();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();

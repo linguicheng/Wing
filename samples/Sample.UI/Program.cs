@@ -1,21 +1,32 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 using Wing;
 
-namespace Sample.UI
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul());
-    }
-}
+builder.Services.AddControllers();
+builder.Host.AddWing(builder => builder.AddConsul());
+
+builder.Services.AddWing()
+                 .AddWingUI()
+                 .AddPersistence()
+                 .AddAPM();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+// 设置允许所有来源跨域
+app.UseCors(options =>
+{
+    options.AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed(x => true)
+    .AllowCredentials();
+});
+
+app.MapControllers();
+
+app.Run();

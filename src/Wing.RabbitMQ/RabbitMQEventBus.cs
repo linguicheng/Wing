@@ -108,7 +108,7 @@ namespace Wing.RabbitMQ
                     var consumer = new EventingBasicConsumer(channel);
                     consumer.Received += async (model, ea) =>
                     {
-                        var message = Encoding.UTF8.GetString(ea.Body);
+                        var message = Encoding.UTF8.GetString(ea.Body.ToArray());
                         var eventMessage = _json.Deserialize<TEventMessage>(message);
                         var result = false;
                         result = await new TConsumer().Consume(eventMessage);

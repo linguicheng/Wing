@@ -1,5 +1,4 @@
-﻿using System;
-using FreeSql.DataAnnotations;
+﻿using FreeSql.DataAnnotations;
 using Wing.EventBus;
 
 namespace Wing.Persistence.Saga

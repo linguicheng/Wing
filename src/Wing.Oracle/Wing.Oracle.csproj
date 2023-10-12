@@ -15,7 +15,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreeSql.Provider.Oracle" Version="3.2.697" />
+    <PackageReference Include="FreeSql.Provider.Oracle" Version="3.2.801" />
   </ItemGroup>
 
   <ItemGroup>

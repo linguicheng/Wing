@@ -1,23 +1,26 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
+using Sample.GrpcService;
 using Wing;
 
-namespace Sample.GrpcService
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
+var builder = WebApplication.CreateBuilder(args);
 
-        // Additional configuration is required to successfully run gRPC on macOS.
-        // For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul());
-    }
-}
+builder.Host.AddWing(builder => builder.AddConsul());
+
+builder.Services.AddGrpc(options =>
+{
+    options.MaxReceiveMessageSize = 1 * 1024 * 1024; // 1 MB
+    options.MaxSendMessageSize = 1 * 1024 * 1024; // 1 MB
+});
+builder.Services.AddWing();
+
+var app = builder.Build();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapGrpcService<GreeterService>();
+    endpoints.MapGrpcService<HealthCheck>();
+    endpoints.MapGet("/", async context =>
+    {
+        await context.Response.WriteAsync("Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+    });
+});
+
+app.Run();
