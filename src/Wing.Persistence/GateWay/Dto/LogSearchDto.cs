@@ -10,14 +10,17 @@ namespace Wing.Persistence.Gateway
         public string DownstreamUrl { get; set; }
 
         public string RequestUrl { get; set; }
+
         /// <summary>
         /// 网关服务器IP
         /// </summary>
         public string GateWayServerIp { get; set; }
+
         /// <summary>
         /// 客户端请求IP
         /// </summary>
         public string ClientIp { get; set; }
+
         /// <summary>
         /// 服务地址
         /// </summary>

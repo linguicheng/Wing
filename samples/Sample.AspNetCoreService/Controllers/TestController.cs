@@ -116,5 +116,11 @@ namespace Sample.AspNetCoreService.Controllers
         {
             _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond });
         }
+
+        [HttpPost]
+        public WeatherForecast Post(WeatherForecast model)
+        {
+            return model;
+        }
     }
 }

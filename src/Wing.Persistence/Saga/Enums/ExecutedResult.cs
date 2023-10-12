@@ -6,6 +6,7 @@
         /// 执行成功
         /// </summary>
         Success = 1,
+
         /// <summary>
         /// 执行失败
         /// </summary>

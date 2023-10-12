@@ -6,6 +6,7 @@
         /// 事务执行结果
         /// </summary>
         public bool Success { get; set; } = true;
+
         /// <summary>
         /// 消息提示
         /// </summary>

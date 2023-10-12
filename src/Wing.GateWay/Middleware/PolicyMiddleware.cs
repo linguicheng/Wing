@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Bulkhead;
@@ -149,7 +150,7 @@ namespace Wing.Gateway.Middleware
                 return await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
-                    var reqMsg = serviceContext.HttpContext.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
+                    var reqMsg = await serviceContext.HttpContext.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
                     var client = _clientFactory.CreateClient(serviceContext.ServiceName);
                     return await client.SendAsync(reqMsg);
                 });

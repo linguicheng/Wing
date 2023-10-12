@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\src\Wing.Oracle\Wing.Oracle.csproj" />
+	<ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
 	<ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.GateWay\Wing.Gateway.csproj" />

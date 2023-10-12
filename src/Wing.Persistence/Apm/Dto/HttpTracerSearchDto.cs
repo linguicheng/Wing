@@ -5,7 +5,6 @@ namespace Wing.Persistence.Apm
 {
     public class HttpTracerSearchDto
     {
-
         public string ServerIp { get; set; }
 
         public string ServiceName { get; set; }

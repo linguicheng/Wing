@@ -1,5 +1,5 @@
-﻿using FreeSql.DataAnnotations;
-using System;
+﻿using System;
+using FreeSql.DataAnnotations;
 
 namespace Wing.Persistence.Saga
 {

@@ -49,7 +49,7 @@ namespace Wing.Gateway.Middleware
                 var resMsg = await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
-                    var reqMsg = context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
+                    var reqMsg = await context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
                     var client = _clientFactory.CreateClient(serviceContext.ServiceName);
                     return await client.SendAsync(reqMsg);
                 });

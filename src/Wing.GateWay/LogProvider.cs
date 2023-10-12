@@ -49,7 +49,7 @@ namespace Wing.Gateway
                     Id = Guid.NewGuid().ToString(),
                     ClientIp = Tools.RemoteIp,
                     DownstreamUrl = serviceContext.DownstreamPath,
-                    Policy = _json.Serialize(serviceContext.Policy),
+                    Policy = serviceContext.Policy == null ? string.Empty : _json.Serialize(serviceContext.Policy),
                     RequestTime = serviceContext.RequestTime,
                     RequestMethod = request.Method,
                     RequestUrl = request.GetDisplayUrl(),
@@ -80,8 +80,6 @@ namespace Wing.Gateway
 
                 if (request.Body != null)
                 {
-                    request.EnableBuffering();
-                    request.Body.Position = 0;
                     using (var reader = new StreamReader(request.Body))
                     {
                         log.RequestValue = await reader.ReadToEndAsync();

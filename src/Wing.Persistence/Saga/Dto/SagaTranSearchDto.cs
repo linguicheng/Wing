@@ -21,6 +21,5 @@ namespace Wing.Persistence.Saga
         /// 创建时间
         /// </summary>
         public List<DateTime> CreatedTime { get; set; }
-
     }
 }

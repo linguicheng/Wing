@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -9,7 +10,7 @@ namespace Wing.Gateway
 {
     public static class HttpExtensions
     {
-        public static HttpRequestMessage ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path)
+        public static async Task<HttpRequestMessage> ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path)
         {
             var reqMsg = new HttpRequestMessage
             {
@@ -21,9 +22,18 @@ namespace Wing.Gateway
                     Port = serviceAddress.Port,
                     Path = path,
                     Query = req.QueryString.ToString()
-                }.Uri,
-                Content = new StreamContent(req.Body)
+                }.Uri
             };
+            if (req.Body != null)
+            {
+                req.EnableBuffering();
+                var ms = new MemoryStream();
+                await req.Body.CopyToAsync(ms);
+                ms.Position = 0;
+                reqMsg.Content = new StreamContent(ms);
+                req.Body.Position = 0;
+            }
+
             if (req.Headers != null && req.Headers.ContainsKey("Content-Type"))
             {
                 reqMsg.Content.Headers.Add("Content-Type", req.ContentType);

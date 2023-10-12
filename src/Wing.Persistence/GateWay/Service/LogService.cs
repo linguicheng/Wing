@@ -105,6 +105,7 @@ namespace Wing.Persistence.Gateway
                     }
                 });
             }
+
             result = result.OrderBy(x => x.Month).ToList();
             return result;
         }
