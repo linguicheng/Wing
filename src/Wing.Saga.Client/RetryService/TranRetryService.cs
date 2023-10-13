@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Injection;
@@ -30,7 +28,7 @@ namespace Wing.Saga.Client
                 BeginTime = DateTime.Now,
                 RetryAction = "Commit"
             };
-            ResponseData result = new ResponseData();
+            ResponseData result = new ();
             foreach (var item in retryData.SagaTranUnits)
             {
                 SagaResult sagaResult;
@@ -38,9 +36,10 @@ namespace Wing.Saga.Client
                 try
                 {
                     var unitType = GlobalInjection.GetType(item.UnitNamespace);
+                    var unitModelType = GlobalInjection.GetType(item.UnitModelNamespace);
                     var unitObj = Activator.CreateInstance(unitType);
                     var commit = unitType.GetMethod("Commit");
-                    var unitModel = DataConverter.BytesToObject(item.ParamsValue);
+                    var unitModel = DataConverter.BytesToObject(item.ParamsValue, unitModelType);
                     tranUnitEvent.BeginTime = DateTime.Now;
                     sagaResult = await (commit.Invoke(unitObj, new object[] { unitModel, previousResult }) as Task<SagaResult>);
                 }
@@ -96,7 +95,7 @@ namespace Wing.Saga.Client
                 BeginTime = DateTime.Now,
                 RetryAction = "Cancel"
             };
-            ResponseData result = new ResponseData();
+            ResponseData result = new ();
             foreach (var item in retryData.SagaTranUnits)
             {
                 SagaResult sagaResult;
@@ -104,9 +103,10 @@ namespace Wing.Saga.Client
                 try
                 {
                     var unitType = GlobalInjection.GetType(item.UnitNamespace);
+                    var unitModelType = GlobalInjection.GetType(item.UnitModelNamespace);
                     var unitObj = Activator.CreateInstance(unitType);
                     var commit = unitType.GetMethod("Cancel");
-                    var unitModel = DataConverter.BytesToObject(item.ParamsValue);
+                    var unitModel = DataConverter.BytesToObject(item.ParamsValue, unitModelType);
                     tranUnitEvent.BeginTime = DateTime.Now;
                     sagaResult = await (commit.Invoke(unitObj, new object[] { unitModel, previousResult }) as Task<SagaResult>);
                 }

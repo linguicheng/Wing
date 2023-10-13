@@ -1,5 +1,4 @@
-﻿using System;
-using Wing.Converter;
+﻿using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
 

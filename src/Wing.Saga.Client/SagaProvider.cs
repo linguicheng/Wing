@@ -45,7 +45,8 @@ namespace Wing.Saga.Client
                 Name = unitModel.Name,
                 OrderNo = _previousOrder,
                 ParamsValue = DataConverter.ObjectToBytes(unitModel),
-                UnitNamespace = typeof(TSagaUnit).FullName
+                UnitNamespace = typeof(TSagaUnit).FullName,
+                UnitModelNamespace = typeof(TUnitModel).FullName
             };
 
             if (_tran.Status == TranStatus.Failed)

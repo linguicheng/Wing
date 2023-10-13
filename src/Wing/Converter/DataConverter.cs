@@ -1,8 +1,5 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+﻿using System.Text;
+using System.Text.Json;
 using Microsoft.Extensions.Configuration;
 
 namespace Wing.Converter
@@ -21,10 +18,12 @@ namespace Wing.Converter
 
         public static IConfigurationRoot BuildConfig(byte[] bytes)
         {
-            using Stream stream = new MemoryStream(bytes);
-            return new ConfigurationBuilder()
-                .AddJsonStream(stream)
-                .Build();
+            using (Stream stream = new MemoryStream(bytes))
+            {
+                return new ConfigurationBuilder()
+               .AddJsonStream(stream)
+               .Build();
+            }
         }
 
         public static Dictionary<string, string> BytesToDictionary(byte[] bytes)
@@ -36,20 +35,14 @@ namespace Wing.Converter
 
         public static byte[] ObjectToBytes(object obj)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                var formatter = new BinaryFormatter();
-                formatter.Serialize(ms, obj);
-                return ms.GetBuffer();
-            }
+           return JsonSerializer.SerializeToUtf8Bytes(obj);
         }
 
-        public static object BytesToObject(byte[] bytes)
+        public static object BytesToObject(byte[] bytes, Type type)
         {
-            using (MemoryStream ms = new MemoryStream(bytes))
+            using (MemoryStream ms = new (bytes))
             {
-                var formatter = new BinaryFormatter();
-                return formatter.Deserialize(ms);
+                return JsonSerializer.Deserialize(ms, type);
             }
         }
     }

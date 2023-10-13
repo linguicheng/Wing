@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Grpc.Core;
+﻿using Grpc.Core;
 using Wing.Saga.Grpc;
 
 namespace Wing.Saga.Client
@@ -26,7 +23,8 @@ namespace Wing.Saga.Client
             {
                 Id = x.Id,
                 ParamsValue = x.ParamsValue.ToByteArray(),
-                UnitNamespace = x.UnitNamespace
+                UnitNamespace = x.UnitNamespace,
+                UnitModelNamespace = x.UnitModelNamespace
             }));
             var result = await _tranRetryService.Commit(requestData);
             return new ResponseData { Success = result.Success, Msg = result.Msg };
@@ -43,7 +41,8 @@ namespace Wing.Saga.Client
             {
                 Id = x.Id,
                 ParamsValue = x.ParamsValue.ToByteArray(),
-                UnitNamespace = x.UnitNamespace
+                UnitNamespace = x.UnitNamespace,
+                UnitModelNamespace = x.UnitModelNamespace
             }));
             var result = await _tranRetryService.Cancel(requestData);
             return new ResponseData { Success = result.Success, Msg = result.Msg };

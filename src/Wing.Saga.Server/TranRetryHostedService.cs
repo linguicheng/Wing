@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net.Http.Headers;
 using Google.Protobuf;
 using Grpc.Core;
 using Grpc.Net.Client;
@@ -22,7 +16,7 @@ namespace Wing.Saga.Server
 {
     public class TranRetryHostedService : BackgroundService
     {
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new ();
         private readonly ILogger<TranRetryHostedService> _logger;
         private readonly IServiceFactory _serviceFactory;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -44,6 +38,12 @@ namespace Wing.Saga.Server
             _sagaOptions = sagaOptions;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            _timer?.Dispose();
+        }
+
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Saga重试服务开始运行...");
@@ -52,7 +52,6 @@ namespace Wing.Saga.Server
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Dispose();
             _logger.LogInformation("Saga重试服务停止运行...");
             return base.StopAsync(cancellationToken);
         }
@@ -163,7 +162,8 @@ namespace Wing.Saga.Server
                 {
                     Id = x.Id,
                     ParamsValue = ByteString.CopyFrom(x.ParamsValue),
-                    UnitNamespace = x.UnitNamespace
+                    UnitNamespace = x.UnitNamespace,
+                    UnitModelNamespace = x.UnitModelNamespace
                 });
             });
             return retryData;
@@ -190,7 +190,8 @@ namespace Wing.Saga.Server
                 {
                     Id = x.Id,
                     ParamsValue = x.ParamsValue,
-                    UnitNamespace = x.UnitNamespace
+                    UnitNamespace = x.UnitNamespace,
+                    UnitModelNamespace = x.UnitModelNamespace
                 });
             });
             return retryData;

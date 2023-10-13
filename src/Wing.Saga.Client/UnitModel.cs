@@ -2,7 +2,6 @@
 
 namespace Wing.Saga.Client
 {
-    [Serializable]
     public class UnitModel
     {
         public string Name { get; set; }

@@ -62,6 +62,11 @@ namespace Wing.Persistence.Saga
         public string UnitNamespace { get; set; }
 
         /// <summary>
+        /// 事务单元模型命名空间
+        /// </summary>
+        public string UnitModelNamespace { get; set; }
+
+        /// <summary>
         /// 参数值
         /// </summary>
         public byte[] ParamsValue { get; set; }

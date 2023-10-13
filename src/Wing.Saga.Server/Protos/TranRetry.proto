@@ -16,6 +16,7 @@ message RetryTranUnit {
   string id = 1;
   bytes paramsValue = 2;
   string unitNamespace = 3;
+  string unitModelNamespace = 4;
 }
 
 message ResponseData {

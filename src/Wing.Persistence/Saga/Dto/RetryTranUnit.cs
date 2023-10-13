@@ -7,5 +7,7 @@
         public byte[] ParamsValue { get; set; }
 
         public string UnitNamespace { get; set; }
+
+        public string UnitModelNamespace { get; set; }
     }
 }

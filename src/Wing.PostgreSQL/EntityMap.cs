@@ -125,6 +125,7 @@ namespace Wing.Persistence
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.Name).HasColumnType("varchar(200)");
                 eb.Property(x => x.UnitNamespace).HasColumnType("text");
+                eb.Property(x => x.UnitModelNamespace).HasColumnType("text");
                 eb.Property(x => x.ParamsValue).HasColumnType("bytea");
                 eb.Property(x => x.Description).HasColumnType("text");
                 eb.Property(x => x.ErrorMsg).HasColumnType("text");
