@@ -3,9 +3,10 @@ using Wing;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.AddWing(builder => builder.AddConsul());
+
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
-builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddWing().AddJwt(context =>
 {

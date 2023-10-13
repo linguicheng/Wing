@@ -2,8 +2,9 @@ using Wing;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
 builder.Host.AddWing(builder => builder.AddConsul());
+
+builder.Services.AddControllers();
 
 builder.Services.AddWing()
                  .AddWingUI()

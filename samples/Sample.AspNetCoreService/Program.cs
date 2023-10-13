@@ -2,13 +2,13 @@ using FreeSql;
 using Sample.AspNetCoreService;
 using System.Security.Claims;
 using Wing;
-using Wing.ServiceProvider;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Host.AddWing(builder => builder.AddConsul());
+
 builder.Services.AddControllers();
 builder.Services.AddHttpClient();
-builder.Host.AddWing(builder => builder.AddConsul());
 
 var fsql = new FreeSqlBuilder()
                               .UseConnectionString(DataType.SqlServer, builder.Configuration["ConnectionStrings:Sample.Wing"])
