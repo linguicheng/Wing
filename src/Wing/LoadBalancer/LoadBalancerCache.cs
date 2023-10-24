@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
 using Wing.Injection;
 
 namespace Wing.LoadBalancer

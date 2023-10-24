@@ -1,7 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
 using Wing.Persistence.APM;
 
 namespace Wing.APM.Listeners

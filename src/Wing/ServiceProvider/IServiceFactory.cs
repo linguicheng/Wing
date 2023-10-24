@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Wing.ServiceProvider
+﻿namespace Wing.ServiceProvider
 {
     public interface IServiceFactory
     {

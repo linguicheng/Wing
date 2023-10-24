@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Wing.Exceptions;
+﻿using Wing.Exceptions;
 using Wing.ServiceProvider;
 
 namespace Wing.LoadBalancer
@@ -46,6 +43,11 @@ namespace Wing.LoadBalancer
                 service.CurrentWeight -= _totalWeight;
                 return service.ServiceAddress;
             }
+        }
+
+        public override ServiceAddress GetServiceAddress(string key)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

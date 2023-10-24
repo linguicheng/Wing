@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Extensions.Logging;
-using Wing.Exceptions;
+﻿using Wing.Exceptions;
 using Wing.ServiceProvider;
 
 namespace Wing.LoadBalancer
@@ -38,6 +34,11 @@ namespace Wing.LoadBalancer
                 _leases.Add(leaseConnection);
                 return leaseConnection.ServiceAddress;
             }
+        }
+
+        public override ServiceAddress GetServiceAddress(string key)
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>

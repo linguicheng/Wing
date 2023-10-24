@@ -1,9 +1,5 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
 using Wing.Persistence.Apm;
 using Wing.Persistence.APM;

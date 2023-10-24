@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Wing.APM.SqlSugar
+﻿namespace Wing.APM.SqlSugar
 {
     public class OnLogExecutedModel
     {

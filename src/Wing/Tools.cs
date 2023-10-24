@@ -1,7 +1,4 @@
-﻿using System;
-using System.Globalization;
-using System.IO;
-using System.Linq;
+﻿using System.Globalization;
 using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -33,18 +30,6 @@ namespace Wing
                 var context = httpContextAccessor?.HttpContext;
                 var ip = context?.Request.Headers["X-Forwarded-For"].FirstOrDefault();
                 return string.IsNullOrWhiteSpace(ip) ? context.Connection.RemoteIpAddress?.MapToIPv4()?.ToString() : ip;
-            }
-        }
-
-        public static T DeepCopy<T>(T value)
-        {
-            using (var ms = new MemoryStream())
-            {
-                BinaryFormatter bf = new BinaryFormatter();
-                bf.Serialize(ms, value);
-                ms.Seek(0, SeekOrigin.Begin);
-                var result = bf.Deserialize(ms);
-                return (T)result;
             }
         }
 

@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
-using Wing.Configuration;
-using Wing.ServiceProvider.Config;
-
-namespace Wing.ServiceProvider
+﻿namespace Wing.ServiceProvider
 {
     public interface IDiscoveryServiceProvider
     {

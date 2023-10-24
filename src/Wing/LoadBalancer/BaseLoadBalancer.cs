@@ -1,12 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Wing.ServiceProvider;
+﻿using Wing.ServiceProvider;
 
 namespace Wing.LoadBalancer
 {
     public abstract class BaseLoadBalancer : ILoadBalancer
     {
-        protected static readonly object _lock = new object();
+        protected static readonly object _lock = new ();
 
         protected List<Service> Services { get; set; }
 
@@ -14,6 +12,8 @@ namespace Wing.LoadBalancer
         {
             Services = services;
         }
+
+        public abstract ServiceAddress GetServiceAddress(string key);
 
         public abstract ServiceAddress GetServiceAddress();
 

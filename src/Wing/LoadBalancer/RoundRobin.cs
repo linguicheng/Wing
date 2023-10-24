@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Wing.Exceptions;
+﻿using Wing.Exceptions;
 using Wing.ServiceProvider;
 
 namespace Wing.LoadBalancer
@@ -37,6 +35,11 @@ namespace Wing.LoadBalancer
                 _last++;
                 return next.ServiceAddress;
             }
+        }
+
+        public override ServiceAddress GetServiceAddress(string key)
+        {
+            throw new NotImplementedException();
         }
     }
 }

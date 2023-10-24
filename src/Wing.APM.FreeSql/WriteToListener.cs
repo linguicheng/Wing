@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using FreeSql.Aop;
 
 namespace Wing.APM.FreeSql

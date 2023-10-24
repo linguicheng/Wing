@@ -1,5 +1,4 @@
-﻿using System;
-using SqlSugar;
+﻿using SqlSugar;
 
 namespace Wing.APM.SqlSugar
 {

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Wing.ServiceProvider.Config;
-
-namespace Wing.ServiceProvider
+﻿namespace Wing.ServiceProvider
 {
     public class ServiceAddress
     {
