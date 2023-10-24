@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.Exceptions;
 using Wing.Injection;
@@ -13,7 +9,7 @@ namespace Wing.ServiceProvider
 {
     public class ServiceFactory : IServiceFactory, ISingleton
     {
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new ();
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
         private readonly ILogger<ServiceFactory> _logger;
         private readonly ILoadBalancerCache _loadBalancerCache;
@@ -77,7 +73,7 @@ namespace Wing.ServiceProvider
             {
                 _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
-                throw ex;
+                throw;
             }
         }
 
@@ -110,7 +106,7 @@ namespace Wing.ServiceProvider
             {
                 _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
-                throw ex;
+                throw;
             }
         }
 
@@ -146,7 +142,7 @@ namespace Wing.ServiceProvider
             {
                 _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
-                throw ex;
+                throw;
             }
         }
 
@@ -179,7 +175,7 @@ namespace Wing.ServiceProvider
             {
                 _logger.LogError(ex, $"服务【{serviceName}】调用异常");
                 weightRoundRobin?.ReduceWeight(serviceAddress);
-                throw ex;
+                throw;
             }
         }
 
@@ -187,7 +183,7 @@ namespace Wing.ServiceProvider
         {
             serviceName.IsNotNull();
             var services = await _discoveryServiceProvider.Get(serviceName, HealthStatus.Healthy);
-            lock (serviceName)
+            lock (_lock)
             {
                 if (services.Count == 0)
                 {
