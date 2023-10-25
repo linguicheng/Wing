@@ -15,6 +15,11 @@
         /// <summary>
         /// 最小连接数
         /// </summary>
-        LeastConnection
+        LeastConnection,
+
+        /// <summary>
+        /// 一致性哈希
+        /// </summary>
+        ConsistentHash
     }
 }

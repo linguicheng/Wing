@@ -9,7 +9,7 @@ namespace Wing.ServiceProvider
 {
     public class ServiceFactory : IServiceFactory, ISingleton
     {
-        private static readonly object _lock = new ();
+        private static readonly object _lock = new();
         private readonly IDiscoveryServiceProvider _discoveryServiceProvider;
         private readonly ILogger<ServiceFactory> _logger;
         private readonly ILoadBalancerCache _loadBalancerCache;
@@ -23,31 +23,51 @@ namespace Wing.ServiceProvider
 
         public T Invoke<T>(string serviceName, Func<ServiceAddress, T> func)
         {
-            return ServiceInvoke(serviceName, func);
+            return ServiceInvoke(serviceName, null, func);
+        }
+
+        public T Invoke<T>(string serviceName, string key, Func<ServiceAddress, T> func)
+        {
+            return ServiceInvoke(serviceName, key, func);
         }
 
         public void Invoke(string serviceName, Action<ServiceAddress> action)
         {
-            ServiceInvoke(serviceName, action);
+            ServiceInvoke(serviceName, null, action);
+        }
+
+        public void Invoke(string serviceName, string key, Action<ServiceAddress> action)
+        {
+            ServiceInvoke(serviceName, key, action);
         }
 
         public async Task<T> InvokeAsync<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
         {
-            return await ServiceInvoke(serviceName, func);
+            return await ServiceInvoke(serviceName, null, func);
+        }
+
+        public async Task<T> InvokeAsync<T>(string serviceName, string key, Func<ServiceAddress, Task<T>> func)
+        {
+            return await ServiceInvoke(serviceName, key, func);
         }
 
         public async Task InvokeAsync(string serviceName, Func<ServiceAddress, Task> func)
         {
-            await ServiceInvoke(serviceName, func);
+            await ServiceInvoke(serviceName, null, func);
         }
 
-        private async Task<T> ServiceInvoke<T>(string serviceName, Func<ServiceAddress, Task<T>> func)
+        public async Task InvokeAsync(string serviceName, string key, Func<ServiceAddress, Task> func)
+        {
+            await ServiceInvoke(serviceName, key, func);
+        }
+
+        private async Task<T> ServiceInvoke<T>(string serviceName, string key, Func<ServiceAddress, Task<T>> func)
         {
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                var serviceInfo = await GetServices(serviceName);
+                var serviceInfo = await GetServices(serviceName, key);
                 serviceAddress = serviceInfo.Item1;
                 var loadBalancer = serviceInfo.Item2;
                 if (loadBalancer is WeightRoundRobin)
@@ -77,13 +97,13 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private async Task ServiceInvoke(string serviceName, Func<ServiceAddress, Task> func)
+        private async Task ServiceInvoke(string serviceName, string key, Func<ServiceAddress, Task> func)
         {
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                var serviceInfo = await GetServices(serviceName);
+                var serviceInfo = await GetServices(serviceName, key);
                 serviceAddress = serviceInfo.Item1;
                 var loadBalancer = serviceInfo.Item2;
                 if (loadBalancer is WeightRoundRobin)
@@ -110,13 +130,13 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private T ServiceInvoke<T>(string serviceName, Func<ServiceAddress, T> func)
+        private T ServiceInvoke<T>(string serviceName, string key, Func<ServiceAddress, T> func)
         {
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                var serviceInfo = GetServices(serviceName).GetAwaiter().GetResult();
+                var serviceInfo = GetServices(serviceName, key).GetAwaiter().GetResult();
                 serviceAddress = serviceInfo.Item1;
                 var loadBalancer = serviceInfo.Item2;
                 if (loadBalancer is WeightRoundRobin)
@@ -146,13 +166,13 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private void ServiceInvoke(string serviceName, Action<ServiceAddress> action)
+        private void ServiceInvoke(string serviceName, string key, Action<ServiceAddress> action)
         {
             WeightRoundRobin weightRoundRobin = null;
             ServiceAddress serviceAddress = null;
             try
             {
-                var serviceInfo = GetServices(serviceName).GetAwaiter().GetResult();
+                var serviceInfo = GetServices(serviceName, key).GetAwaiter().GetResult();
                 serviceAddress = serviceInfo.Item1;
                 var loadBalancer = serviceInfo.Item2;
                 if (loadBalancer is WeightRoundRobin)
@@ -179,7 +199,7 @@ namespace Wing.ServiceProvider
             }
         }
 
-        private async Task<(ServiceAddress, ILoadBalancer)> GetServices(string serviceName)
+        private async Task<(ServiceAddress, ILoadBalancer)> GetServices(string serviceName, string key)
         {
             serviceName.IsNotNull();
             var services = await _discoveryServiceProvider.Get(serviceName, HealthStatus.Healthy);
@@ -212,6 +232,15 @@ namespace Wing.ServiceProvider
                         case LoadBalancerOptions.WeightRoundRobin:
                             loadBalancerConfig.LoadBalancer = new WeightRoundRobin(services);
                             serviceAddress = loadBalancerConfig.LoadBalancer.GetServiceAddress();
+                            break;
+                        case LoadBalancerOptions.ConsistentHash:
+                            if (string.IsNullOrWhiteSpace(key))
+                            {
+                                throw new ArgumentEmptyException(nameof(key));
+                            }
+
+                            loadBalancerConfig.LoadBalancer = new ConsistentHash(services);
+                            serviceAddress = loadBalancerConfig.LoadBalancer.GetServiceAddress(key);
                             break;
                         default:
                             loadBalancerConfig.LoadBalancer = new RoundRobin(services);

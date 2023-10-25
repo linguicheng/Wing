@@ -1,18 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Sample.AspNetCoreService.EventBus;
+﻿using Sample.AspNetCoreService.EventBus;
 using Sample.AspNetCoreService.Policy;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
 using Sample.Auth;
 using Wing.EventBus;
-using System.Net.Http;
-using Wing.Injection;
-using Wing.ServiceProvider;
-using System.Threading;
 
 namespace Sample.AspNetCoreService.Controllers
 {
