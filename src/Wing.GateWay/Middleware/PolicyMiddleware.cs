@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 using System.Net;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Polly;
 using Polly.Bulkhead;
@@ -39,7 +34,7 @@ namespace Wing.Gateway.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (string.IsNullOrWhiteSpace(serviceContext.ServiceName))
+            if (string.IsNullOrWhiteSpace(serviceContext.ServiceName) || serviceContext.IsWebSocket)
             {
                 await _next(serviceContext);
                 return;

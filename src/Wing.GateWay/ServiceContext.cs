@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 
 namespace Wing.Gateway
 {
@@ -25,5 +24,7 @@ namespace Wing.Gateway
         public int StatusCode { get; set; }
 
         public string ResponseValue { get; set; }
+
+        public bool IsWebSocket { get; set; } = false;
     }
 }

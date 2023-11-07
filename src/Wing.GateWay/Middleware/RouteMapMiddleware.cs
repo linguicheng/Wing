@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Wing.Gateway.Config;
 
 namespace Wing.Gateway.Middleware
@@ -21,7 +17,8 @@ namespace Wing.Gateway.Middleware
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
             serviceContext.RequestTime = DateTime.Now;
-            var fullPath = serviceContext.HttpContext.Request.Path.ToString();
+            var context = serviceContext.HttpContext;
+            var fullPath = context.Request.Path.ToString();
             var paths = fullPath.Split("/");
             if (paths == null || paths.Length <= 2)
             {
@@ -43,7 +40,49 @@ namespace Wing.Gateway.Middleware
                 upstreamPaths[i] = paths[i + 2];
             }
 
+            serviceContext.IsWebSocket = context.WebSockets.IsWebSocketRequest;
             serviceContext.DownstreamPath = "/" + string.Join('/', upstreamPaths);
+            WebSocketAuth(serviceContext);
+            GetPolicy(serviceContext, upstreamPaths);
+            await _next(serviceContext);
+        }
+
+        private void WebSocketAuth(ServiceContext serviceContext)
+        {
+            if (!serviceContext.IsWebSocket)
+            {
+                return;
+            }
+
+            var context = serviceContext.HttpContext;
+            var token = context.Request.Query["token"].ToString();
+            if (!string.IsNullOrWhiteSpace(token))
+            {
+                if (context.Request.Headers.ContainsKey("Authorization"))
+                {
+                    context.Request.Headers["Authorization"] = $"Bearer {token}";
+                }
+                else
+                {
+                    context.Request.Headers.Add("Authorization", $"Bearer {token}");
+                }
+            }
+            else
+            {
+                var authKey = context.Request.Query["key"].ToString();
+                if (context.Request.Headers.ContainsKey("AuthKey"))
+                {
+                    context.Request.Headers["AuthKey"] = authKey;
+                }
+                else
+                {
+                    context.Request.Headers.Add("AuthKey", authKey);
+                }
+            }
+        }
+
+        private void GetPolicy(ServiceContext serviceContext, string[] upstreamPaths)
+        {
             var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
             if (config != null)
             {
@@ -95,8 +134,6 @@ namespace Wing.Gateway.Middleware
 
                 serviceContext.Policy ??= config.Global;
             }
-
-            await _next(serviceContext);
         }
     }
 }

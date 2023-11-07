@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Wing.Gateway.Config
+﻿namespace Wing.Gateway.Config
 {
     public class Policy
     {
