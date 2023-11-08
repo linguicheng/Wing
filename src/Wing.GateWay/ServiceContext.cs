@@ -23,6 +23,8 @@ namespace Wing.Gateway
 
         public int StatusCode { get; set; }
 
+        public string RequestValue { get; set; }
+
         public string ResponseValue { get; set; }
 
         public bool IsWebSocket { get; set; } = false;

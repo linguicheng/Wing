@@ -15,6 +15,7 @@ namespace Wing.Gateway
                 middlewareBuilder.UseMiddleware<AuthenticationMiddleware>();
                 middlewareBuilder.UseMiddleware<NoPolicyMiddleware>();
                 middlewareBuilder.UseMiddleware<PolicyMiddleware>();
+                middlewareBuilder.UseMiddleware<WebSocketMiddleware>();
                 var firstDelegate = middlewareBuilder.Build();
                 async Task Middleware(HttpContext context, Func<Task> next)
                 {

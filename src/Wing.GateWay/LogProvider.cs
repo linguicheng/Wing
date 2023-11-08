@@ -74,7 +74,11 @@ namespace Wing.Gateway
                     }
                 }
 
-                if (request.Body != null)
+                if (!string.IsNullOrEmpty(serviceContext.RequestValue))
+                {
+                    log.RequestValue = serviceContext.RequestValue;
+                }
+                else if (request.Body != null)
                 {
                     using (var reader = new StreamReader(request.Body))
                     {
