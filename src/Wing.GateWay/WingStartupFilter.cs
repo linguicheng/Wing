@@ -6,10 +6,20 @@ namespace Wing.Gateway
 {
     internal class WingStartupFilter
     {
-        public Action<IApplicationBuilder> Configure()
+        public Action<IApplicationBuilder> Configure(WebSocketOptions webSocketOptions = null)
         {
             return app =>
             {
+                if (webSocketOptions == null)
+                {
+                    webSocketOptions = new WebSocketOptions
+                    {
+                        KeepAliveInterval = TimeSpan.FromMinutes(2)
+                    };
+                }
+
+                app.UseWebSockets(webSocketOptions);
+
                 var middlewareBuilder = new MiddlewareBuilder(app.ApplicationServices);
                 middlewareBuilder.UseMiddleware<RouteMapMiddleware>();
                 middlewareBuilder.UseMiddleware<AuthenticationMiddleware>();

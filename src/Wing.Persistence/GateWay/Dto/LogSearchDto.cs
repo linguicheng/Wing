@@ -41,5 +41,7 @@ namespace Wing.Persistence.Gateway
         public string AuthKey { get; set; }
 
         public string Token { get; set; }
+
+        public string Exception { get; set; }
     }
 }

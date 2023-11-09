@@ -74,6 +74,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.APM.EFCore", "src\Wing
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.APM.EFCore", "samples\Sample.APM.EFCore\Sample.APM.EFCore.csproj", "{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.WebSocket", "samples\Sample.WebSocket\Sample.WebSocket.csproj", "{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -192,6 +194,10 @@ Global
 		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -228,6 +234,7 @@ Global
 		{70ECD8A4-405C-4E23-AB3C-468020CBA7FD} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
 		{D9159D5E-FB82-4C33-BD10-DCBC6F68E647} = {17A8768A-2F64-40AE-AA08-912AD8FD2C71}
 		{EAFEB23E-59CA-44D6-B193-8B83DDC0FAD2} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
+		{C7D5D86A-3D59-4F71-BE50-292C46BDE8FB} = {E70A0BB1-8418-4F80-A4A5-47461D35D368}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A4E7060C-278C-4789-8857-13E1D41F6AD6}

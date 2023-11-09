@@ -28,5 +28,7 @@ namespace Wing.Gateway
         public string ResponseValue { get; set; }
 
         public bool IsWebSocket { get; set; } = false;
+
+        public string Exception { get; set; }
     }
 }

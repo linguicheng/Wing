@@ -223,6 +223,14 @@ namespace Wing.ServiceProvider
                         LoadBalancerOptions = services[0].LoadBalancer,
                     };
                     ServiceAddress serviceAddress;
+                    if (!string.IsNullOrWhiteSpace(key))
+                    {
+                        loadBalancerConfig.LoadBalancer = new ConsistentHash(services);
+                        serviceAddress = loadBalancerConfig.LoadBalancer.GetServiceAddress(key);
+                        _loadBalancerCache.Add(serviceName, loadBalancerConfig);
+                        return (serviceAddress, loadBalancerConfig.LoadBalancer);
+                    }
+
                     switch (loadBalancerConfig.LoadBalancerOptions)
                     {
                         case LoadBalancerOptions.LeastConnection:

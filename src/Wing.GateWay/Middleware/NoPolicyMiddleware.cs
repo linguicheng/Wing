@@ -58,16 +58,19 @@ namespace Wing.Gateway.Middleware
                     _logProvider.Add(serviceContext);
                 });
             }
-            catch (ServiceNotFoundException)
+            catch (ServiceNotFoundException ex)
             {
                 serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
                 context.Response.StatusCode = serviceContext.StatusCode;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
                 await _logProvider.Add(serviceContext);
             }
-            catch
+            catch(Exception ex)
             {
                 serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
                 context.Response.StatusCode = serviceContext.StatusCode;
+
                 await _logProvider.Add(serviceContext);
             }
         }

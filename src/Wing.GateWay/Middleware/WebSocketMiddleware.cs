@@ -30,79 +30,100 @@ namespace Wing.Gateway.Middleware
             }
 
             var context = serviceContext.HttpContext;
-
+            WebSocket webSocket = null;
+            WebSocketReceiveResult receiveResult = null;
+            ClientWebSocket client = null;
+            WebSocketReceiveResult clientReceiveResult = null;
+            WebSocketCloseStatus closeStatus = WebSocketCloseStatus.NormalClosure;
             try
             {
-                using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
-                await Echo(webSocket, serviceContext);
-            }
-            catch (ServiceNotFoundException)
-            {
-                serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
-                context.Response.StatusCode = serviceContext.StatusCode;
-                await _logProvider.Add(serviceContext);
-            }
-            catch
-            {
-                serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
-                context.Response.StatusCode = serviceContext.StatusCode;
-                await _logProvider.Add(serviceContext);
-            }
-        }
-
-        private async Task Echo(WebSocket webSocket, ServiceContext serviceContext)
-        {
-            var buffer = new byte[1024 * 4];
-            var receiveResult = await webSocket.ReceiveAsync(
-                new ArraySegment<byte>(buffer), CancellationToken.None);
-            if (receiveResult.CloseStatus.HasValue)
-            {
-                await webSocket.CloseAsync(
-               receiveResult.CloseStatus.Value,
-               receiveResult.CloseStatusDescription,
-               CancellationToken.None);
-                return;
-            }
-
-            var client = new ClientWebSocket();
-            await _serviceFactory.InvokeAsync(serviceContext.ServiceName, Tools.RemoteIp, async serviceAddr =>
-            {
-                var scheme = serviceAddr.Sheme == "https" ? "wss" : "ws";
-                await client.ConnectAsync(new Uri($"{scheme}://{serviceAddr.Host}:{serviceAddr.Port}{serviceContext.DownstreamPath}"), CancellationToken.None);
-            });
-            while (!receiveResult.CloseStatus.HasValue)
-            {
-                serviceContext.RequestValue = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
-                await client.SendAsync(new ArraySegment<byte>(buffer, 0, receiveResult.Count),
-                    receiveResult.MessageType,
-                    receiveResult.EndOfMessage,
-                    CancellationToken.None);
-
-                var clientReceiveResult = await client.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
-                serviceContext.ResponseValue = Encoding.UTF8.GetString(buffer, 0, clientReceiveResult.Count);
-                if (clientReceiveResult.CloseStatus.HasValue)
+                webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                var buffer = new byte[1024 * 4];
+                receiveResult = await webSocket.ReceiveAsync(
+                   new ArraySegment<byte>(buffer), CancellationToken.None);
+                if (receiveResult.CloseStatus.HasValue)
                 {
-                    serviceContext.StatusCode = (int)clientReceiveResult.CloseStatus;
-                    await _logProvider.Add(serviceContext);
-                    break;
+                    return;
                 }
 
-                serviceContext.StatusCode = (int)HttpStatusCode.OK;
-                await _logProvider.Add(serviceContext);
-                await webSocket.SendAsync(
-                    new ArraySegment<byte>(buffer, 0, receiveResult.Count),
-                    receiveResult.MessageType,
-                    receiveResult.EndOfMessage,
-                    CancellationToken.None);
+                client = new ClientWebSocket();
+                await _serviceFactory.InvokeAsync(serviceContext.ServiceName, Tools.RemoteIp, async serviceAddr =>
+                {
+                    serviceContext.ServiceAddress = serviceAddr.ToString();
+                    var scheme = serviceAddr.Sheme == "https" ? "wss" : "ws";
+                    await client.ConnectAsync(new Uri($"{scheme}://{serviceAddr.Host}:{serviceAddr.Port}{serviceContext.DownstreamPath}"), CancellationToken.None);
+                });
+                while (!receiveResult.CloseStatus.HasValue)
+                {
+                    serviceContext.RequestTime = DateTime.Now;
+                    serviceContext.RequestValue = Encoding.UTF8.GetString(buffer, 0, receiveResult.Count);
+                    await client.SendAsync(new ArraySegment<byte>(buffer, 0, receiveResult.Count),
+                        receiveResult.MessageType,
+                        receiveResult.EndOfMessage,
+                        CancellationToken.None);
 
-                receiveResult = await webSocket.ReceiveAsync(
-                    new ArraySegment<byte>(buffer), CancellationToken.None);
+                    clientReceiveResult = await client.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+                    serviceContext.ResponseValue = Encoding.UTF8.GetString(buffer, 0, clientReceiveResult.Count);
+                    if (clientReceiveResult.CloseStatus.HasValue)
+                    {
+                        serviceContext.StatusCode = (int)clientReceiveResult.CloseStatus;
+                        await _logProvider.Add(serviceContext);
+                        break;
+                    }
+
+                    serviceContext.StatusCode = (int)HttpStatusCode.OK;
+                    await _logProvider.Add(serviceContext);
+                    await webSocket.SendAsync(
+                        new ArraySegment<byte>(buffer, 0, clientReceiveResult.Count),
+                        clientReceiveResult.MessageType,
+                        clientReceiveResult.EndOfMessage,
+                        CancellationToken.None);
+
+                    receiveResult = await webSocket.ReceiveAsync(
+                        new ArraySegment<byte>(buffer), CancellationToken.None);
+                }
             }
+            catch (ServiceNotFoundException ex)
+            {
+                closeStatus = WebSocketCloseStatus.EndpointUnavailable;
+                serviceContext.StatusCode = (int)closeStatus;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                await _logProvider.Add(serviceContext);
+            }
+            catch (Exception ex)
+            {
+                closeStatus = WebSocketCloseStatus.InternalServerError;
+                serviceContext.StatusCode = (int)closeStatus;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                await _logProvider.Add(serviceContext);
+            }
+            finally
+            {
+                if (receiveResult.CloseStatus.HasValue)
+                {
+                    closeStatus = receiveResult.CloseStatus.Value;
+                }
 
-            await webSocket.CloseAsync(
-                receiveResult.CloseStatus.Value,
-                receiveResult.CloseStatusDescription,
-                CancellationToken.None);
+                if (client != null)
+                {
+                    if (client.State != WebSocketState.Aborted)
+                    {
+                        await client.CloseAsync(closeStatus, receiveResult.CloseStatusDescription, CancellationToken.None);
+                    }
+
+                    client.Dispose();
+                }
+
+                if (webSocket != null)
+                {
+                    if (webSocket.State != WebSocketState.Aborted)
+                    {
+                        await webSocket.CloseAsync(closeStatus, receiveResult.CloseStatusDescription, CancellationToken.None);
+                    }
+
+                    webSocket.Dispose();
+                }
+            }
         }
     }
 }

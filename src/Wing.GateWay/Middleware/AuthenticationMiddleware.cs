@@ -1,6 +1,9 @@
 ﻿using System.Net;
+using System.Net.WebSockets;
+using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
+using Polly;
 
 namespace Wing.Gateway.Middleware
 {
@@ -70,8 +73,20 @@ namespace Wing.Gateway.Middleware
 
         private async Task Unauthorized(ServiceContext serviceContext)
         {
+            var context = serviceContext.HttpContext;
+            if (serviceContext.IsWebSocket)
+            {
+                WebSocketCloseStatus status = WebSocketCloseStatus.PolicyViolation;
+                serviceContext.StatusCode = (int)status;
+                serviceContext.Exception = "权限认证不通过";
+                await _logProvider.Add(serviceContext);
+                using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                await webSocket.CloseAsync(status, null, CancellationToken.None);
+                return;
+            }
+
             serviceContext.StatusCode = (int)HttpStatusCode.Unauthorized;
-            serviceContext.HttpContext.Response.StatusCode = serviceContext.StatusCode;
+            context.Response.StatusCode = serviceContext.StatusCode;
             await _logProvider.Add(serviceContext);
         }
     }

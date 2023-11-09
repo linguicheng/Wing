@@ -101,6 +101,7 @@ namespace Wing.Persistence
                 eb.Property(x => x.Policy).HasColumnType("text");
                 eb.Property(x => x.AuthKey).HasColumnType("text");
                 eb.Property(x => x.Token).HasColumnType("text");
+                eb.Property(x => x.Exception).HasColumnType("text");
             });
             #endregion
 
