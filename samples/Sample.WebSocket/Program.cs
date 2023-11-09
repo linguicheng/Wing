@@ -73,7 +73,7 @@ async Task Echo(WebSocket webSocket)
     while (!receiveResult.CloseStatus.HasValue)
     {
         await webSocket.SendAsync(
-            new ArraySegment<byte>(buffer, 0, buffer.Length),
+            new ArraySegment<byte>(buffer, 0, receiveResult.Count),
             receiveResult.MessageType,
             receiveResult.EndOfMessage,
             CancellationToken.None);
