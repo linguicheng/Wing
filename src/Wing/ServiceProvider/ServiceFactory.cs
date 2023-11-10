@@ -223,14 +223,6 @@ namespace Wing.ServiceProvider
                         LoadBalancerOptions = services[0].LoadBalancer,
                     };
                     ServiceAddress serviceAddress;
-                    if (!string.IsNullOrWhiteSpace(key))
-                    {
-                        loadBalancerConfig.LoadBalancer = new ConsistentHash(services);
-                        serviceAddress = loadBalancerConfig.LoadBalancer.GetServiceAddress(key);
-                        _loadBalancerCache.Add(serviceName, loadBalancerConfig);
-                        return (serviceAddress, loadBalancerConfig.LoadBalancer);
-                    }
-
                     switch (loadBalancerConfig.LoadBalancerOptions)
                     {
                         case LoadBalancerOptions.LeastConnection:
@@ -260,13 +252,18 @@ namespace Wing.ServiceProvider
                     return (serviceAddress, loadBalancerConfig.LoadBalancer);
                 }
 
-                return (GetServiceAddress(loadBalancerConfig.LoadBalancer, services), loadBalancerConfig.LoadBalancer);
+                return (GetServiceAddress(loadBalancerConfig.LoadBalancer, services, key), loadBalancerConfig.LoadBalancer);
             }
         }
 
-        private ServiceAddress GetServiceAddress(ILoadBalancer loadBalancer, List<Service> services)
+        private ServiceAddress GetServiceAddress(ILoadBalancer loadBalancer, List<Service> services, string key)
         {
             loadBalancer.UpdateServices(services);
+            if (loadBalancer is ConsistentHash)
+            {
+                return loadBalancer.GetServiceAddress(key);
+            }
+
             return loadBalancer.GetServiceAddress();
         }
     }

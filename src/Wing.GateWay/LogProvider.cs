@@ -47,7 +47,7 @@ namespace Wing.Gateway
                     DownstreamUrl = serviceContext.DownstreamPath,
                     Policy = serviceContext.Policy == null ? string.Empty : _json.Serialize(serviceContext.Policy),
                     RequestTime = serviceContext.RequestTime,
-                    RequestMethod = request.Method,
+                    RequestMethod = serviceContext.IsWebSocket ? "WebSocket" : request.Method,
                     RequestUrl = request.GetDisplayUrl(),
                     ResponseTime = now,
                     ServiceName = serviceContext.ServiceName,
@@ -55,7 +55,8 @@ namespace Wing.Gateway
                     ResponseValue = serviceContext.ResponseValue,
                     GateWayServerIp = Tools.LocalIp,
                     ServiceAddress = serviceContext.ServiceAddress,
-                    UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds)
+                    UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds),
+                    Exception = serviceContext.Exception
                 };
 
                 if (request.Headers != null && request.Headers.ContainsKey("AuthKey"))

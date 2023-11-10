@@ -106,7 +106,9 @@ namespace Wing.Gateway.Middleware
 
                 if (client != null)
                 {
-                    if (client.State != WebSocketState.Aborted)
+                    if (client.State != WebSocketState.Aborted
+                        && client.State != WebSocketState.Closed
+                        && client.State != WebSocketState.None)
                     {
                         await client.CloseAsync(closeStatus, receiveResult.CloseStatusDescription, CancellationToken.None);
                     }
@@ -116,7 +118,9 @@ namespace Wing.Gateway.Middleware
 
                 if (webSocket != null)
                 {
-                    if (webSocket.State != WebSocketState.Aborted)
+                    if (webSocket.State != WebSocketState.Aborted 
+                        && webSocket.State != WebSocketState.Closed
+                        && webSocket.State != WebSocketState.None)
                     {
                         await webSocket.CloseAsync(closeStatus, receiveResult.CloseStatusDescription, CancellationToken.None);
                     }

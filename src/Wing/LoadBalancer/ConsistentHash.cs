@@ -50,7 +50,11 @@ namespace Wing.LoadBalancer
             for (int i = 0; i < virtualNodeCount; i++)
             {
                 var vNode = new VirtualNode(physicalNode, i);
-                _hashRing.Add(Tools.GetHashCode(vNode.ToString()), vNode);
+                var hashcode = Tools.GetHashCode(vNode.ToString());
+                if (!_hashRing.ContainsKey(hashcode))
+                {
+                    _hashRing.Add(hashcode, vNode);
+                }
             }
         }
     }
