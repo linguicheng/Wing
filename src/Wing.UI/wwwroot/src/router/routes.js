@@ -49,13 +49,13 @@ const frameIn = [
         component: _import('config')
       },
       {
-        path: 'gateWayLog',
-        name: 'gateWayLog',
+        path: 'gateway',
+        name: 'gateway',
         meta: {
           title: '网关日志',
           auth: true
         },
-        component: _import('log')
+        component: _import('gateway')
       },
       {
         path: 'apm',

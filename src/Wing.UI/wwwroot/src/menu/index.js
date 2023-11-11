@@ -29,7 +29,7 @@ export const menuAside = supplementPath([
     ]
   },
   { path: '/config', title: '配置中心', icon: 'folder-o' },
-  { path: '/gateWayLog', title: '网关日志', icon: 'folder-o' },
+  { path: '/gateway', title: '网关日志', icon: 'folder-o' },
   {
     title: 'APM',
     icon: 'folder-o',
