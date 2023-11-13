@@ -1,4 +1,3 @@
-using Sample.Auth;
 using Wing;
 
 var builder = WebApplication.CreateBuilder(args);

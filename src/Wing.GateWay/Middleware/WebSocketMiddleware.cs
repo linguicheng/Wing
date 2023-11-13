@@ -118,7 +118,7 @@ namespace Wing.Gateway.Middleware
 
                 if (webSocket != null)
                 {
-                    if (webSocket.State != WebSocketState.Aborted 
+                    if (webSocket.State != WebSocketState.Aborted
                         && webSocket.State != WebSocketState.Closed
                         && webSocket.State != WebSocketState.None)
                     {
