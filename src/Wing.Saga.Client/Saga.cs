@@ -1,6 +1,7 @@
 ﻿using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
+using Wing.Saga.Client.Persistence;
 
 namespace Wing.Saga.Client
 {
@@ -43,7 +44,7 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
 
-            App.GetRequiredService<IEventBus>().Publish(sagaTran);
+            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务");
             return new SagaProvider(sagaTran, 0, null);
         }
     }

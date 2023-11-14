@@ -3,20 +3,23 @@ using Wing.Converter;
 using Wing.EventBus;
 using Wing.Injection;
 using Wing.Persistence.Saga;
+using Wing.Saga.Client.Persistence;
 
 namespace Wing.Saga.Client
 {
     public class TranRetryService : ITranRetryService, ISingleton
     {
-        private readonly IEventBus _eventBus;
         private readonly ILogger<TranRetryService> _logger;
-        private readonly IJson _json;
+        private readonly ISagaTranAppService _tranAppService;
+        private readonly ISagaTranUnitAppService _tranUnitAppService;
 
-        public TranRetryService(IEventBus eventBus, ILogger<TranRetryService> logger, IJson json)
+        public TranRetryService(ILogger<TranRetryService> logger,
+            ISagaTranAppService tranAppService,
+            ISagaTranUnitAppService tranUnitAppService)
         {
-            _eventBus = eventBus;
             _logger = logger;
-            _json = json;
+            _tranAppService = tranAppService;
+            _tranUnitAppService = tranUnitAppService;
         }
 
         public async Task<ResponseData> Commit(RetryData retryData)
@@ -28,7 +31,7 @@ namespace Wing.Saga.Client
                 BeginTime = DateTime.Now,
                 RetryAction = "Commit"
             };
-            ResponseData result = new ();
+            ResponseData result = new();
             foreach (var item in retryData.SagaTranUnits)
             {
                 SagaResult sagaResult;
@@ -61,7 +64,7 @@ namespace Wing.Saga.Client
                 {
                     previousResult = sagaResult;
                     tranUnitEvent.RetryResult = ExecutedResult.Success;
-                    result = Publish(tranUnitEvent, "事务单元提交");
+                    result.Success = await _tranUnitAppService.RetryCommit(tranUnitEvent, "事务单元提交");
                     if (!result.Success)
                     {
                         return result;
@@ -71,11 +74,11 @@ namespace Wing.Saga.Client
                 }
 
                 tranUnitEvent.RetryResult = ExecutedResult.Failed;
-                Publish(tranUnitEvent, "事务单元提交");
+                await _tranUnitAppService.RetryCommit(tranUnitEvent, "事务单元提交");
                 tranEvent.EndTime = DateTime.Now;
                 tranEvent.RetryResult = ExecutedResult.Failed;
                 tranEvent.UsedMillSeconds = Convert.ToInt64((tranEvent.EndTime - tranEvent.BeginTime).TotalMilliseconds);
-                Publish(tranEvent, "事务提交");
+                await _tranAppService.RetryCommit(tranEvent, "事务提交");
                 result.Success = false;
                 result.Msg = sagaResult.Msg;
                 return result;
@@ -83,7 +86,8 @@ namespace Wing.Saga.Client
 
             tranEvent.EndTime = DateTime.Now;
             tranEvent.RetryResult = ExecutedResult.Success;
-            return Publish(tranEvent, "事务提交");
+            result.Success = await _tranAppService.RetryCommit(tranEvent, "事务提交");
+            return result;
         }
 
         public async Task<ResponseData> Cancel(RetryData retryData)
@@ -95,7 +99,7 @@ namespace Wing.Saga.Client
                 BeginTime = DateTime.Now,
                 RetryAction = "Cancel"
             };
-            ResponseData result = new ();
+            ResponseData result = new();
             foreach (var item in retryData.SagaTranUnits)
             {
                 SagaResult sagaResult;
@@ -128,7 +132,7 @@ namespace Wing.Saga.Client
                 {
                     previousResult = sagaResult;
                     tranUnitEvent.RetryResult = ExecutedResult.Success;
-                    result = Publish(tranUnitEvent, "事务单元取消");
+                    result.Success = await _tranUnitAppService.RetryCancel(tranUnitEvent, "事务单元取消");
                     if (!result.Success)
                     {
                         return result;
@@ -138,11 +142,11 @@ namespace Wing.Saga.Client
                 }
 
                 tranUnitEvent.RetryResult = ExecutedResult.Failed;
-                Publish(tranUnitEvent, "事务单元取消");
+                await _tranUnitAppService.RetryCancel(tranUnitEvent, "事务单元取消");
                 tranEvent.EndTime = DateTime.Now;
                 tranEvent.RetryResult = ExecutedResult.Failed;
                 tranEvent.UsedMillSeconds = Convert.ToInt64((tranEvent.EndTime - tranEvent.BeginTime).TotalMilliseconds);
-                Publish(tranEvent, "事务取消");
+                await _tranAppService.RetryCancel(tranEvent, "事务取消");
                 result.Success = false;
                 result.Msg = sagaResult.Msg;
                 return result;
@@ -150,23 +154,7 @@ namespace Wing.Saga.Client
 
             tranEvent.EndTime = DateTime.Now;
             tranEvent.RetryResult = ExecutedResult.Success;
-            return Publish(tranEvent, "事务取消");
-        }
-
-        private ResponseData Publish(EventMessage message, string errorMsg)
-        {
-            var result = new ResponseData() { Success = true };
-            try
-            {
-                _eventBus.Publish(message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Saga重试服务发布{0}消息异常，内容为：{1}", errorMsg, _json.Serialize(message));
-                result.Success = false;
-                result.Msg = ex.Message;
-            }
-
+            result.Success = await _tranAppService.RetryCancel(tranEvent, "事务取消");
             return result;
         }
     }

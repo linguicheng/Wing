@@ -10,6 +10,7 @@
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing.Saga.Client\Wing.Saga.Client.csproj" />
+    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
     <ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
   </ItemGroup>
 

@@ -14,12 +14,12 @@ namespace Wing.Saga.Client
 
         public override async Task<ResponseData> Commit(RetryData retryData, ServerCallContext context)
         {
-            var requestData = new Persistence.Saga.RetryData
+            var requestData = new Wing.Persistence.Saga.RetryData
             {
                 TranId = retryData.TranId,
-                SagaTranUnits = new List<Persistence.Saga.RetryTranUnit>()
+                SagaTranUnits = new List<Wing.Persistence.Saga.RetryTranUnit>()
             };
-            retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Persistence.Saga.RetryTranUnit
+            retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Wing.Persistence.Saga.RetryTranUnit
             {
                 Id = x.Id,
                 ParamsValue = x.ParamsValue.ToByteArray(),
@@ -32,12 +32,12 @@ namespace Wing.Saga.Client
 
         public override async Task<ResponseData> Cancel(RetryData retryData, ServerCallContext context)
         {
-            var requestData = new Persistence.Saga.RetryData
+            var requestData = new Wing.Persistence.Saga.RetryData
             {
                 TranId = retryData.TranId,
-                SagaTranUnits = new List<Persistence.Saga.RetryTranUnit>()
+                SagaTranUnits = new List<Wing.Persistence.Saga.RetryTranUnit>()
             };
-            retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Persistence.Saga.RetryTranUnit
+            retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Wing.Persistence.Saga.RetryTranUnit
             {
                 Id = x.Id,
                 ParamsValue = x.ParamsValue.ToByteArray(),

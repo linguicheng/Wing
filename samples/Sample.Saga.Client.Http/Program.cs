@@ -6,7 +6,7 @@ builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddControllers();
 
-builder.Services.AddWing().AddSaga().AddJwt().AddEventBus();
+builder.Services.AddWing().AddPersistence().AddSaga().AddJwt();
 
 var app = builder.Build();
 

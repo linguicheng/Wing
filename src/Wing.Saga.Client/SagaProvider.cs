@@ -1,8 +1,7 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using Wing.Converter;
-using Wing.EventBus;
 using Wing.Persistence.Saga;
+using Wing.Saga.Client.Persistence;
 
 namespace Wing.Saga.Client
 {
@@ -10,11 +9,11 @@ namespace Wing.Saga.Client
     {
         private readonly SagaTran _tran;
 
-        private readonly IEventBus _eventBus;
-
         private readonly ILogger<SagaProvider> _logger;
 
-        private readonly IJson _json;
+        private readonly ISagaTranAppService _tranAppService;
+
+        private readonly ISagaTranUnitAppService _tranUnitAppService;
 
         private SagaResult _previousResult;
 
@@ -24,10 +23,10 @@ namespace Wing.Saga.Client
         {
             _tran = tran;
             _previousOrder = previousOrder;
-            _eventBus = App.GetRequiredService<IEventBus>();
             _logger = App.GetRequiredService<ILogger<SagaProvider>>();
-            _json = App.GetRequiredService<IJson>();
             _previousResult = previousResult;
+            _tranAppService = App.GetRequiredService<ISagaTranAppService>();
+            _tranUnitAppService = App.GetRequiredService<ISagaTranUnitAppService>();
         }
 
         public SagaProvider Then<TSagaUnit, TUnitModel>(TSagaUnit sagaUnit, TUnitModel unitModel)
@@ -54,7 +53,7 @@ namespace Wing.Saga.Client
                 tranUnit.EndTime = DateTime.Now;
                 tranUnit.UsedMillSeconds = 0;
                 tranUnit.Status = TranStatus.Failed;
-                Publish(tranUnit, "事务单元");
+                _tranUnitAppService.Add(tranUnit, "事务单元").GetAwaiter().GetResult();
                 return new SagaProvider(_tran, _previousOrder, _previousResult);
             }
 
@@ -78,7 +77,7 @@ namespace Wing.Saga.Client
             tranUnit.EndTime = DateTime.Now;
             tranUnit.UsedMillSeconds = Convert.ToInt64((tranUnit.EndTime - tranUnit.BeginTime).TotalMilliseconds);
             _previousResult = result;
-            Publish(tranUnit, "事务单元");
+            _tranUnitAppService.Add(tranUnit, "事务单元").GetAwaiter().GetResult();
             return new SagaProvider(_tran, _previousOrder, _previousResult);
         }
 
@@ -91,27 +90,14 @@ namespace Wing.Saga.Client
 
             _tran.EndTime = DateTime.Now;
             _tran.UsedMillSeconds = Convert.ToInt64((_tran.EndTime - _tran.BeginTime).TotalMilliseconds);
-            Publish(new UpdateTranStatusEvent
+            _tranAppService.UpdateStatus(new UpdateTranStatusEvent
             {
                 Id = _tran.Id,
                 EndTime = DateTime.Now,
                 Status = _tran.Status,
                 UsedMillSeconds = Convert.ToInt64((_tran.EndTime - _tran.BeginTime).TotalMilliseconds)
-            }, "事务");
+            }, "事务").GetAwaiter().GetResult();
             return _previousResult;
-        }
-
-        private void Publish(EventMessage message, string errorMsg)
-        {
-            try
-            {
-                _eventBus.Publish(message);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Saga发布{0}消息异常，内容为：{1}", errorMsg, _json.Serialize(message));
-                throw;
-            }
         }
     }
 }

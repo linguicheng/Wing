@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Wing.Persistence.Saga;
+﻿using Wing.Persistence.Saga;
 
 namespace Wing.Saga.Client
 {
