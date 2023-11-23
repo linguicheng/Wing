@@ -1,5 +1,4 @@
 ﻿using Wing.Converter;
-using Wing.EventBus;
 using Wing.Persistence.Saga;
 using Wing.Saga.Client.Persistence;
 
@@ -17,7 +16,7 @@ namespace Wing.Saga.Client
         {
             name.IsNotNull();
             var service = App.CurrentService;
-            SagaTran sagaTran = new SagaTran
+            SagaTran sagaTran = new()
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = name,
@@ -44,7 +43,7 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
 
-            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务");
+            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务").GetAwaiter().GetResult();
             return new SagaProvider(sagaTran, 0, null);
         }
     }

@@ -1,8 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using Wing.Converter;
-using Wing.EventBus;
 using Wing.Persistence.Saga;
-using Wing.ServiceProvider;
 
 namespace Wing.Saga.Client.Persistence
 {
