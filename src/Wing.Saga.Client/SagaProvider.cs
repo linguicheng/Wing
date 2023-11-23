@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using System.Data.Common;
+using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.Persistence.Saga;
 using Wing.Saga.Client.Persistence;
@@ -19,7 +20,9 @@ namespace Wing.Saga.Client
 
         private int _previousOrder;
 
-        public SagaProvider(SagaTran tran, int previousOrder, SagaResult previousResult)
+        private DbTransaction _transaction;
+
+        public SagaProvider(SagaTran tran, int previousOrder, SagaResult previousResult, DbTransaction transaction)
         {
             _tran = tran;
             _previousOrder = previousOrder;
@@ -27,6 +30,7 @@ namespace Wing.Saga.Client
             _previousResult = previousResult;
             _tranAppService = App.GetRequiredService<ISagaTranAppService>();
             _tranUnitAppService = App.GetRequiredService<ISagaTranUnitAppService>();
+            _transaction = transaction;
         }
 
         public SagaProvider Then<TSagaUnit, TUnitModel>(TSagaUnit sagaUnit, TUnitModel unitModel)
@@ -53,8 +57,8 @@ namespace Wing.Saga.Client
                 tranUnit.EndTime = DateTime.Now;
                 tranUnit.UsedMillSeconds = 0;
                 tranUnit.Status = TranStatus.Failed;
-                _tranUnitAppService.Add(tranUnit, "事务单元").GetAwaiter().GetResult();
-                return new SagaProvider(_tran, _previousOrder, _previousResult);
+                _tranUnitAppService.Add(tranUnit, "事务单元", _transaction).GetAwaiter().GetResult();
+                return new SagaProvider(_tran, _previousOrder, _previousResult, _transaction);
             }
 
             SagaResult result;
@@ -77,8 +81,8 @@ namespace Wing.Saga.Client
             tranUnit.EndTime = DateTime.Now;
             tranUnit.UsedMillSeconds = Convert.ToInt64((tranUnit.EndTime - tranUnit.BeginTime).TotalMilliseconds);
             _previousResult = result;
-            _tranUnitAppService.Add(tranUnit, "事务单元").GetAwaiter().GetResult();
-            return new SagaProvider(_tran, _previousOrder, _previousResult);
+            _tranUnitAppService.Add(tranUnit, "事务单元", _transaction).GetAwaiter().GetResult();
+            return new SagaProvider(_tran, _previousOrder, _previousResult, _transaction);
         }
 
         public SagaResult End()

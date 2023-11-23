@@ -1,4 +1,5 @@
-﻿using Wing.Converter;
+﻿using System.Data.Common;
+using Wing.Converter;
 using Wing.Persistence.Saga;
 using Wing.Saga.Client.Persistence;
 
@@ -11,8 +12,9 @@ namespace Wing.Saga.Client
         /// </summary>
         /// <param name="name">事务名称</param>
         /// <param name="sagaOptions">其他选项</param>
+        /// <param name="transaction">事务</param>
         /// <returns></returns>
-        public static SagaProvider Start(string name, SagaOptions sagaOptions = null)
+        public static SagaProvider Start(string name, SagaOptions sagaOptions = null, DbTransaction transaction = null)
         {
             name.IsNotNull();
             var service = App.CurrentService;
@@ -43,8 +45,8 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
 
-            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务").GetAwaiter().GetResult();
-            return new SagaProvider(sagaTran, 0, null);
+            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务", transaction).GetAwaiter().GetResult();
+            return new SagaProvider(sagaTran, 0, null, transaction);
         }
     }
 }

@@ -1,10 +1,11 @@
-﻿using Wing.Persistence.Saga;
+﻿using System.Data.Common;
+using Wing.Persistence.Saga;
 
 namespace Wing.Saga.Client.Persistence
 {
     public interface ISagaTranUnitAppService
     {
-        Task<bool> Add(SagaTranUnit tranUnit, string action);
+        Task<bool> Add(SagaTranUnit tranUnit, string action, DbTransaction transaction);
 
         Task<bool> RetryCancel(RetryCancelTranUnitEvent eventMessage, string action);
 

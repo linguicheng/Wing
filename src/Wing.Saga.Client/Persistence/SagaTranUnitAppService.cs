@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using System.Data.Common;
 using Wing.Converter;
 using Wing.EventBus;
 using Wing.Persistence.Saga;
@@ -18,7 +19,7 @@ namespace Wing.Saga.Client.Persistence
             }
         }
 
-        public async Task<bool> Add(SagaTranUnit sagaTran, string action)
+        public async Task<bool> Add(SagaTranUnit sagaTran, string action, DbTransaction transaction)
         {
             if (_useEventBus)
             {
@@ -26,7 +27,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _service.Add(sagaTran);
+            var result = await _service.Add(sagaTran, transaction);
             return result > 0;
         }
 
