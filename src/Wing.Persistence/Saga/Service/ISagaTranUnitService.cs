@@ -1,10 +1,8 @@
-﻿using System.Data.Common;
-
-namespace Wing.Persistence.Saga
+﻿namespace Wing.Persistence.Saga
 {
     public interface ISagaTranUnitService
     {
-        Task<int> Add(SagaTranUnit entity, DbTransaction transaction = null);
+        Task<int> Add(SagaTranUnit entity);
 
         Task<int> UpdateStatus(UpdateStatusEvent dto);
 

@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System.Data.Common;
 using Wing.Converter;
-using Wing.EventBus;
 using Wing.Persistence.Saga;
 
 namespace Wing.Saga.Client.Persistence
@@ -19,7 +17,7 @@ namespace Wing.Saga.Client.Persistence
             }
         }
 
-        public async Task<bool> Add(SagaTranUnit sagaTran, string action, DbTransaction transaction)
+        public async Task<bool> Add(SagaTranUnit sagaTran, string action)
         {
             if (_useEventBus)
             {
@@ -27,8 +25,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _service.Add(sagaTran, transaction);
-            return result > 0;
+            return await Handler(sagaTran, async x => await _service.Add(sagaTran), action);
         }
 
         public async Task<bool> RetryCancel(RetryCancelTranUnitEvent eventMessage, string action)
@@ -39,8 +36,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _service.RetryCancel(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _service.RetryCancel(eventMessage), action);
         }
 
         public async Task<bool> RetryCommit(RetryCommitTranUnitEvent eventMessage, string action)
@@ -51,8 +47,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _service.RetryCommit(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _service.RetryCommit(eventMessage), action);
         }
 
         public async Task<bool> UpdateStatus(UpdateTranUnitStatusEvent eventMessage, string action)
@@ -63,8 +58,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _service.UpdateStatus(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _service.UpdateStatus(eventMessage), action);
         }
     }
 }

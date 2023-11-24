@@ -13,9 +13,9 @@ namespace Wing.Persistence.Saga
             _fsql = fsql;
         }
 
-        public Task<int> Add(SagaTran entity, DbTransaction tran = null)
+        public Task<int> Add(SagaTran entity)
         {
-            return _fsql.Insert(entity).WithTransaction(tran).ExecuteAffrowsAsync();
+            return _fsql.Insert(entity).ExecuteAffrowsAsync();
         }
 
         public Task<bool> Any(string id)

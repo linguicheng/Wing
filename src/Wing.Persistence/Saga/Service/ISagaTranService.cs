@@ -1,12 +1,11 @@
-﻿using System.Data.Common;
-using Wing.Model;
+﻿using Wing.Model;
 using Wing.Result;
 
 namespace Wing.Persistence.Saga
 {
     public interface ISagaTranService
     {
-        Task<int> Add(SagaTran entity, DbTransaction tran = null);
+        Task<int> Add(SagaTran entity);
 
         Task<int> UpdateStatus(UpdateStatusEvent dto);
 

@@ -161,7 +161,7 @@ namespace Wing.Saga.Server
                 retryData.SagaTranUnits.Add(new Grpc.RetryTranUnit
                 {
                     Id = x.Id,
-                    ParamsValue = ByteString.CopyFrom(x.ParamsValue),
+                    ParamsValue = x.ParamsValue,
                     UnitNamespace = x.UnitNamespace,
                     UnitModelNamespace = x.UnitModelNamespace
                 });

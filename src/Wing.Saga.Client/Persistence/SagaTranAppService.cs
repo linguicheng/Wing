@@ -1,7 +1,10 @@
 ﻿using System.Data.Common;
+using System.Transactions;
 using Microsoft.Extensions.Logging;
 using Wing.Converter;
+using Wing.EventBus;
 using Wing.Persistence.Saga;
+using Wing.ServiceProvider;
 
 namespace Wing.Saga.Client.Persistence
 {
@@ -18,7 +21,7 @@ namespace Wing.Saga.Client.Persistence
             }
         }
 
-        public async Task<bool> Add(SagaTran sagaTran, string action, DbTransaction transaction)
+        public async Task<bool> Add(SagaTran sagaTran, string action)
         {
             if (_useEventBus)
             {
@@ -26,8 +29,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _sagaTranService.Add(sagaTran, transaction);
-            return result > 0;
+            return await Handler(sagaTran, async x => await _sagaTranService.Add(sagaTran), action);
         }
 
         public async Task<bool> RetryCancel(RetryCancelTranEvent eventMessage, string action)
@@ -38,8 +40,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _sagaTranService.RetryCancel(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _sagaTranService.RetryCancel(eventMessage), action);
         }
 
         public async Task<bool> RetryCommit(RetryCommitTranEvent eventMessage, string action)
@@ -50,8 +51,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _sagaTranService.RetryCommit(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _sagaTranService.RetryCommit(eventMessage), action);
         }
 
         public async Task<bool> UpdateStatus(UpdateTranStatusEvent eventMessage, string action)
@@ -62,8 +62,7 @@ namespace Wing.Saga.Client.Persistence
                 return true;
             }
 
-            var result = await _sagaTranService.UpdateStatus(eventMessage);
-            return result > 0;
+            return await Handler(eventMessage, async x => await _sagaTranService.UpdateStatus(eventMessage), action);
         }
     }
 }

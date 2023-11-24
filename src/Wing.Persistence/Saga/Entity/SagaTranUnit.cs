@@ -69,7 +69,7 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 参数值
         /// </summary>
-        public byte[] ParamsValue { get; set; }
+        public string ParamsValue { get; set; }
 
         public string Description { get; set; }
 

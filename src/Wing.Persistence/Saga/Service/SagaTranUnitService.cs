@@ -1,8 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Data.Common;
-using System.Threading.Tasks;
-
-namespace Wing.Persistence.Saga
+﻿namespace Wing.Persistence.Saga
 {
     public class SagaTranUnitService : ISagaTranUnitService
     {
@@ -13,9 +9,9 @@ namespace Wing.Persistence.Saga
             _fsql = fsql;
         }
 
-        public Task<int> Add(SagaTranUnit entity, DbTransaction transaction = null)
+        public Task<int> Add(SagaTranUnit entity)
         {
-            return _fsql.Insert(entity).WithTransaction(transaction).ExecuteAffrowsAsync();
+            return _fsql.Insert(entity).ExecuteAffrowsAsync();
         }
 
         public Task<bool> Any(string id)

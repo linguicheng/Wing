@@ -125,10 +125,10 @@ namespace Wing.Persistence
                 eb.HasIndex(x => x.TranId).HasName("IX_SagaTranUnit_TranId");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.Name).HasColumnType("varchar(200)");
-                eb.Property(x => x.UnitNamespace).HasColumnType("text");
-                eb.Property(x => x.UnitModelNamespace).HasColumnType("text");
-                eb.Property(x => x.ParamsValue).HasColumnType("bytea");
-                eb.Property(x => x.Description).HasColumnType("text");
+                eb.Property(x => x.UnitNamespace).HasColumnType("varchar(800)");
+                eb.Property(x => x.UnitModelNamespace).HasColumnType("varchar(800)");
+                eb.Property(x => x.ParamsValue).HasColumnType("text");
+                eb.Property(x => x.Description).HasColumnType("varchar(1000)");
                 eb.Property(x => x.ErrorMsg).HasColumnType("text");
                 eb.Property(x => x.RetryAction).HasColumnType("varchar(50)");
             });

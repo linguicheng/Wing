@@ -127,8 +127,8 @@ namespace Wing.Persistence
                 eb.Property(x => x.Name).HasColumnType("nvarchar(200)");
                 eb.Property(x => x.UnitNamespace).HasColumnType("varchar(800)");
                 eb.Property(x => x.UnitModelNamespace).HasColumnType("varchar(800)");
-                eb.Property(x => x.ParamsValue).HasColumnType("varbinary(max)");
-                eb.Property(x => x.Description).HasColumnType("nvarchar(800)");
+                eb.Property(x => x.ParamsValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Description).HasColumnType("nvarchar(1000)");
                 eb.Property(x => x.ErrorMsg).HasColumnType("nvarchar(2000)");
                 eb.Property(x => x.RetryAction).HasColumnType("varchar(50)");
             });

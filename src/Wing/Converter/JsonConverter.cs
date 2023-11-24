@@ -10,10 +10,15 @@ namespace Wing.Converter
         {
             if (typeof(T) == typeof(string))
             {
-                return (T)System.Convert.ChangeType(value, typeof(T));
+                return (T)Convert.ChangeType(value, typeof(T));
             }
 
             return JsonConvert.DeserializeObject<T>(value, DefaultSetting());
+        }
+
+        public object Deserialize(string value, Type type)
+        {
+            return JsonConvert.DeserializeObject(value, type, DefaultSetting());
         }
 
         public T DeserializeAnonymousType<T>(string value, T anonymousTypeObject)

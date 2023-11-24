@@ -4,7 +4,7 @@
     {
         public string Id { get; set; }
 
-        public byte[] ParamsValue { get; set; }
+        public string ParamsValue { get; set; }
 
         public string UnitNamespace { get; set; }
 

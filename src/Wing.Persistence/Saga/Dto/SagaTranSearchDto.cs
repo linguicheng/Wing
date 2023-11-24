@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Wing.Persistence.Saga
+﻿namespace Wing.Persistence.Saga
 {
     public class SagaTranSearchDto
     {

@@ -127,8 +127,8 @@ namespace Wing.Persistence
                 eb.Property(x => x.Name).HasColumnType("NVARCHAR2(200)");
                 eb.Property(x => x.UnitNamespace).HasColumnType("VARCHAR2(800)");
                 eb.Property(x => x.UnitModelNamespace).HasColumnType("VARCHAR2(800)");
-                eb.Property(x => x.ParamsValue).HasColumnType("BLOB");
-                eb.Property(x => x.Description).HasColumnType("NVARCHAR2(800)");
+                eb.Property(x => x.ParamsValue).HasColumnType("NCLOB");
+                eb.Property(x => x.Description).HasColumnType("NVARCHAR2(1000)");
                 eb.Property(x => x.ErrorMsg).HasColumnType("NVARCHAR2(2000)");
                 eb.Property(x => x.RetryAction).HasColumnType("VARCHAR2(50)");
             });

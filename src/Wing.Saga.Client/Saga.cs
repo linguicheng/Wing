@@ -14,7 +14,7 @@ namespace Wing.Saga.Client
         /// <param name="sagaOptions">其他选项</param>
         /// <param name="transaction">事务</param>
         /// <returns></returns>
-        public static SagaProvider Start(string name, SagaOptions sagaOptions = null, DbTransaction transaction = null)
+        public static SagaProvider Start(string name, SagaOptions sagaOptions = null)
         {
             name.IsNotNull();
             var service = App.CurrentService;
@@ -45,8 +45,8 @@ namespace Wing.Saga.Client
                 sagaTran.Description = sagaOptions.Description;
             }
 
-            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务", transaction).GetAwaiter().GetResult();
-            return new SagaProvider(sagaTran, 0, null, transaction);
+            App.GetRequiredService<ISagaTranAppService>().Add(sagaTran, "开始Saga事务").GetAwaiter().GetResult();
+            return new SagaProvider(sagaTran, 0, null, App.GetRequiredService<IJson>());
         }
     }
 }

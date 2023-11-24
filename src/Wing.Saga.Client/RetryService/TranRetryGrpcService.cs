@@ -22,7 +22,7 @@ namespace Wing.Saga.Client
             retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Wing.Persistence.Saga.RetryTranUnit
             {
                 Id = x.Id,
-                ParamsValue = x.ParamsValue.ToByteArray(),
+                ParamsValue = x.ParamsValue,
                 UnitNamespace = x.UnitNamespace,
                 UnitModelNamespace = x.UnitModelNamespace
             }));
@@ -40,7 +40,7 @@ namespace Wing.Saga.Client
             retryData.SagaTranUnits.ToList().ForEach(x => requestData.SagaTranUnits.Add(new Wing.Persistence.Saga.RetryTranUnit
             {
                 Id = x.Id,
-                ParamsValue = x.ParamsValue.ToByteArray(),
+                ParamsValue = x.ParamsValue,
                 UnitNamespace = x.UnitNamespace,
                 UnitModelNamespace = x.UnitModelNamespace
             }));

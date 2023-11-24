@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using Wing.Converter;
-using Wing.EventBus;
 using Wing.Injection;
 using Wing.Persistence.Saga;
 using Wing.Saga.Client.Persistence;
@@ -12,14 +11,17 @@ namespace Wing.Saga.Client
         private readonly ILogger<TranRetryService> _logger;
         private readonly ISagaTranAppService _tranAppService;
         private readonly ISagaTranUnitAppService _tranUnitAppService;
+        private readonly IJson _json;
 
         public TranRetryService(ILogger<TranRetryService> logger,
             ISagaTranAppService tranAppService,
-            ISagaTranUnitAppService tranUnitAppService)
+            ISagaTranUnitAppService tranUnitAppService,
+            IJson json)
         {
             _logger = logger;
             _tranAppService = tranAppService;
             _tranUnitAppService = tranUnitAppService;
+            _json = json;
         }
 
         public async Task<ResponseData> Commit(RetryData retryData)
@@ -42,7 +44,7 @@ namespace Wing.Saga.Client
                     var unitModelType = GlobalInjection.GetType(item.UnitModelNamespace);
                     var unitObj = Activator.CreateInstance(unitType);
                     var commit = unitType.GetMethod("Commit");
-                    var unitModel = DataConverter.BytesToObject(item.ParamsValue, unitModelType);
+                    var unitModel = _json.Deserialize(item.ParamsValue, unitModelType);
                     tranUnitEvent.BeginTime = DateTime.Now;
                     sagaResult = await (commit.Invoke(unitObj, new object[] { unitModel, previousResult }) as Task<SagaResult>);
                 }
@@ -110,7 +112,7 @@ namespace Wing.Saga.Client
                     var unitModelType = GlobalInjection.GetType(item.UnitModelNamespace);
                     var unitObj = Activator.CreateInstance(unitType);
                     var commit = unitType.GetMethod("Cancel");
-                    var unitModel = DataConverter.BytesToObject(item.ParamsValue, unitModelType);
+                    var unitModel = _json.Deserialize(item.ParamsValue, unitModelType);
                     tranUnitEvent.BeginTime = DateTime.Now;
                     sagaResult = await (commit.Invoke(unitObj, new object[] { unitModel, previousResult }) as Task<SagaResult>);
                 }
