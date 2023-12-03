@@ -38,7 +38,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestUrl).HasColumnType("text");
                 eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
                 eb.Property(x => x.RequestValue).HasColumnType("text");
-                eb.Property(x => x.ServerIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.ResponseValue).HasColumnType("text");
                 eb.Property(x => x.Exception).HasColumnType("text");
             });

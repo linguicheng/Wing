@@ -51,7 +51,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.ServiceUrl).HasColumnType("VARCHAR2(200)");
                 eb.Property(x => x.Action).HasColumnType("NVARCHAR2(50)");
                 eb.Property(x => x.Sql).HasColumnType("NCLOB");
-                eb.Property(x => x.ServerIp).HasColumnType("VARCHAR2(50)");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
             });
             fsql.CodeFirst.Entity<HttpTracerDetail>(eb =>
