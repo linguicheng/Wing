@@ -1,11 +1,7 @@
 ﻿using System.Globalization;
-using System.Net;
-using System.Net.NetworkInformation;
-using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 
 namespace Wing
 {
@@ -14,27 +10,6 @@ namespace Wing
         private static readonly object _lock = new();
 
         private static MD5 _md5 = null;
-
-        public static string LocalIp
-        {
-            get
-            {
-                try
-                {
-                    return NetworkInterface.GetAllNetworkInterfaces()
-                    .Select(p => p.GetIPProperties())
-                    .SelectMany(p => p.UnicastAddresses)
-                    .Where(p => p.PrefixOrigin == PrefixOrigin.Dhcp || p.PrefixOrigin == PrefixOrigin.Manual)
-                    .OrderByDescending(p => p.PrefixOrigin)
-                    .FirstOrDefault(p => p.IsDnsEligible && p.Address.AddressFamily == AddressFamily.InterNetwork && !IPAddress.IsLoopback(p.Address))?.Address.ToString();
-                }
-                catch (Exception ex)
-                {
-                    App.GetRequiredService<ILogger>().LogError(ex, "获取本机IP异常");
-                    return string.Empty;
-                }
-            }
-        }
 
         public static string RemoteIp
         {

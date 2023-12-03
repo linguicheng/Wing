@@ -12,8 +12,6 @@ namespace Wing.Persistence.Apm
         /// </summary>
         public string Action { get; set; }
 
-        public string ServerIp { get; set; }
-
         public string ServiceName { get; set; }
 
         /// <summary>

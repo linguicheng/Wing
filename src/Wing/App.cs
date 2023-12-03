@@ -15,6 +15,8 @@ namespace Wing
 
         public static ServiceData CurrentService { get; set; }
 
+        public static string CurrentServiceUrl => $"{CurrentService.Scheme}://{CurrentService.Host}:{CurrentService.Port}";
+
         public static object GetService(Type serviceType)
         {
             return ServiceProvider.GetService(serviceType);

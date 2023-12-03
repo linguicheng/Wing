@@ -16,7 +16,7 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="FreeSql.Provider.PostgreSQL" Version="3.2.801" />
+    <PackageReference Include="FreeSql.Provider.PostgreSQL" Version="3.2.805" />
   </ItemGroup>
 
   <ItemGroup>

@@ -94,7 +94,7 @@ namespace Wing.APM
                     Id = Guid.NewGuid().ToString(),
                     ClientIp = Tools.RemoteIp,
                     ServiceName = service.Name,
-                    ServiceUrl = ApmTools.GetServiceUrl(service),
+                    ServiceUrl = App.CurrentServiceUrl,
                     RequestType = requestType,
                     RequestMethod = context.Request.Method,
                     RequestTime = DateTime.Now,

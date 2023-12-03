@@ -7,7 +7,6 @@ namespace Wing.Persistence.Apm
         [Column(IsPrimary = true)]
         public string Id { get; set; }
 
-        public string ServerIp { get; set; }
 
         public string ServiceName { get; set; }
 

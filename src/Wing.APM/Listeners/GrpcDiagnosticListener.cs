@@ -67,9 +67,8 @@ namespace Wing.APM.Listeners
                     HttpTracer = new HttpTracer
                     {
                         Id = detailId,
-                        ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
-                        ServiceUrl = ApmTools.GetServiceUrl(service),
+                        ServiceUrl = App.CurrentServiceUrl,
                         RequestType = ApmTools.Grpc,
                         RequestMethod = request.Method.ToString(),
                         RequestTime = DateTime.Now,

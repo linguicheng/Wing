@@ -71,9 +71,8 @@ namespace Wing.APM.SqlSugar
                         Id = id,
                         Action = GetAction(data.ActionType),
                         BeginTime = data.BeginTime,
-                        ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
-                        ServiceUrl = ApmTools.GetServiceUrl(service)
+                        ServiceUrl = App.CurrentServiceUrl
                     }
                 };
                 ListenerTracer.Data.TryAdd(tracerDto.SqlTracer.Id, tracerDto);

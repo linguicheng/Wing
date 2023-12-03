@@ -71,9 +71,8 @@ namespace Wing.APM.EFCore
                         Sql = ApmTools.SqlFormat(data.Command.CommandText, data.Command.Parameters),
                         Action = GetAction(data.Command.CommandText),
                         BeginTime = data.StartTime.LocalDateTime,
-                        ServerIp = Tools.LocalIp,
                         ServiceName = service.Name,
-                        ServiceUrl = ApmTools.GetServiceUrl(service)
+                        ServiceUrl = App.CurrentServiceUrl
                     }
                 };
                 ListenerTracer.Data.TryAdd(tracerDto.SqlTracer.Id, tracerDto);

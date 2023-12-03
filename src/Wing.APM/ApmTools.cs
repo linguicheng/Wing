@@ -1,7 +1,4 @@
-﻿using System;
-using System.Data.Common;
-using System.Reflection.Metadata;
-using Wing.ServiceProvider.Config;
+﻿using System.Data.Common;
 
 namespace Wing.APM
 {
@@ -44,11 +41,6 @@ namespace Wing.APM
         public static long UsedMillSeconds(DateTime bdate, DateTime edate)
         {
             return Convert.ToInt64((edate - bdate).TotalMilliseconds);
-        }
-
-        public static string GetServiceUrl(ServiceData service)
-        {
-            return $"{service.Scheme}://{service.Host}:{service.Port}";
         }
 
         private static void SqlFormat(ref string sql, DbParameter parameter)

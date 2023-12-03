@@ -38,7 +38,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestUrl).HasColumnType("varchar(4000)");
                 eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
                 eb.Property(x => x.RequestValue).HasColumnType("nvarchar(max)");
-                eb.Property(x => x.ServerIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
@@ -52,7 +51,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.ServiceUrl).HasColumnType("varchar(200)");
                 eb.Property(x => x.Action).HasColumnType("nvarchar(50)");
                 eb.Property(x => x.Sql).HasColumnType("nvarchar(max)");
-                eb.Property(x => x.ServerIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
             fsql.CodeFirst.Entity<HttpTracerDetail>(eb =>

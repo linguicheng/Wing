@@ -57,12 +57,12 @@
                   :data="result.items"
                   :mouse-config="{ selected: true }">
           <vxe-column field="serviceName"
-                      title="服务名称"
+                      title="下游服务名称"
                       fixed="left"
                       width="200"
                       sortable/>
           <vxe-column field="requestUrl"
-                        title="请求地址"
+                        title="请求URL"
                         fixed="left"
                         align="left"
                         width="400"
@@ -72,7 +72,7 @@
                       width="150"
                       sortable/>
           <vxe-column field="gateWayServerIp"
-                      title="网关服务器IP"
+                      title="网关服务器地址"
                       width="150"
                       sortable/>
           <vxe-column field="clientIp"
@@ -80,7 +80,7 @@
                       width="150"
                       sortable/>
           <vxe-column field="serviceAddress"
-                      title="服务地址"
+                      title="下游服务地址"
                       width="200"
                       sortable/>
           <vxe-column field="requestTime"

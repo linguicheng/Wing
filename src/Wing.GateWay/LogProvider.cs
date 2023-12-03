@@ -8,6 +8,7 @@ using Wing.Converter;
 using Wing.EventBus;
 using Wing.Gateway.Config;
 using Wing.Persistence.Gateway;
+using Wing.ServiceProvider;
 
 namespace Wing.Gateway
 {
@@ -53,7 +54,7 @@ namespace Wing.Gateway
                     ServiceName = serviceContext.ServiceName,
                     StatusCode = serviceContext.StatusCode,
                     ResponseValue = serviceContext.ResponseValue,
-                    GateWayServerIp = Tools.LocalIp,
+                    GateWayServerIp = App.CurrentServiceUrl,
                     ServiceAddress = serviceContext.ServiceAddress,
                     UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds),
                     Exception = serviceContext.Exception

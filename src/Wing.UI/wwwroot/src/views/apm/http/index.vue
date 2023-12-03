@@ -66,10 +66,6 @@
                       title="服务名称"
                       width="200"
                       sortable/>
-          <vxe-column field="serverIp"
-                      title="服务端IP"
-                      width="150"
-                      sortable/>
           <vxe-column field="serviceUrl"
                       title="服务地址"
                       width="200"
