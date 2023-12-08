@@ -85,6 +85,11 @@ namespace Wing.APM.Listeners
                 return;
             }
 
+            if (context.Items == null || !context.Items.Any())
+            {
+                return;
+            }
+
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             tracerDto.HttpTracerDetails ??= new ConcurrentDictionary<string, HttpTracerDetail>();
             tracerDto.HttpTracerDetails.TryAdd(detailId, new HttpTracerDetail
