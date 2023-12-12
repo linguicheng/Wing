@@ -10,8 +10,6 @@
     public class Upstream
     {
         public string Url { get; set; }
-
-        public string Method { get; set; }
     }
 
     public class Downstream

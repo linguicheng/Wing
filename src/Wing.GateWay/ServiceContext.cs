@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace Wing.Gateway
 {
@@ -12,6 +13,10 @@ namespace Wing.Gateway
         public HttpContext HttpContext { get; }
 
         public string ServiceName { get; set; }
+
+        public Config.Route Route { get; set; }
+
+        public string UpstreamPath { get; set; }
 
         public string DownstreamPath { get; set; }
 
