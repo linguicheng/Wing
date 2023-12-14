@@ -1,12 +1,11 @@
 ﻿using System.Net;
-using System.Net.Http;
 
 namespace Wing.Exceptions
 {
     public class ApiRequestException : HttpRequestException
     {
         public ApiRequestException(string uri, HttpStatusCode statusCode)
-            : base($"request uri:{uri},statusCode:{statusCode.ToString()}")
+            : base($"request uri:{uri},statusCode:{statusCode}")
         {
         }
 

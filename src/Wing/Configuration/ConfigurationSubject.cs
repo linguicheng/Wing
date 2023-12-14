@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Wing.Configuration
+﻿namespace Wing.Configuration
 {
     internal static class ConfigurationSubject
     {

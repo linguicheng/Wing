@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Wing.EventBus
+﻿namespace Wing.EventBus
 {
     public interface ISubscribe<TEventMessage>
         where TEventMessage : EventMessage

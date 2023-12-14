@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Wing.EventBus
+﻿namespace Wing.EventBus
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
     public class SubscribeAttribute : Attribute
