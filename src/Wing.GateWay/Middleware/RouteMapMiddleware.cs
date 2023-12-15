@@ -32,23 +32,11 @@ namespace Wing.Gateway.Middleware
                 var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
                 if (paths.Length == keys.Length)
                 {
-                    int count = 0;
-                    for (var i = 0; i < keys.Length; i++)
+                    var count = UrlTemplateMatch(keys, paths, (key, path) =>
                     {
-                        if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
-                        {
-                            count++;
-                            serviceContext.TemplateParameterName = keys[i];
-                            serviceContext.TemplateParameterValue = paths[i];
-                            continue;
-                        }
-
-                        if (keys[i].Equals(paths[i], StringComparison.OrdinalIgnoreCase))
-                        {
-                            count++;
-                            continue;
-                        }
-                    }
+                        serviceContext.TemplateParameterName = key;
+                        serviceContext.TemplateParameterValue = path;
+                    });
 
                     if (count == keys.Length)
                     {
@@ -144,13 +132,8 @@ namespace Wing.Gateway.Middleware
             {
                 if (config.Policies != null && config.Policies.Count > 0)
                 {
-                    serviceContext.Route.Downstreams.ForEach(x =>
+                    DownstreamsForEach(serviceContext, x =>
                     {
-                        if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
-                        {
-                            x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
-                        }
-
                         serviceContext.ServiceName = x.ServiceName;
                         GetPolicy(serviceContext, x.Url.Split('/'), config);
                         serviceContext.Policy ??= config.Global;
@@ -160,39 +143,34 @@ namespace Wing.Gateway.Middleware
                             Policy = serviceContext.Policy
                         });
                     });
+                    return;
                 }
-                else
-                {
-                    serviceContext.Route.Downstreams.ForEach(x =>
-                    {
-                        if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
-                        {
-                            x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
-                        }
 
-                        serviceContext.DownstreamServices.Add(new DownstreamService
-                        {
-                            Downstream = x,
-                            Policy = config.Global
-                        });
-                    });
-                }
+                DownstreamsForEach(serviceContext, x => serviceContext.DownstreamServices.Add(new DownstreamService
+                {
+                    Downstream = x,
+                    Policy = config.Global
+                }));
+                return;
             }
-            else
+
+            DownstreamsForEach(serviceContext, x => serviceContext.DownstreamServices.Add(new DownstreamService
             {
-                serviceContext.Route.Downstreams.ForEach(x =>
-                {
-                    if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
-                    {
-                        x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
-                    }
+                Downstream = x,
+            }));
+        }
 
-                    serviceContext.DownstreamServices.Add(new DownstreamService
-                    {
-                        Downstream = x,
-                    });
-                });
-            }
+        private void DownstreamsForEach(ServiceContext serviceContext, Action<Downstream> action)
+        {
+            serviceContext.Route.Downstreams.ForEach(x =>
+            {
+                if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
+                {
+                    x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
+                }
+
+                action(x);
+            });
         }
 
         private void GetPolicy(ServiceContext serviceContext, string[] downstreamPaths, PolicyConfig config)
@@ -209,22 +187,7 @@ namespace Wing.Gateway.Middleware
                     var keys = p.Key.Split('/');
                     if (keys.Length == downstreamPaths.Length)
                     {
-                        int count = 0;
-                        for (var i = 0; i < keys.Length; i++)
-                        {
-                            if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
-                            {
-                                count++;
-                                continue;
-                            }
-
-                            if (keys[i].Equals(downstreamPaths[i], StringComparison.OrdinalIgnoreCase))
-                            {
-                                count++;
-                                continue;
-                            }
-                        }
-
+                        var count = UrlTemplateMatch(keys, downstreamPaths);
                         if (count == keys.Length)
                         {
                             methodPolicy = p;
@@ -238,6 +201,28 @@ namespace Wing.Gateway.Middleware
                     serviceContext.Policy = methodPolicy;
                 }
             }
+        }
+
+        private int UrlTemplateMatch(string[] keys, string[] paths, Action<string, string> action = null)
+        {
+            int count = 0;
+            for (var i = 0; i < keys.Length; i++)
+            {
+                if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
+                {
+                    count++;
+                    action?.Invoke(keys[i], paths[i]);
+                    continue;
+                }
+
+                if (keys[i].Equals(paths[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    count++;
+                    continue;
+                }
+            }
+
+            return count;
         }
     }
 }
