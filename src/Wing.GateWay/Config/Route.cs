@@ -5,6 +5,10 @@
         public Upstream Upstream { get; set; }
 
         public List<Downstream> Downstreams { get; set; }
+
+        public bool? UseJWTAuth { get; set; }
+
+        public string AuthKey { get; set; }
     }
 
     public class Upstream

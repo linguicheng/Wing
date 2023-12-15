@@ -1,9 +1,7 @@
 ﻿using System.Net;
 using System.Net.WebSockets;
-using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
-using Polly;
 
 namespace Wing.Gateway.Middleware
 {
@@ -24,19 +22,32 @@ namespace Wing.Gateway.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (serviceContext.Policy is null)
+            string authKey;
+            bool useJWTAuth;
+            if (serviceContext.Route == null)
             {
-                await _next(serviceContext);
-                return;
+                if (serviceContext.Policy is null)
+                {
+                    await _next(serviceContext);
+                    return;
+                }
+
+                authKey = serviceContext.Policy.AuthKey;
+                useJWTAuth = serviceContext.Policy.UseJWTAuth.GetValueOrDefault();
+            }
+            else
+            {
+                authKey = serviceContext.Route.AuthKey;
+                useJWTAuth = serviceContext.Route.UseJWTAuth.GetValueOrDefault();
             }
 
             var context = serviceContext.HttpContext;
-            if (!string.IsNullOrWhiteSpace(serviceContext.Policy.AuthKey))
+            if (!string.IsNullOrWhiteSpace(authKey))
             {
                 _logger.LogInformation($"请求路由：{context.Request.Path}，开始AuthKey权限认证");
                 if (context.Request.Headers == null ||
                     !context.Request.Headers.ContainsKey("AuthKey") ||
-                    context.Request.Headers["AuthKey"].ToString() != serviceContext.Policy.AuthKey)
+                    context.Request.Headers["AuthKey"].ToString() != authKey)
                 {
                     _logger.LogInformation($"请求路由：{context.Request.Path}，AuthKey权限认证不通过");
                     await Unauthorized(serviceContext);
@@ -46,7 +57,7 @@ namespace Wing.Gateway.Middleware
                 _logger.LogInformation($"请求路由：{context.Request.Path}，AuthKey权限认证通过");
             }
 
-            if (serviceContext.Policy.UseJWTAuth.GetValueOrDefault())
+            if (useJWTAuth)
             {
                 _logger.LogInformation($"请求路由：{context.Request.Path}，开始JWT权限认证");
                 var result = await context.AuthenticateAsync();
