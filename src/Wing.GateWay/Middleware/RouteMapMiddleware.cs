@@ -38,7 +38,9 @@ namespace Wing.Gateway.Middleware
                         serviceContext.TemplateParameterValue = path;
                     });
 
-                    if (count == keys.Length)
+                    if (count == keys.Length
+                        && route.Downstreams != null
+                        && route.Downstreams.Count > 0)
                     {
                         serviceContext.Route = route;
                         serviceContext.UpstreamPath = fullPath;

@@ -24,7 +24,9 @@ namespace Wing.Gateway.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (string.IsNullOrWhiteSpace(serviceContext.ServiceName) || serviceContext.IsWebSocket)
+            if (serviceContext.Route != null
+                || string.IsNullOrWhiteSpace(serviceContext.ServiceName)
+                || serviceContext.IsWebSocket)
             {
                 await _next(serviceContext);
                 return;
@@ -65,7 +67,7 @@ namespace Wing.Gateway.Middleware
                 serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
                 await _logProvider.Add(serviceContext);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
                 serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";

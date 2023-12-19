@@ -10,19 +10,19 @@ using Wing.ServiceProvider;
 
 namespace Wing.Gateway.Middleware
 {
-    public class PolicyMiddleware
+    public class RoutePolicyMiddleware
     {
         private static readonly ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>> Policies = new ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>>();
         private readonly ServiceRequestDelegate _next;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
-        private readonly ILogger<PolicyMiddleware> _logger;
+        private readonly ILogger<RoutePolicyMiddleware> _logger;
         private readonly ILogProvider _logProvider;
 
-        public PolicyMiddleware(ServiceRequestDelegate next,
+        public RoutePolicyMiddleware(ServiceRequestDelegate next,
             IHttpClientFactory clientFactory,
             IServiceFactory serviceFactory,
-            ILogger<PolicyMiddleware> logger,
+            ILogger<RoutePolicyMiddleware> logger,
             ILogProvider logProvider)
         {
             _next = next;
@@ -34,18 +34,99 @@ namespace Wing.Gateway.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (serviceContext.Route != null
-                 || string.IsNullOrWhiteSpace(serviceContext.ServiceName)
-                 || serviceContext.IsWebSocket)
+            if (serviceContext.Route == null || serviceContext.IsWebSocket)
             {
                 await _next(serviceContext);
                 return;
             }
 
-            await InvokeWithPolicy(serviceContext);
+            string result;
+            if (serviceContext.DownstreamServices.Count == 1)
+            {
+                result = await InvokeDownstreamService(serviceContext, serviceContext.DownstreamServices.First());
+                return;
+            }
+
+            result = "{";
+            string downstreamResponse;
+            foreach (var downstreamService in serviceContext.DownstreamServices)
+            {
+                downstreamResponse = await InvokeDownstreamService(serviceContext, downstreamService);
+                result += downstreamResponse;
+            }
+
+            result += "}";
+
         }
 
-        private async Task InvokeWithPolicy(ServiceContext serviceContext)
+        private async Task<string> InvokeDownstreamService(ServiceContext serviceContext, DownstreamService downstreamService)
+        {
+            string downstreamResponse;
+            if (downstreamService.Policy != null &&
+                  ((downstreamService.Policy.Breaker != null && downstreamService.Policy.Breaker.IsEnabled)
+                  || (downstreamService.Policy.RateLimit != null && downstreamService.Policy.RateLimit.IsEnabled)
+                  || (downstreamService.Policy.BulkHead != null && downstreamService.Policy.BulkHead.IsEnabled)
+                  || (downstreamService.Policy.Retry != null && downstreamService.Policy.Retry.IsEnabled)
+                  || (downstreamService.Policy.TimeOut != null && downstreamService.Policy.TimeOut.IsEnabled)))
+            {
+                downstreamResponse = await InvokeWithPolicy(serviceContext);
+            }
+            else
+            {
+                downstreamResponse = await InvokeWithNoPolicy(serviceContext);
+            }
+
+            return downstreamResponse;
+        }
+
+        private async Task<string> InvokeWithNoPolicy(ServiceContext serviceContext)
+        {
+            if (serviceContext.Policy != null &&
+                ((serviceContext.Policy.Breaker != null && serviceContext.Policy.Breaker.IsEnabled)
+                || (serviceContext.Policy.RateLimit != null && serviceContext.Policy.RateLimit.IsEnabled)
+                || (serviceContext.Policy.BulkHead != null && serviceContext.Policy.BulkHead.IsEnabled)
+                || (serviceContext.Policy.Retry != null && serviceContext.Policy.Retry.IsEnabled)
+                || (serviceContext.Policy.TimeOut != null && serviceContext.Policy.TimeOut.IsEnabled)))
+            {
+                await _next(serviceContext);
+                return;
+            }
+
+            var context = serviceContext.HttpContext;
+            try
+            {
+                var resMsg = await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
+                {
+                    serviceContext.ServiceAddress = serviceAddr.ToString();
+                    var reqMsg = await context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
+                    var client = _clientFactory.CreateClient(serviceContext.ServiceName);
+                    return await client.SendAsync(reqMsg);
+                });
+                await context.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
+                {
+                    serviceContext.StatusCode = statusCode;
+                    serviceContext.ResponseValue = content;
+                    _logProvider.Add(serviceContext);
+                });
+            }
+            catch (ServiceNotFoundException ex)
+            {
+                serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
+                context.Response.StatusCode = serviceContext.StatusCode;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                await _logProvider.Add(serviceContext);
+            }
+            catch (Exception ex)
+            {
+                serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
+                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                context.Response.StatusCode = serviceContext.StatusCode;
+
+                await _logProvider.Add(serviceContext);
+            }
+        }
+
+        private async Task<string> InvokeWithPolicy(ServiceContext serviceContext)
         {
             var config = serviceContext.Policy;
             Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
