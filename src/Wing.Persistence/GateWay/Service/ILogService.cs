@@ -1,15 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Wing.Model;
+﻿using Wing.Model;
+using Wing.Persistence.GateWay;
 using Wing.Result;
 
 namespace Wing.Persistence.Gateway
 {
     public interface ILogService
     {
-        Task<int> Add(Log log);
-
-        Task<int> Add(IEnumerable<Log> logs);
+        Task<int> Add(LogAddDto logDto);
 
         Task<bool> Any(string id);
 

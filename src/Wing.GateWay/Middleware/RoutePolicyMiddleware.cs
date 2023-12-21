@@ -81,17 +81,6 @@ namespace Wing.Gateway.Middleware
 
         private async Task<string> InvokeWithNoPolicy(ServiceContext serviceContext)
         {
-            if (serviceContext.Policy != null &&
-                ((serviceContext.Policy.Breaker != null && serviceContext.Policy.Breaker.IsEnabled)
-                || (serviceContext.Policy.RateLimit != null && serviceContext.Policy.RateLimit.IsEnabled)
-                || (serviceContext.Policy.BulkHead != null && serviceContext.Policy.BulkHead.IsEnabled)
-                || (serviceContext.Policy.Retry != null && serviceContext.Policy.Retry.IsEnabled)
-                || (serviceContext.Policy.TimeOut != null && serviceContext.Policy.TimeOut.IsEnabled)))
-            {
-                await _next(serviceContext);
-                return;
-            }
-
             var context = serviceContext.HttpContext;
             try
             {

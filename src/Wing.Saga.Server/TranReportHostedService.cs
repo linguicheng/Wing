@@ -18,6 +18,12 @@ namespace Wing.Saga.Server
             _logger = logger;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            _timer?.Dispose();
+        }
+
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("Saga报表服务开始运行...");
@@ -26,7 +32,6 @@ namespace Wing.Saga.Server
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Dispose();
             _logger.LogInformation("Saga报表服务停止运行...");
             return base.StopAsync(cancellationToken);
         }

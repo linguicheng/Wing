@@ -20,6 +20,12 @@ namespace Wing.APM
             _tracerService = tracerService;
         }
 
+        public override void Dispose()
+        {
+            base.Dispose();
+            _timer?.Dispose();
+        }
+
         public override Task StartAsync(CancellationToken cancellationToken)
         {
             _logger.LogInformation("APM链路跟踪平台开始启动...");
@@ -28,7 +34,6 @@ namespace Wing.APM
 
         public override Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Dispose();
             _logger.LogInformation("APM链路跟踪平台停止运行...");
             return base.StopAsync(cancellationToken);
         }

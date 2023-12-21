@@ -47,7 +47,7 @@ namespace Wing.Gateway.Middleware
                 }
 
                 client = new ClientWebSocket();
-                await _serviceFactory.InvokeAsync(serviceContext.ServiceName, Tools.RemoteIp, async serviceAddr =>
+                await _serviceFactory.InvokeAsync(serviceContext.ServiceName, DataProvider.RemoteIp, async serviceAddr =>
                 {
                     serviceContext.ServiceAddress = serviceAddr.ToString();
                     var scheme = serviceAddr.Sheme == "https" ? "wss" : "ws";

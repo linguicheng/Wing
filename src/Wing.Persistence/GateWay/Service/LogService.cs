@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Wing.Model;
+﻿using Wing.Model;
+using Wing.Persistence.GateWay;
 using Wing.Result;
 
 namespace Wing.Persistence.Gateway
@@ -16,14 +13,20 @@ namespace Wing.Persistence.Gateway
             _fsql = fsql;
         }
 
-        public Task<int> Add(Log log)
+        public async Task<int> Add(LogAddDto logDto)
         {
-            return _fsql.Insert(log).ExecuteAffrowsAsync();
-        }
+            var result = await _fsql.Insert(logDto.Log).ExecuteAffrowsAsync();
+            if (result < 1)
+            {
+                return result;
+            }
 
-        public Task<int> Add(IEnumerable<Log> logs)
-        {
-            return _fsql.Insert(logs).ExecuteAffrowsAsync();
+            if (logDto.LogDetails != null && logDto.LogDetails.Count > 0)
+            {
+                result = await _fsql.Insert(logDto.LogDetails).ExecuteAffrowsAsync();
+            }
+
+            return result;
         }
 
         public Task<bool> Any(string id)

@@ -101,6 +101,25 @@ namespace Wing.Persistence
                 eb.Property(x => x.Token).HasColumnType("text");
                 eb.Property(x => x.Exception).HasColumnType("text");
             });
+
+            fsql.CodeFirst.Entity<LogDetail>(eb =>
+            {
+                eb.ToTable("GateWay_LogDetail");
+                eb.HasIndex(x => x.RequestTime).HasName("IX_GateWay_RequestTime");
+                eb.HasIndex(x => x.ServiceName).HasName("IX_GateWay_ServiceName");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.ServiceName).HasColumnType("varchar(200)");
+                eb.Property(x => x.RequestUrl).HasColumnType("text");
+                eb.Property(x => x.Key).HasColumnType("varchar(100)");
+                eb.Property(x => x.ServiceAddress).HasColumnType("varchar(200)");
+                eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
+                eb.Property(x => x.RequestValue).HasColumnType("text");
+                eb.Property(x => x.ResponseValue).HasColumnType("text");
+                eb.Property(x => x.Policy).HasColumnType("text");
+                eb.Property(x => x.AuthKey).HasColumnType("text");
+                eb.Property(x => x.Token).HasColumnType("text");
+                eb.Property(x => x.Exception).HasColumnType("text");
+            });
             #endregion
 
             #region Saga entity config
