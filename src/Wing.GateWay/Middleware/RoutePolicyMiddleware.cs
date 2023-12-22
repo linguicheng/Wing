@@ -12,7 +12,7 @@ namespace Wing.Gateway.Middleware
 {
     public class RoutePolicyMiddleware
     {
-        private static readonly ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>> Policies = new ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>>();
+        private static readonly ConcurrentDictionary<string, KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>>> Policies = new();
         private readonly ServiceRequestDelegate _next;
         private readonly IHttpClientFactory _clientFactory;
         private readonly IServiceFactory _serviceFactory;
@@ -40,15 +40,40 @@ namespace Wing.Gateway.Middleware
                 return;
             }
 
-            string result;
+            HttpResponseMessage downstreamResponse;
+            var context = serviceContext.HttpContext;
             if (serviceContext.DownstreamServices.Count == 1)
             {
-                result = await InvokeDownstreamService(serviceContext, serviceContext.DownstreamServices.First());
+                try
+                {
+                    downstreamResponse = await InvokeDownstreamService(serviceContext, serviceContext.DownstreamServices.First());
+                    await context.Response.FromHttpResponseMessage(downstreamResponse, (statusCode, content) =>
+                    {
+                        serviceContext.StatusCode = statusCode;
+                        serviceContext.ResponseValue = content;
+                        _logProvider.Add(serviceContext);
+                    });
+                }
+                catch (ServiceNotFoundException ex)
+                {
+                    serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
+                    context.Response.StatusCode = serviceContext.StatusCode;
+                    serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                    await _logProvider.Add(serviceContext);
+                }
+                catch (Exception ex)
+                {
+                    serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
+                    serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
+                    context.Response.StatusCode = serviceContext.StatusCode;
+
+                    await _logProvider.Add(serviceContext);
+                }
+
                 return;
             }
 
-            result = "{";
-            string downstreamResponse;
+            var result = "{";
             foreach (var downstreamService in serviceContext.DownstreamServices)
             {
                 downstreamResponse = await InvokeDownstreamService(serviceContext, downstreamService);
@@ -59,15 +84,19 @@ namespace Wing.Gateway.Middleware
 
         }
 
-        private async Task<string> InvokeDownstreamService(ServiceContext serviceContext, DownstreamService downstreamService)
+        private async Task<HttpResponseMessage> InvokeDownstreamService(ServiceContext serviceContext, DownstreamService downstreamService)
         {
-            string downstreamResponse;
-            if (downstreamService.Policy != null &&
-                  ((downstreamService.Policy.Breaker != null && downstreamService.Policy.Breaker.IsEnabled)
-                  || (downstreamService.Policy.RateLimit != null && downstreamService.Policy.RateLimit.IsEnabled)
-                  || (downstreamService.Policy.BulkHead != null && downstreamService.Policy.BulkHead.IsEnabled)
-                  || (downstreamService.Policy.Retry != null && downstreamService.Policy.Retry.IsEnabled)
-                  || (downstreamService.Policy.TimeOut != null && downstreamService.Policy.TimeOut.IsEnabled)))
+            serviceContext.ServiceName = downstreamService.Downstream.ServiceName;
+            serviceContext.DownstreamPath = downstreamService.Downstream.Url;
+            serviceContext.Method = downstreamService.Downstream.Method;
+            serviceContext.Policy = downstreamService.Policy;
+            HttpResponseMessage downstreamResponse;
+            if (serviceContext.Policy != null &&
+                  ((serviceContext.Policy.Breaker != null && serviceContext.Policy.Breaker.IsEnabled)
+                  || (serviceContext.Policy.RateLimit != null && serviceContext.Policy.RateLimit.IsEnabled)
+                  || (serviceContext.Policy.BulkHead != null && serviceContext.Policy.BulkHead.IsEnabled)
+                  || (serviceContext.Policy.Retry != null && serviceContext.Policy.Retry.IsEnabled)
+                  || (serviceContext.Policy.TimeOut != null && serviceContext.Policy.TimeOut.IsEnabled)))
             {
                 downstreamResponse = await InvokeWithPolicy(serviceContext);
             }
@@ -79,43 +108,19 @@ namespace Wing.Gateway.Middleware
             return downstreamResponse;
         }
 
-        private async Task<string> InvokeWithNoPolicy(ServiceContext serviceContext)
+        private async Task<HttpResponseMessage> InvokeWithNoPolicy(ServiceContext serviceContext)
         {
             var context = serviceContext.HttpContext;
-            try
+            return await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
             {
-                var resMsg = await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
-                {
-                    serviceContext.ServiceAddress = serviceAddr.ToString();
-                    var reqMsg = await context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
-                    var client = _clientFactory.CreateClient(serviceContext.ServiceName);
-                    return await client.SendAsync(reqMsg);
-                });
-                await context.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
-                {
-                    serviceContext.StatusCode = statusCode;
-                    serviceContext.ResponseValue = content;
-                    _logProvider.Add(serviceContext);
-                });
-            }
-            catch (ServiceNotFoundException ex)
-            {
-                serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
-                context.Response.StatusCode = serviceContext.StatusCode;
-                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
-                await _logProvider.Add(serviceContext);
-            }
-            catch (Exception ex)
-            {
-                serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
-                serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
-                context.Response.StatusCode = serviceContext.StatusCode;
-
-                await _logProvider.Add(serviceContext);
-            }
+                serviceContext.ServiceAddress = serviceAddr.ToString();
+                var reqMsg = await context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath, serviceContext.Method);
+                var client = _clientFactory.CreateClient(serviceContext.ServiceName);
+                return await client.SendAsync(reqMsg);
+            });
         }
 
-        private async Task<string> InvokeWithPolicy(ServiceContext serviceContext)
+        private async Task<HttpResponseMessage> InvokeWithPolicy(ServiceContext serviceContext)
         {
             var config = serviceContext.Policy;
             Policies.TryGetValue(serviceContext.ServiceName, out KeyValuePair<Config.Policy, AsyncPolicy<HttpResponseMessage>> policyPair);
@@ -212,7 +217,7 @@ namespace Wing.Gateway.Middleware
                 });
             }
 
-            var resMsg = await policy.ExecuteAsync(async () =>
+            return await policy.ExecuteAsync(async () =>
             {
                 return await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
                 {
@@ -221,12 +226,6 @@ namespace Wing.Gateway.Middleware
                     var client = _clientFactory.CreateClient(serviceContext.ServiceName);
                     return await client.SendAsync(reqMsg);
                 });
-            });
-            await serviceContext.HttpContext.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
-            {
-                serviceContext.StatusCode = statusCode;
-                serviceContext.ResponseValue = content;
-                _logProvider.Add(serviceContext);
             });
         }
     }

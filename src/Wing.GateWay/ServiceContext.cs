@@ -27,6 +27,8 @@ namespace Wing.Gateway
 
         public string DownstreamPath { get; set; }
 
+        public string Method { get; set; }
+
         public Policy Policy { get; set; }
 
         public DateTime RequestTime { get; set; }
