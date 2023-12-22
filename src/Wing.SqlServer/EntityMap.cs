@@ -116,8 +116,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestValue).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
                 eb.Property(x => x.Policy).HasColumnType("nvarchar(max)");
-                eb.Property(x => x.AuthKey).HasColumnType("varchar(4000)");
-                eb.Property(x => x.Token).HasColumnType("varchar(4000)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
             #endregion

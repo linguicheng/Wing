@@ -116,8 +116,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.RequestValue).HasColumnType("NCLOB");
                 eb.Property(x => x.ResponseValue).HasColumnType("NCLOB");
                 eb.Property(x => x.Policy).HasColumnType("NCLOB");
-                eb.Property(x => x.AuthKey).HasColumnType("VARCHAR2(4000)");
-                eb.Property(x => x.Token).HasColumnType("VARCHAR2(4000)");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");
             });
             #endregion
