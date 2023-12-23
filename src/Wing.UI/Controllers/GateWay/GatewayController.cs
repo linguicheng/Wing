@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Wing.Model;
 using Wing.Persistence.Gateway;
 using Wing.Result;
@@ -20,6 +18,12 @@ namespace Wing.UI.Controllers
         public Task<PageResult<List<Log>>> List([FromQuery] PageModel<LogSearchDto> dto)
         {
            return _logService.List(dto);
+        }
+
+        [HttpGet]
+        public Task<List<LogDetail>> DetailList(string logId)
+        {
+            return _logService.DetailList(logId);
         }
 
         [HttpGet]

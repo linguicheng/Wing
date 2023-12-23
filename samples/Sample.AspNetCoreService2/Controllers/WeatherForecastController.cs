@@ -25,7 +25,7 @@ namespace Sample.AspNetCoreService2.Controllers
             _httpClientFactory = httpClientFactory;
             _auth = auth;
         }
-        [Authorize("Wing")]
+
         [HttpGet]
         public IEnumerable<WeatherForecast> Get()
         {

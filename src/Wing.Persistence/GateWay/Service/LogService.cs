@@ -54,6 +54,14 @@ namespace Wing.Persistence.Gateway
             };
         }
 
+        public Task<List<LogDetail>> DetailList(string logId)
+        {
+            return _fsql.Select<LogDetail>()
+                .Where(x => x.LogId == logId)
+                .OrderByDescending(x => x.RequestTime)
+                .ToListAsync();
+        }
+
         public long TimeoutTotal()
         {
             return _fsql.Select<Log>().Where(x => x.UsedMillSeconds >= Config.GatewayTimeOut && x.RequestTime > Config.SearchTime).Count();

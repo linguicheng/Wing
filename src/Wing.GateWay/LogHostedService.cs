@@ -7,15 +7,24 @@ namespace Wing.Gateway
 {
     public class LogHostedService : BackgroundService
     {
+        private static readonly object _lock = new object();
         private readonly ILogger<LogHostedService> _logger;
         private readonly ILogService _logService;
         private readonly IJson _json;
+        private Timer _timer;
+        private bool _wait = false;
 
         public LogHostedService(ILogger<LogHostedService> logger, ILogService logService, IJson json)
         {
             _logger = logger;
             _logService = logService;
             _json = json;
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            _timer?.Dispose();
         }
 
         public override Task StartAsync(CancellationToken cancellationToken)
@@ -30,25 +39,37 @@ namespace Wing.Gateway
             return base.StopAsync(cancellationToken);
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            while (true)
+            _timer = new Timer(x =>
             {
-                if (!DataProvider.Data.IsEmpty)
+                lock (_lock)
                 {
-                    if (DataProvider.Data.TryDequeue(out var logDto))
+                    if (_wait)
                     {
-                        try
+                        return;
+                    }
+
+                    _wait = true;
+                    if (!DataProvider.Data.IsEmpty)
+                    {
+                        if (DataProvider.Data.TryDequeue(out var logDto))
                         {
-                            await _logService.Add(logDto);
-                        }
-                        catch (Exception ex)
-                        {
-                            _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                            try
+                            {
+                                _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
+                            }
+                            catch (Exception ex)
+                            {
+                                _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                            }
                         }
                     }
+
+                    _wait = false;
                 }
-            }
+            }, null, TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.1));
+            return Task.CompletedTask;
         }
     }
 }

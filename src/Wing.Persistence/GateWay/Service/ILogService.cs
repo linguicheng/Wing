@@ -12,6 +12,8 @@ namespace Wing.Persistence.Gateway
 
         Task<PageResult<List<Log>>> List(PageModel<LogSearchDto> model);
 
+        Task<List<LogDetail>> DetailList(string logId);
+
         long TimeoutTotal();
 
         Task<List<Log>> TimeoutList();

@@ -136,6 +136,7 @@ namespace Wing.Gateway.Middleware
 
                     logDetail.ResponseTime = DateTime.Now;
                     logDetail.ResponseValue = content;
+                    logDetail.UsedMillSeconds = Convert.ToInt64((logDetail.ResponseTime - logDetail.RequestTime).TotalMilliseconds);
                     logDetail.ServiceAddress = serviceContext.ServiceAddress;
                     content = "\"" + logDetail.Key + "\":" + content + ",";
                     result += content;
@@ -159,6 +160,9 @@ namespace Wing.Gateway.Middleware
             result = result.TrimEnd(',');
             result += "}";
             logDto.Log.ResponseValue = result;
+            logDto.Log.ResponseTime = DateTime.Now;
+            logDto.Log.UsedMillSeconds = Convert.ToInt64((logDto.Log.ResponseTime - logDto.Log.RequestTime).TotalMilliseconds);
+            logDto.Log.StatusCode = (int)HttpStatusCode.OK;
             await _logProvider.Add(logDto, context);
             await context.Response.WriteAsync(result);
         }
