@@ -169,20 +169,8 @@
                             align="left"
                             width="400"
                             sortable/>
-              <vxe-column field="downstreamUrl"
-                          title="下游地址"
-                          width="150"
-                          sortable/>
-              <vxe-column field="gateWayServerIp"
-                          title="网关服务器地址"
-                          width="150"
-                          sortable/>
-              <vxe-column field="clientIp"
-                          title="客户端请求IP"
-                          width="150"
-                          sortable/>
               <vxe-column field="serviceAddress"
-                          title="下游服务地址"
+                          title="服务地址"
                           width="200"
                           sortable/>
               <vxe-column field="requestTime"
@@ -203,9 +191,6 @@
                           title="请求方式"
                           width="120"
                           sortable/>
-              <vxe-column field="requestValue"
-                          title="请求内容"
-                          width="300"/>
               <vxe-column field="responseValue"
                           title="响应内容"
                           width="300"/>

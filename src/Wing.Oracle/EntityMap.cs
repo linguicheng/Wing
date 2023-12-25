@@ -113,7 +113,6 @@ namespace Wing.Persistence
                 eb.Property(x => x.Key).HasColumnType("VARCHAR2(100)");
                 eb.Property(x => x.ServiceAddress).HasColumnType("VARCHAR2(200)");
                 eb.Property(x => x.RequestMethod).HasColumnType("VARCHAR2(20)");
-                eb.Property(x => x.RequestValue).HasColumnType("NCLOB");
                 eb.Property(x => x.ResponseValue).HasColumnType("NCLOB");
                 eb.Property(x => x.Policy).HasColumnType("NCLOB");
                 eb.Property(x => x.Exception).HasColumnType("NCLOB");

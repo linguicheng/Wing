@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using System.Diagnostics;
 using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
@@ -98,14 +97,6 @@ namespace Wing.Gateway.Middleware
                 LogDetails = []
             };
 
-            if (request.Body != null)
-            {
-                using (var reader = new StreamReader(request.Body))
-                {
-                    logDto.Log.RequestValue = await reader.ReadToEndAsync();
-                }
-            }
-
             foreach (var downstreamService in serviceContext.DownstreamServices)
             {
                 var logDetail = new LogDetail
@@ -163,6 +154,15 @@ namespace Wing.Gateway.Middleware
             logDto.Log.ResponseTime = DateTime.Now;
             logDto.Log.UsedMillSeconds = Convert.ToInt64((logDto.Log.ResponseTime - logDto.Log.RequestTime).TotalMilliseconds);
             logDto.Log.StatusCode = (int)HttpStatusCode.OK;
+
+            if (request.Body != null)
+            {
+                using (var reader = new StreamReader(request.Body))
+                {
+                    logDto.Log.RequestValue = await reader.ReadToEndAsync();
+                }
+            }
+
             await _logProvider.Add(logDto, context);
             await context.Response.WriteAsync(result);
         }

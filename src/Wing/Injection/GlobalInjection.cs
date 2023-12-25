@@ -10,7 +10,7 @@ namespace Wing.Injection
 
         static GlobalInjection()
         {
-            Assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.FullName.Contains("Microsoft"));
         }
 
         public static Type GetType(string name)

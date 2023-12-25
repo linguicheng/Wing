@@ -22,8 +22,6 @@ namespace Wing.Persistence.Gateway
 
         public string RequestMethod { get; set; }
 
-        public string RequestValue { get; set; }
-
         public DateTime ResponseTime { get; set; }
 
         public string ResponseValue { get; set; }
