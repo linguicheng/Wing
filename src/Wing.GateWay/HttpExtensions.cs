@@ -5,11 +5,11 @@ namespace Wing.Gateway
 {
     public static class HttpExtensions
     {
-        public static async Task<HttpRequestMessage> ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path)
+        public static async Task<HttpRequestMessage> ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path, string method = "")
         {
             var reqMsg = new HttpRequestMessage
             {
-                Method = new HttpMethod(req.Method),
+                Method = new HttpMethod(string.IsNullOrWhiteSpace(method) ? req.Method : method),
                 RequestUri = new UriBuilder
                 {
                     Scheme = serviceAddress.Sheme,

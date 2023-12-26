@@ -34,8 +34,8 @@
             </el-button>
         </div>
     </template>
-     <div class="table-container">
-        <vxe-table ref="httpTable"
+     <div class="table-main">
+        <vxe-table ref="mainTable"
                   class="mytable-scrollbar"
                   border
                   resizable
@@ -55,6 +55,7 @@
                   }"
                   :loading="loading"
                   :data="result.items"
+                  @current-change="rowSelected"
                   :mouse-config="{ selected: true }">
           <vxe-column field="serviceName"
                       title="下游服务名称"
@@ -124,16 +125,95 @@
                       title="异常说明"
                       width="300"/>
         </vxe-table>
+        <div style="padding:5px;">
+          <el-pagination :current-page="pageModel.pageIndex"
+                        :page-size="pageModel.pageSize"
+                        :page-sizes="[15, 25, 35, 45]"
+                        layout="total, sizes, prev, pager, next, jumper"
+                        :total="result.totalCount"
+                        @size-change="sizeChange"
+                        @current-change="currentChange" />
+        </div>
     </div>
-    <template slot="footer">
-      <el-pagination :current-page="pageModel.pageIndex"
-                     :page-size="pageModel.pageSize"
-                     :page-sizes="[15, 25, 35, 45]"
-                     layout="total, sizes, prev, pager, next, jumper"
-                     :total="result.totalCount"
-                     @size-change="sizeChange"
-                     @current-change="currentChange" />
-    </template>
+    <div class="table-detail">
+      <el-tabs type="border-card">
+        <el-tab-pane label="服务聚合请求明细">
+            <vxe-table ref="detailTable"
+                    class="mytable-scrollbar"
+                    border
+                    resizable
+                    size="medium"
+                    align="center"
+                    highlight-hover-row
+                    highlight-current-row
+                    show-overflow
+                    auto-resize
+                    keep-source
+                    stripe
+                    :edit-config="{
+                      trigger: 'click',
+                      mode: 'row',
+                      showStatus: true,
+                    }"
+                    :loading="detail.loading"
+                    :data="detail.result"
+                    :mouse-config="{ selected: true }">
+              <vxe-column field="serviceName"
+                          title="服务名称"
+                          fixed="left"
+                          width="200"
+                          sortable/>
+              <vxe-column field="requestUrl"
+                            title="请求URL"
+                            fixed="left"
+                            align="left"
+                            width="400"
+                            sortable/>
+              <vxe-column field="serviceAddress"
+                          title="服务地址"
+                          width="200"
+                          sortable/>
+              <vxe-column field="requestTime"
+                          title="请求时间"
+                          width="200"
+                          :formatter="['formatDate','yyyy-MM-dd HH:mm:ss']"
+                          sortable/>
+              <vxe-column field="responseTime"
+                          title="响应时间"
+                          width="200"
+                          :formatter="['formatDate','yyyy-MM-dd HH:mm:ss']"
+                          sortable/>
+              <vxe-column field="usedMillSeconds"
+                          title="请求耗时(毫秒)"
+                          width="150"
+                          sortable/>
+              <vxe-column field="requestMethod"
+                          title="请求方式"
+                          width="120"
+                          sortable/>
+              <vxe-column field="responseValue"
+                          title="响应内容"
+                          width="300"/>
+              <vxe-column field="statusCode"
+                          title="状态码"
+                          width="100"
+                          sortable/>
+              <vxe-column field="policy"
+                          title="网关策略"
+                          width="300"/>
+              <vxe-column field="authKey"
+                          title="简单令牌"
+                          width="300"/>
+              <vxe-column field="token"
+                          title="JWT令牌"
+                          width="300"/>
+              <vxe-column field="exception"
+                          title="异常说明"
+                          width="300"/>
+            </vxe-table>
+        </el-tab-pane>
+      </el-tabs>
+    </div>
   </d2-container>
 </template>
 
@@ -180,6 +260,10 @@ export default {
             picker.$emit('pick', [start, end])
           }
         }]
+      },
+      detail: {
+        loading: false,
+        result: []
       }
     }
   },
@@ -187,6 +271,11 @@ export default {
     this.search()
   },
   methods: {
+    async rowSelected (e) {
+      this.detail.loading = true
+      this.detail.result = await this.$api.GATEWAY_DETAIL_LIST(e.row.id)
+      this.detail.loading = false
+    },
     async search () {
       this.loading = true
       if (this.requestTime) {

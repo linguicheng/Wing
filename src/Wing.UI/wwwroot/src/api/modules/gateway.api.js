@@ -12,6 +12,13 @@ export default ({ request }) => ({
       params: data
     })
   },
+  GATEWAY_DETAIL_LIST (logId) {
+    return request({
+      method: 'GET',
+      url: 'Gateway/DetailList',
+      params: { logId }
+    })
+  },
   GATEWAY_TIMEOUT_LIST () {
     return request({
       method: 'GET',

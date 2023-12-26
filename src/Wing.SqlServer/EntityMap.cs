@@ -101,6 +101,22 @@ namespace Wing.Persistence
                 eb.Property(x => x.Token).HasColumnType("varchar(4000)");
                 eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
             });
+
+            fsql.CodeFirst.Entity<LogDetail>(eb =>
+            {
+                eb.ToTable("GateWay_LogDetail");
+                eb.HasIndex(x => x.RequestTime).HasName("IX_RequestTime");
+                eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
+                eb.Property(x => x.RequestUrl).HasColumnType("varchar(4000)");
+                eb.Property(x => x.Key).HasColumnType("varchar(100)");
+                eb.Property(x => x.ServiceAddress).HasColumnType("varchar(200)");
+                eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");
+                eb.Property(x => x.ResponseValue).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Policy).HasColumnType("nvarchar(max)");
+                eb.Property(x => x.Exception).HasColumnType("nvarchar(max)");
+            });
             #endregion
 
             #region Saga entity config

@@ -19,31 +19,62 @@ namespace Wing.Gateway.Middleware
             serviceContext.RequestTime = DateTime.Now;
             var context = serviceContext.HttpContext;
             var fullPath = context.Request.Path.ToString();
-            var paths = fullPath.Split("/");
-            if (paths == null || paths.Length <= 2)
+            var paths = fullPath.Split("/", StringSplitOptions.RemoveEmptyEntries);
+            if (paths == null || paths.Length <= 0)
             {
                 await _next(serviceContext);
                 return;
             }
 
-            var serviceName = paths[1];
-            if (string.IsNullOrWhiteSpace(serviceName))
+            var routes = _configuration.GetSection("Gateway:Routes").Get<List<Route>>();
+            foreach (var route in routes)
             {
-                await _next(serviceContext);
-                return;
+                var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                if (paths.Length == keys.Length)
+                {
+                    var count = UrlTemplateMatch(keys, paths, (key, path) =>
+                    {
+                        serviceContext.TemplateParameterName = key;
+                        serviceContext.TemplateParameterValue = path;
+                    });
+
+                    if (count == keys.Length
+                        && route.Downstreams != null
+                        && route.Downstreams.Count > 0)
+                    {
+                        serviceContext.Route = route;
+                        serviceContext.UpstreamPath = fullPath;
+                        break;
+                    }
+                }
             }
 
-            serviceContext.ServiceName = serviceName;
-            string[] upstreamPaths = new string[paths.Length - 2];
-            for (var i = 0; i < upstreamPaths.Length; i++)
+            string[] downstreamPaths = null;
+            if (serviceContext.Route == null)
             {
-                upstreamPaths[i] = paths[i + 2];
+                if (paths.Length <= 1)
+                {
+                    await _next(serviceContext);
+                    return;
+                }
+
+                serviceContext.ServiceName = paths[0];
+                downstreamPaths = new string[paths.Length - 1];
+                for (var i = 0; i < downstreamPaths.Length; i++)
+                {
+                    downstreamPaths[i] = paths[i + 1];
+                }
+
+                serviceContext.UpstreamPath = serviceContext.DownstreamPath = "/" + string.Join('/', downstreamPaths);
+                GetServicePolicy(serviceContext, downstreamPaths);
+            }
+            else
+            {
+                GetRoutePolicy(serviceContext);
             }
 
             serviceContext.IsWebSocket = context.WebSockets.IsWebSocketRequest;
-            serviceContext.DownstreamPath = "/" + string.Join('/', upstreamPaths);
             WebSocketAuth(serviceContext);
-            GetPolicy(serviceContext, upstreamPaths);
             await _next(serviceContext);
         }
 
@@ -81,59 +112,119 @@ namespace Wing.Gateway.Middleware
             }
         }
 
-        private void GetPolicy(ServiceContext serviceContext, string[] upstreamPaths)
+        private void GetServicePolicy(ServiceContext serviceContext, string[] downstreamPaths)
         {
             var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
             if (config != null)
             {
                 if (config.Policies != null && config.Policies.Count > 0)
                 {
-                    // 服务策略
-                    serviceContext.Policy = config.Policies.Where(p => p.Key == serviceContext.ServiceName).FirstOrDefault();
-                    if (serviceContext.Policy != null
-                        && serviceContext.Policy.MethodPolicies != null
-                        && serviceContext.Policy.MethodPolicies.Count > 0)
-                    {
-                        // 服务方法策略
-                        Policy methodPolicy = null;
-                        foreach (var p in serviceContext.Policy.MethodPolicies)
-                        {
-                            var keys = p.Key.Split('/');
-                            if (keys.Length == upstreamPaths.Length)
-                            {
-                                int count = 0;
-                                for (var i = 0; i < keys.Length; i++)
-                                {
-                                    if (keys[i].StartsWith("{") && keys[i].EndsWith("}"))
-                                    {
-                                        count++;
-                                        continue;
-                                    }
-
-                                    if (keys[i].ToLower() == upstreamPaths[i].ToLower())
-                                    {
-                                        count++;
-                                        continue;
-                                    }
-                                }
-
-                                if (count == keys.Length)
-                                {
-                                    methodPolicy = p;
-                                    break;
-                                }
-                            }
-                        }
-
-                        if (methodPolicy != null)
-                        {
-                            serviceContext.Policy = methodPolicy;
-                        }
-                    }
+                    GetPolicy(serviceContext, downstreamPaths, config);
                 }
 
                 serviceContext.Policy ??= config.Global;
             }
+        }
+
+        private void GetRoutePolicy(ServiceContext serviceContext)
+        {
+            var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
+            serviceContext.DownstreamServices = [];
+            if (config != null)
+            {
+                if (config.Policies != null && config.Policies.Count > 0)
+                {
+                    DownstreamsForEach(serviceContext, x =>
+                    {
+                        serviceContext.ServiceName = x.ServiceName;
+                        GetPolicy(serviceContext, x.Url.Split('/'), config);
+                        serviceContext.Policy ??= config.Global;
+                        serviceContext.DownstreamServices.Add(new DownstreamService
+                        {
+                            Downstream = x,
+                            Policy = serviceContext.Policy
+                        });
+                    });
+                    return;
+                }
+
+                DownstreamsForEach(serviceContext, x => serviceContext.DownstreamServices.Add(new DownstreamService
+                {
+                    Downstream = x,
+                    Policy = config.Global
+                }));
+                return;
+            }
+
+            DownstreamsForEach(serviceContext, x => serviceContext.DownstreamServices.Add(new DownstreamService
+            {
+                Downstream = x,
+            }));
+        }
+
+        private void DownstreamsForEach(ServiceContext serviceContext, Action<Downstream> action)
+        {
+            serviceContext.Route.Downstreams.ForEach(x =>
+            {
+                if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
+                {
+                    x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
+                }
+
+                action(x);
+            });
+        }
+
+        private void GetPolicy(ServiceContext serviceContext, string[] downstreamPaths, PolicyConfig config)
+        {
+            // 服务方法策略
+            Policy methodPolicy = null;
+            serviceContext.Policy = config.Policies.Where(p => p.Key == serviceContext.ServiceName).FirstOrDefault();
+            if (serviceContext.Policy != null
+                && serviceContext.Policy.MethodPolicies != null
+                && serviceContext.Policy.MethodPolicies.Count > 0)
+            {
+                foreach (var p in serviceContext.Policy.MethodPolicies)
+                {
+                    var keys = p.Key.Split('/');
+                    if (keys.Length == downstreamPaths.Length)
+                    {
+                        var count = UrlTemplateMatch(keys, downstreamPaths);
+                        if (count == keys.Length)
+                        {
+                            methodPolicy = p;
+                            break;
+                        }
+                    }
+                }
+
+                if (methodPolicy != null)
+                {
+                    serviceContext.Policy = methodPolicy;
+                }
+            }
+        }
+
+        private int UrlTemplateMatch(string[] keys, string[] paths, Action<string, string> action = null)
+        {
+            int count = 0;
+            for (var i = 0; i < keys.Length; i++)
+            {
+                if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
+                {
+                    count++;
+                    action?.Invoke(keys[i], paths[i]);
+                    continue;
+                }
+
+                if (keys[i].Equals(paths[i], StringComparison.OrdinalIgnoreCase))
+                {
+                    count++;
+                    continue;
+                }
+            }
+
+            return count;
         }
     }
 }

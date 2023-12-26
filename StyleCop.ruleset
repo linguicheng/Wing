@@ -69,6 +69,8 @@
     <Rule Id="CA2242" Action="Warning" />
   </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+   <Rule Id="ASP0019" Action="None" />
+   <Rule Id="SA1010" Action="None" />
    <Rule Id="SA1515" Action="None" />
    <Rule Id="SA1401" Action="None" />
    <Rule Id="SA1124" Action="None" />

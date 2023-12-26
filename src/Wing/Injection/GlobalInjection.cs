@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.EventBus;
 
@@ -13,7 +10,7 @@ namespace Wing.Injection
 
         static GlobalInjection()
         {
-            Assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => !x.FullName.Contains("Microsoft"));
         }
 
         public static Type GetType(string name)

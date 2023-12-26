@@ -34,7 +34,9 @@ namespace Wing.Gateway.Middleware
 
         public async Task InvokeAsync(ServiceContext serviceContext)
         {
-            if (string.IsNullOrWhiteSpace(serviceContext.ServiceName) || serviceContext.IsWebSocket)
+            if (serviceContext.Route != null
+                 || string.IsNullOrWhiteSpace(serviceContext.ServiceName)
+                 || serviceContext.IsWebSocket)
             {
                 await _next(serviceContext);
                 return;

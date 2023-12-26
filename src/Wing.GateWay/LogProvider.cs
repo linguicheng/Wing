@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -8,7 +9,7 @@ using Wing.Converter;
 using Wing.EventBus;
 using Wing.Gateway.Config;
 using Wing.Persistence.Gateway;
-using Wing.ServiceProvider;
+using Wing.Persistence.GateWay;
 
 namespace Wing.Gateway
 {
@@ -37,11 +38,11 @@ namespace Wing.Gateway
 
             var httpContext = serviceContext.HttpContext;
             var request = httpContext.Request;
-            Log log = null;
+            LogAddDto logDto = new();
             try
             {
                 var now = DateTime.Now;
-                log = new Log
+                logDto.Log = new Log
                 {
                     Id = Guid.NewGuid().ToString(),
                     ClientIp = Tools.RemoteIp,
@@ -62,14 +63,14 @@ namespace Wing.Gateway
 
                 if (request.Headers != null && request.Headers.ContainsKey("AuthKey"))
                 {
-                    log.AuthKey = request.Headers["AuthKey"].ToString();
+                    logDto.Log.AuthKey = request.Headers["AuthKey"].ToString();
                 }
 
                 if (App.GetService<IAuthenticationService>() != null)
                 {
                     try
                     {
-                        log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                        logDto.Log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
                     }
                     catch
                     {
@@ -78,32 +79,70 @@ namespace Wing.Gateway
 
                 if (!string.IsNullOrEmpty(serviceContext.RequestValue))
                 {
-                    log.RequestValue = serviceContext.RequestValue;
+                    logDto.Log.RequestValue = serviceContext.RequestValue;
                 }
                 else if (request.Body != null)
                 {
                     using (var reader = new StreamReader(request.Body))
                     {
-                        log.RequestValue = await reader.ReadToEndAsync();
+                        logDto.Log.RequestValue = await reader.ReadToEndAsync();
                     }
                 }
 
                 if (config.UseEventBus)
                 {
-                    App.GetRequiredService<IEventBus>().Publish(log);
+                    App.GetRequiredService<IEventBus>().Publish(logDto);
                 }
                 else
                 {
-                    var result = await App.GetRequiredService<ILogService>().Add(log);
-                    if (result <= 0)
-                    {
-                        _logger.LogInformation($"数据库保存失败，请求日志：{_json.Serialize(log)}");
-                    }
+                    DataProvider.Data.Enqueue(logDto);
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "发生异常,请求日志：{0}", log != null ? _json.Serialize(log) : string.Empty);
+                _logger.LogError(ex, "发生异常,请求日志：{0}", _json.Serialize(logDto));
+            }
+        }
+
+        public async Task Add(LogAddDto logDto, HttpContext httpContext)
+        {
+            var config = _configuration.GetSection("Gateway:Log").Get<LogConfig>();
+            if (!config.IsEnabled)
+            {
+                return;
+            }
+
+            var request = httpContext.Request;
+            try
+            {
+                if (request.Headers != null && request.Headers.ContainsKey("AuthKey"))
+                {
+                    logDto.Log.AuthKey = request.Headers["AuthKey"].ToString();
+                }
+
+                if (App.GetService<IAuthenticationService>() != null)
+                {
+                    try
+                    {
+                        logDto.Log.Token = await httpContext.GetTokenAsync(JwtBearerDefaults.AuthenticationScheme, OpenIdConnectParameterNames.AccessToken);
+                    }
+                    catch
+                    {
+                    }
+                }
+
+                if (config.UseEventBus)
+                {
+                    App.GetRequiredService<IEventBus>().Publish(logDto);
+                }
+                else
+                {
+                    DataProvider.Data.Enqueue(logDto);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "发生异常,请求日志：{0}", _json.Serialize(logDto));
             }
         }
     }

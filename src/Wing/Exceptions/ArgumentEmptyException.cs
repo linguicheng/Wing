@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Wing.Exceptions
+﻿namespace Wing.Exceptions
 {
     public class ArgumentEmptyException : ArgumentException
     {

@@ -25,9 +25,9 @@ namespace Sample.AspNetCoreService2.Controllers
             _httpClientFactory = httpClientFactory;
             _auth = auth;
         }
-        [Authorize("Wing")]
-        [HttpGet]
-        public IEnumerable<WeatherForecast> Get()
+
+        [HttpGet("{name}")]
+        public IEnumerable<WeatherForecast> Get(string name)
         {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
@@ -67,5 +67,10 @@ namespace Sample.AspNetCoreService2.Controllers
             return _auth.GetToken("byron");
         }
 
+        [HttpPost]
+        public WeatherForecast Post(WeatherForecast model)
+        {
+            return model;
+        }
     }
 }

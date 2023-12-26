@@ -1,5 +1,4 @@
-﻿using System;
-using Wing.Exceptions;
+﻿using Wing.Exceptions;
 
 namespace Wing.Converter
 {

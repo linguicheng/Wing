@@ -35,9 +35,9 @@ namespace Sample.AspNetCoreService.Controllers
             _tracerService = tracerService;
         }
 
-        [HttpGet]
+        [HttpGet("{name}")]
         //[Authorize("Wing")]
-        public IEnumerable<WeatherForecast> Get()
+        public IEnumerable<WeatherForecast> Get(string name)
         {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast

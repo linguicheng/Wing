@@ -60,6 +60,7 @@
 		<None Remove="wwwroot\dist\css\chunk-44ec1dbd.e5a13fe4.css" />
 		<None Remove="wwwroot\dist\css\chunk-47afbc15.d6c499b1.css" />
 		<None Remove="wwwroot\dist\css\chunk-47b0186e.9d6f5b39.css" />
+		<None Remove="wwwroot\dist\css\chunk-47bc9a12.140fff95.css" />
 		<None Remove="wwwroot\dist\css\chunk-5ac53461.036599f2.css" />
 		<None Remove="wwwroot\dist\css\chunk-5e703ca8.89c07d81.css" />
 		<None Remove="wwwroot\dist\css\chunk-62522ff4.fc17237a.css" />
@@ -117,6 +118,8 @@
 		<None Remove="wwwroot\dist\img\qr%402x.c0f04adb.png" />
 		<None Remove="wwwroot\dist\img\we.91ba5945.svg" />
 		<None Remove="wwwroot\dist\index.html" />
+		<None Remove="wwwroot\dist\js\app.05cc31d7.js" />
+		<None Remove="wwwroot\dist\js\app.05cc31d7.js.gz" />
 		<None Remove="wwwroot\dist\js\app.1dde5a89.js" />
 		<None Remove="wwwroot\dist\js\app.1dde5a89.js.gz" />
 		<None Remove="wwwroot\dist\js\app.51c77357.js" />
@@ -209,6 +212,7 @@
 		<None Remove="wwwroot\dist\js\chunk-47b0186e.04631e0b.js" />
 		<None Remove="wwwroot\dist\js\chunk-47b0186e.15a26f29.js" />
 		<None Remove="wwwroot\dist\js\chunk-47b0186e.aed7d100.js" />
+		<None Remove="wwwroot\dist\js\chunk-47bc9a12.4e5830fd.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.06e709e2.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.20a34051.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.8c7209a6.js" />
@@ -266,7 +270,6 @@
 		<EmbeddedResource Include="wwwroot\dist\css\app.e8b298b4.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\app.e8b298b4.css.gz" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-021e5078.b8e0bbf8.css" />
-		<EmbeddedResource Include="wwwroot\dist\css\chunk-08a0c414.e5cf8142.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-20005747.6ce34d49.css">
 		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
@@ -274,6 +277,7 @@
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-293b217d.d39edb96.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-2f53076e.9c0492ca.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-44ec1dbd.e5a13fe4.css" />
+		<EmbeddedResource Include="wwwroot\dist\css\chunk-47bc9a12.140fff95.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-5ac53461.036599f2.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-5e703ca8.89c07d81.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-62522ff4.fc17237a.css" />
@@ -318,12 +322,11 @@
 		<EmbeddedResource Include="wwwroot\dist\image\theme\violet\preview@2x.png" />
 		<EmbeddedResource Include="wwwroot\dist\img\login-code.10fef840.png" />		<EmbeddedResource Include="wwwroot\dist\img\logo@2x.47df8ae2.png" />
 		<EmbeddedResource Include="wwwroot\dist\index.html" />
-		<EmbeddedResource Include="wwwroot\dist\js\app.7a3b9389.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\app.7a3b9389.js.gz" />
+		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js.gz" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-021e5078.9524426e.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-04ec3c10.79bd7f0c.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-04ec3c10.79bd7f0c.js.gz" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-08a0c414.f27be87a.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-20005747.f4b790b0.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-27938a61.d2c4ae07.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-293b217d.cf4fc670.js" />
@@ -340,6 +343,7 @@
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-3ef012c2.9a49124a.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-40704c2c.6779d87b.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-44ec1dbd.06546e9d.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-47bc9a12.4e5830fd.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-5ac53461.06e709e2.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-5e703ca8.29c99687.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-62522ff4.b5a67169.js" />
