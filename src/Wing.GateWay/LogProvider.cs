@@ -30,7 +30,7 @@ namespace Wing.Gateway
 
         public async Task Add(ServiceContext serviceContext)
         {
-            var config = _configuration.GetSection("Gateway:Log").Get<LogConfig>();
+            var config = DataProvider.LogConfig;
             if (!config.IsEnabled)
             {
                 return;
