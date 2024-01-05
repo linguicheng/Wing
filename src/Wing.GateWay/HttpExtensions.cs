@@ -1,63 +1,83 @@
-﻿using Microsoft.AspNetCore.Http;
-using Wing.ServiceProvider;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
+using Microsoft.AspNetCore.Http;
 
 namespace Wing.Gateway
 {
     public static class HttpExtensions
     {
-        public static async Task<HttpRequestMessage> ToHttpRequestMessage(this HttpRequest req, ServiceAddress serviceAddress, string path, string method = "")
+        public static async Task<ServiceContext> Request(this HttpRequest req, ServiceContext serviceContext)
         {
-            var reqMsg = new HttpRequestMessage
+            string method = serviceContext.Method;
+            if (string.IsNullOrWhiteSpace(method))
             {
-                Method = new HttpMethod(string.IsNullOrWhiteSpace(method) ? req.Method : method),
-                RequestUri = new UriBuilder
+                method = req.Method;
+            }
+
+            method = method.ToLower();
+
+            var httpClientFactory = App.GetRequiredService<IHttpClientFactory>();
+            var client = httpClientFactory.CreateClient();
+            client.BaseAddress = new Uri(serviceContext.ServiceAddress);
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+            if (req.Headers != null && req.Headers.Count > 0)
+            {
+                foreach (var header in req.Headers)
                 {
-                    Scheme = serviceAddress.Sheme,
-                    Host = serviceAddress.Host,
-                    Port = serviceAddress.Port,
-                    Path = path,
-                    Query = req.QueryString.ToString()
-                }.Uri
+                    var key = header.Key.ToLower();
+                    if (key == "accept"
+                        || key == "connection"
+                        || key == "user-agent"
+                        || key == "content-type"
+                        || key == "content-length"
+                        || key == "origin"
+                        || key == "accept-encoding"
+                        || key == "host")
+                    {
+                        continue;
+                    }
+
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value.AsEnumerable());
+                }
+            }
+
+            if (!serviceContext.IsReadRequestBody && req.Body != null)
+            {
+                serviceContext.IsReadRequestBody = true;
+                using (var reader = new StreamReader(req.Body))
+                {
+                    serviceContext.RequestValue = await reader.ReadToEndAsync();
+                }
+            }
+
+            var content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
+            HttpResponseMessage response = method switch
+            {
+                "get" => await client.GetAsync(serviceContext.DownstreamPath),
+                "post" => await client.PostAsync(serviceContext.DownstreamPath, content),
+                "put" => await client.PutAsync(serviceContext.DownstreamPath, content),
+                "delete" => await client.DeleteAsync(serviceContext.DownstreamPath),
+                _ => throw new Exception($"网关不支持该请求方式：{method} 的转发！"),
             };
-            if (req.Body != null)
+            serviceContext.StatusCode = (int)response.StatusCode;
+            if (response.StatusCode == HttpStatusCode.OK)
             {
-                req.EnableBuffering();
-                var ms = new MemoryStream();
-                await req.Body.CopyToAsync(ms);
-                ms.Position = 0;
-                reqMsg.Content = new StreamContent(ms);
-                req.Body.Position = 0;
+                serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
             }
 
-            if (req.Headers != null && req.Headers.ContainsKey("Content-Type"))
-            {
-                reqMsg.Content.Headers.Add("Content-Type", req.ContentType);
-            }
-
-            return req.Headers.Aggregate(reqMsg, (acc, h) =>
-             {
-                 acc.Headers.TryAddWithoutValidation(h.Key, h.Value.AsEnumerable());
-                 return acc;
-             });
+            return serviceContext;
         }
 
-        public static async Task FromHttpResponseMessage(this HttpResponse response, HttpResponseMessage reqMsg, Action<int, string> action)
+        public static async Task Response(this HttpResponse response, ServiceContext serviceContext)
         {
-            var statusCode = (int)reqMsg.StatusCode;
-            response.StatusCode = statusCode;
-            string content = string.Empty;
-            if (reqMsg.Content != null)
+            response.StatusCode = serviceContext.StatusCode;
+            if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
-                if (reqMsg.Content.Headers.Contains("Content-Type"))
-                {
-                    response.ContentType = reqMsg.Content.Headers.GetValues("Content-Type").Single();
-                }
-
-                content = await reqMsg.Content.ReadAsStringAsync();
+                response.ContentType = "text/plain; charset=utf-8";
+                await response.WriteAsync(serviceContext.ResponseValue);
             }
-
-            action(statusCode, content);
-            await response.WriteAsync(content);
         }
     }
 }

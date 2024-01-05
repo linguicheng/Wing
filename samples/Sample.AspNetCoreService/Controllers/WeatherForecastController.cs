@@ -1,13 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Mvc;
 using Sample.Auth;
 
-namespace Sample.AspNetCoreService2.Controllers
+namespace Sample.AspNetCoreService.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -27,6 +21,7 @@ namespace Sample.AspNetCoreService2.Controllers
         }
 
         [HttpGet("{name}")]
+        //[Authorize("Wing")]
         public IEnumerable<WeatherForecast> Get(string name)
         {
             var rng = new Random();
@@ -35,36 +30,15 @@ namespace Sample.AspNetCoreService2.Controllers
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)],
-                Ver = "2.0"
+                Ver = $"自定义路由测试：{name}"
             })
             .ToArray();
         }
-        [HttpGet("test1")]
-        public async Task<ActionResult> Test1()
-        {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri("http://192.168.56.99:5002");
-            string result = await client.GetStringAsync("/api/values");
-            return Ok(result);
-        }
-        [HttpGet("test2")]
-        public async Task<ActionResult> Test2()
-        {
-            var client = _httpClientFactory.CreateClient();
-            client.BaseAddress = new Uri("http://192.168.56.98:5002");
-            string result = await client.GetStringAsync("/api/values");
-            return Ok(result);
-        }
-        [Authorize]
-        [HttpGet("test3")]
-        public string Test3()
+
+        [HttpGet("HelloWing")]
+        public string HelloWing()
         {
             return "Hello Wing";
-        }
-        [HttpGet("gettoken")]
-        public string GetToken()
-        {
-            return _auth.GetToken("byron");
         }
 
         [HttpPost]
@@ -76,7 +50,7 @@ namespace Sample.AspNetCoreService2.Controllers
         [HttpGet("CustomRoute/{name}")]
         public string CustomRoute(string name)
         {
-            return $"自定义路由测试：{name}";
+            return $"自定义路由测试：{name}" ;
         }
     }
 }

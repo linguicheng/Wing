@@ -16,7 +16,7 @@ var fsql = new FreeSqlBuilder()
                               .Build<SampleWingDbFlag>();
 builder.Services.AddSingleton(typeof(IFreeSql<SampleWingDbFlag>), serviceProvider => fsql);
 builder.Services.AddSingleton<ITracerService, TracerService>();
-builder.Services.AddWing().AddPersistence().AddEventBus().AddJwt(context =>
+builder.Services.AddWing().AddPersistence().AddJwt(context =>
 {
     var user = context.User.Claims.Where(c => c.Type == ClaimTypes.Name).FirstOrDefault().Value;
     return user == "byron";

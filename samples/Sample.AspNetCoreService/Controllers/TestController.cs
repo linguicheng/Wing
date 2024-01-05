@@ -15,20 +15,17 @@ namespace Sample.AspNetCoreService.Controllers
             "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
         };
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly IEventBus _eventBus;
         private readonly IProduct _product;
         private readonly IAuth _auth;
         private readonly IConfiguration _configuration;
         private readonly ITracerService _tracerService;
         public TestController(IAuth auth,
                             IHttpClientFactory httpClientFactory,
-                            IEventBus eventBus,
                             IProduct product,
                             ITracerService tracerService,
                             IConfiguration configuration)
         {
             _httpClientFactory = httpClientFactory;
-            _eventBus = eventBus;
             _product = product;
             _auth = auth;
             _configuration = configuration;
@@ -45,7 +42,7 @@ namespace Sample.AspNetCoreService.Controllers
                 Date = DateTime.Now.AddDays(index),
                 TemperatureC = rng.Next(-20, 55),
                 Summary = Summaries[rng.Next(Summaries.Length)],
-                Ver = "2.0"
+                Ver = $"自定义路由测试：{name}"
             })
             .ToArray();
         }
@@ -99,12 +96,6 @@ namespace Sample.AspNetCoreService.Controllers
         public string GetToken()
         {
             return _auth.GetToken("byron");
-        }
-
-        [HttpGet("Publish")]
-        public void Publish()
-        {
-            _eventBus.Publish(new User { Name = "byron", Age = DateTime.Now.Millisecond });
         }
 
         [HttpPost]

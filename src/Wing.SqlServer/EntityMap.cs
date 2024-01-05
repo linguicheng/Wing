@@ -88,8 +88,8 @@ namespace Wing.Persistence
                 eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
-                eb.Property(x => x.DownstreamUrl).HasColumnType("varchar(4000)");
-                eb.Property(x => x.RequestUrl).HasColumnType("varchar(4000)");
+                eb.Property(x => x.DownstreamUrl).HasColumnType("nvarchar(4000)");
+                eb.Property(x => x.RequestUrl).HasColumnType("nvarchar(4000)");
                 eb.Property(x => x.GateWayServerIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.ClientIp).HasColumnType("varchar(50)");
                 eb.Property(x => x.ServiceAddress).HasColumnType("varchar(200)");
@@ -109,7 +109,7 @@ namespace Wing.Persistence
                 eb.HasIndex(x => x.ServiceName).HasName("IX_ServiceName");
                 eb.Property(x => x.Id).HasColumnType("varchar(50)");
                 eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
-                eb.Property(x => x.RequestUrl).HasColumnType("varchar(4000)");
+                eb.Property(x => x.RequestUrl).HasColumnType("nvarchar(4000)");
                 eb.Property(x => x.Key).HasColumnType("varchar(100)");
                 eb.Property(x => x.ServiceAddress).HasColumnType("varchar(200)");
                 eb.Property(x => x.RequestMethod).HasColumnType("varchar(20)");

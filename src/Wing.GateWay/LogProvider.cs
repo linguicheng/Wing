@@ -55,6 +55,7 @@ namespace Wing.Gateway
                     ServiceName = serviceContext.ServiceName,
                     StatusCode = serviceContext.StatusCode,
                     ResponseValue = serviceContext.ResponseValue,
+                    RequestValue = serviceContext.RequestValue,
                     GateWayServerIp = App.CurrentServiceUrl,
                     ServiceAddress = serviceContext.ServiceAddress,
                     UsedMillSeconds = Convert.ToInt64((now - serviceContext.RequestTime).TotalMilliseconds),
@@ -74,18 +75,6 @@ namespace Wing.Gateway
                     }
                     catch
                     {
-                    }
-                }
-
-                if (!string.IsNullOrEmpty(serviceContext.RequestValue))
-                {
-                    logDto.Log.RequestValue = serviceContext.RequestValue;
-                }
-                else if (request.Body != null)
-                {
-                    using (var reader = new StreamReader(request.Body))
-                    {
-                        logDto.Log.RequestValue = await reader.ReadToEndAsync();
                     }
                 }
 

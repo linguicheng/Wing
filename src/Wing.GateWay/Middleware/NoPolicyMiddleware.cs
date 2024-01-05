@@ -1,24 +1,17 @@
 ﻿using System.Net;
 using Wing.Exceptions;
-using Wing.ServiceProvider;
 
 namespace Wing.Gateway.Middleware
 {
     public class NoPolicyMiddleware
     {
         private readonly ServiceRequestDelegate _next;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IServiceFactory _serviceFactory;
         private readonly ILogProvider _logProvider;
 
         public NoPolicyMiddleware(ServiceRequestDelegate next,
-            IHttpClientFactory clientFactory,
-            IServiceFactory serviceFactory,
             ILogProvider logProvider)
         {
             _next = next;
-            _clientFactory = clientFactory;
-            _serviceFactory = serviceFactory;
             _logProvider = logProvider;
         }
 
@@ -46,34 +39,22 @@ namespace Wing.Gateway.Middleware
             var context = serviceContext.HttpContext;
             try
             {
-                var resMsg = await _serviceFactory.InvokeAsync(serviceContext.ServiceName, async serviceAddr =>
-                {
-                    serviceContext.ServiceAddress = serviceAddr.ToString();
-                    var reqMsg = await context.Request.ToHttpRequestMessage(serviceAddr, serviceContext.DownstreamPath);
-                    var client = _clientFactory.CreateClient(serviceContext.ServiceName);
-                    return await client.SendAsync(reqMsg);
-                });
-                await context.Response.FromHttpResponseMessage(resMsg, (statusCode, content) =>
-                {
-                    serviceContext.StatusCode = statusCode;
-                    serviceContext.ResponseValue = content;
-                    _logProvider.Add(serviceContext);
-                });
+                await DataProvider.InvokeWithNoPolicy(serviceContext);
             }
             catch (ServiceNotFoundException ex)
             {
                 serviceContext.StatusCode = (int)HttpStatusCode.NotFound;
-                context.Response.StatusCode = serviceContext.StatusCode;
                 serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
-                await _logProvider.Add(serviceContext);
             }
             catch (Exception ex)
             {
                 serviceContext.StatusCode = (int)HttpStatusCode.BadGateway;
                 serviceContext.Exception = $"{ex.Message} {ex.StackTrace}";
-                context.Response.StatusCode = serviceContext.StatusCode;
-
+            }
+            finally
+            {
                 await _logProvider.Add(serviceContext);
+                await context.Response.Response(serviceContext);
             }
         }
     }
