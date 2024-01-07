@@ -105,7 +105,7 @@ namespace Wing.Gateway.Middleware
                 try
                 {
                     await InvokeDownstreamService(serviceContext, downstreamService);
-                    logDetail.StatusCode = (int)serviceContext.StatusCode;
+                    logDetail.StatusCode = serviceContext.StatusCode;
                     logDetail.ResponseTime = DateTime.Now;
                     logDetail.ResponseValue = serviceContext.ResponseValue;
                     logDetail.UsedMillSeconds = Convert.ToInt64((logDetail.ResponseTime - logDetail.RequestTime).TotalMilliseconds);
