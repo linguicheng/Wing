@@ -1,0 +1,5 @@
+
+User-agent:*
+Disallow:
+
+Sitemap: https://linguicheng.gitee.io/wing/sitemap.xml
