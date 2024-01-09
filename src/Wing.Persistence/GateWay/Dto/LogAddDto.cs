@@ -1,4 +1,5 @@
-﻿using Wing.EventBus;
+﻿using System.Collections.Concurrent;
+using Wing.EventBus;
 using Wing.Persistence.Gateway;
 
 namespace Wing.Persistence.GateWay
@@ -7,6 +8,6 @@ namespace Wing.Persistence.GateWay
     {
         public Log Log { get; set; }
 
-        public List<LogDetail> LogDetails { get; set; }
+        public ConcurrentBag<LogDetail> LogDetails { get; set; }
     }
 }

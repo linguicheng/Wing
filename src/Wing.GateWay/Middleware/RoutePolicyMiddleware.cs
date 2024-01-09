@@ -1,34 +1,24 @@
-﻿using System.Net;
+﻿using System.Collections.Concurrent;
+using System.Net;
 using Microsoft.AspNetCore.Http.Extensions;
-using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.Exceptions;
 using Wing.Persistence.Gateway;
 using Wing.Persistence.GateWay;
-using Wing.ServiceProvider;
 
 namespace Wing.Gateway.Middleware
 {
     public class RoutePolicyMiddleware
     {
         private readonly ServiceRequestDelegate _next;
-        private readonly IHttpClientFactory _clientFactory;
-        private readonly IServiceFactory _serviceFactory;
-        private readonly ILogger<RoutePolicyMiddleware> _logger;
         private readonly ILogProvider _logProvider;
         private readonly IJson _json;
 
         public RoutePolicyMiddleware(ServiceRequestDelegate next,
-            IHttpClientFactory clientFactory,
-            IServiceFactory serviceFactory,
-            ILogger<RoutePolicyMiddleware> logger,
             ILogProvider logProvider,
             IJson json)
         {
             _next = next;
-            _clientFactory = clientFactory;
-            _serviceFactory = serviceFactory;
-            _logger = logger;
             _logProvider = logProvider;
             _json = json;
         }
@@ -86,48 +76,50 @@ namespace Wing.Gateway.Middleware
                     RequestUrl = request.GetDisplayUrl(),
                     GateWayServerIp = App.CurrentServiceUrl
                 },
-                LogDetails = []
+                LogDetails = new ConcurrentBag<LogDetail>()
             };
 
-            foreach (var downstreamService in serviceContext.DownstreamServices)
-            {
-                var logDetail = new LogDetail
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    Policy = downstreamService.Policy == null ? string.Empty : _json.Serialize(downstreamService.Policy),
-                    Key = downstreamService.Downstream.Key,
-                    LogId = logDto.Log.Id,
-                    RequestMethod = downstreamService.Downstream.Method,
-                    RequestTime = DateTime.Now,
-                    RequestUrl = downstreamService.Downstream.Url,
-                    ServiceName = downstreamService.Downstream.ServiceName
-                };
-                try
-                {
-                    await InvokeDownstreamService(serviceContext, downstreamService);
-                    logDetail.StatusCode = serviceContext.StatusCode;
-                    logDetail.ResponseTime = DateTime.Now;
-                    logDetail.ResponseValue = serviceContext.ResponseValue;
-                    logDetail.UsedMillSeconds = Convert.ToInt64((logDetail.ResponseTime - logDetail.RequestTime).TotalMilliseconds);
-                    logDetail.ServiceAddress = serviceContext.ServiceAddress;
-                    var content = "\"" + logDetail.Key + "\":" + serviceContext.ResponseValue + ",";
-                    result += content;
-                }
-                catch (ServiceNotFoundException ex)
-                {
-                    logDetail.StatusCode = (int)HttpStatusCode.NotFound;
-                    logDetail.Exception = $"{ex.Message} {ex.StackTrace}";
-                }
-                catch (Exception ex)
-                {
-                    logDetail.StatusCode = (int)HttpStatusCode.BadGateway;
-                    logDetail.Exception = $"{ex.Message} {ex.StackTrace}";
-                }
-                finally
-                {
-                    logDto.LogDetails.Add(logDetail);
-                }
-            }
+            await Parallel.ForEachAsync(serviceContext.DownstreamServices, async (downstreamService, ct) =>
+             {
+                 var logDetail = new LogDetail
+                 {
+                     Id = Guid.NewGuid().ToString(),
+                     Policy = downstreamService.Policy == null ? string.Empty : _json.Serialize(downstreamService.Policy),
+                     Key = downstreamService.Downstream.Key,
+                     LogId = logDto.Log.Id,
+                     RequestMethod = downstreamService.Downstream.Method,
+                     RequestTime = DateTime.Now,
+                     RequestUrl = downstreamService.Downstream.Url,
+                     ServiceName = downstreamService.Downstream.ServiceName
+                 };
+                 try
+                 {
+                     var serviceContextCopy = new ServiceContext(serviceContext.HttpContext);
+                     await InvokeDownstreamService(serviceContextCopy, downstreamService);
+                     serviceContext.RequestValue = serviceContextCopy.RequestValue;
+                     logDetail.StatusCode = serviceContextCopy.StatusCode;
+                     logDetail.ResponseTime = DateTime.Now;
+                     logDetail.ResponseValue = serviceContextCopy.ResponseValue;
+                     logDetail.UsedMillSeconds = Convert.ToInt64((logDetail.ResponseTime - logDetail.RequestTime).TotalMilliseconds);
+                     logDetail.ServiceAddress = serviceContextCopy.ServiceAddress;
+                     var content = "\"" + logDetail.Key + "\":" + serviceContextCopy.ResponseValue + ",";
+                     result += content;
+                 }
+                 catch (ServiceNotFoundException ex)
+                 {
+                     logDetail.StatusCode = (int)HttpStatusCode.NotFound;
+                     logDetail.Exception = $"{ex.Message} {ex.StackTrace}";
+                 }
+                 catch (Exception ex)
+                 {
+                     logDetail.StatusCode = (int)HttpStatusCode.BadGateway;
+                     logDetail.Exception = $"{ex.Message} {ex.StackTrace}";
+                 }
+                 finally
+                 {
+                     logDto.LogDetails.Add(logDetail);
+                 }
+             });
 
             result = result.TrimEnd(',');
             result += "}";

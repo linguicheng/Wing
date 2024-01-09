@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using System.Xml.Serialization;
 using Microsoft.Extensions.Configuration;
 
 namespace Wing.Converter
@@ -35,15 +36,30 @@ namespace Wing.Converter
 
         public static byte[] ObjectToBytes(object obj)
         {
-           return JsonSerializer.SerializeToUtf8Bytes(obj);
+            return JsonSerializer.SerializeToUtf8Bytes(obj);
         }
 
         public static object BytesToObject(byte[] bytes, Type type)
         {
-            using (MemoryStream ms = new (bytes))
+            using (MemoryStream ms = new(bytes))
             {
                 return JsonSerializer.Deserialize(ms, type);
             }
+        }
+
+        public static T DeepCopy<T>(T obj)
+        {
+            object result;
+            using (MemoryStream ms = new())
+            {
+                XmlSerializer xml = new(typeof(T));
+                xml.Serialize(ms, obj);
+                ms.Seek(0, SeekOrigin.Begin);
+                result = xml.Deserialize(ms);
+                ms.Close();
+            }
+
+            return (T)result;
         }
     }
 }

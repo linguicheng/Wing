@@ -23,7 +23,7 @@ namespace Wing.Persistence.Gateway
 
             if (logDto.LogDetails != null && logDto.LogDetails.Count > 0)
             {
-                result = await _fsql.Insert(logDto.LogDetails).ExecuteAffrowsAsync();
+                result = await _fsql.Insert(logDto.LogDetails.ToList()).ExecuteAffrowsAsync();
             }
 
             return result;
