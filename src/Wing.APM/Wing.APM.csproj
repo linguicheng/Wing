@@ -8,20 +8,30 @@
 	</PropertyGroup>
 	<Import Project="..\..\build\common.props" />
 	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.59.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-	<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
-  </ItemGroup>
-	
-  <ItemGroup>
-    <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
-    <ProjectReference Include="..\Wing\Wing.csproj" />
-  </ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Grpc.AspNetCore.Server" Version="2.57.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Grpc.AspNetCore.Server" Version="2.59.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
+		<ProjectReference Include="..\Wing\Wing.csproj" />
+	</ItemGroup>
 
 </Project>

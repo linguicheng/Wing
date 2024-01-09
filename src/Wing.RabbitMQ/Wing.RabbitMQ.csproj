@@ -6,19 +6,23 @@
 		<Description>Wing微服务框架-消息总线</Description>
 		<PackageTags>Wing;Wing.RabbitMQ;微服务;消息总线</PackageTags>
 	</PropertyGroup>
-  <Import Project="..\..\build\common.props" />
+	<Import Project="..\..\build\common.props" />
 	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="RabbitMQ.Client" Version="6.7.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="RabbitMQ.Client" Version="6.7.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Wing\Wing.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Wing\Wing.csproj" />
+	</ItemGroup>
 
 </Project>

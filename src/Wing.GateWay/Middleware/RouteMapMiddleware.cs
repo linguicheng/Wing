@@ -129,7 +129,7 @@ namespace Wing.Gateway.Middleware
         private void GetRoutePolicy(ServiceContext serviceContext)
         {
             var config = _configuration.GetSection("Gateway:Policy").Get<PolicyConfig>();
-            serviceContext.DownstreamServices = [];
+            serviceContext.DownstreamServices = new();
             if (config != null)
             {
                 if (config.Policies != null && config.Policies.Count > 0)

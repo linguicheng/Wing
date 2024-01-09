@@ -6,30 +6,34 @@
 		<Description>Wing微服务框架-UI</Description>
 		<PackageTags>Wing;Wing.UI;微服务;</PackageTags>
 	</PropertyGroup>
-  <Import Project="..\..\build\common.props" />
+	<Import Project="..\..\build\common.props" />
 	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-  <ItemGroup>
-    <Compile Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
-    <Compile Remove="wwwroot\node_modules\**" />
-    <Compile Remove="wwwroot\public\**" />
-    <Compile Remove="wwwroot\src\**" />
-    <Compile Remove="wwwroot\tests\**" />
-    <EmbeddedResource Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
-    <EmbeddedResource Remove="wwwroot\node_modules\**" />
-    <EmbeddedResource Remove="wwwroot\public\**" />
-    <EmbeddedResource Remove="wwwroot\src\**" />
-    <EmbeddedResource Remove="wwwroot\tests\**" />
-    <None Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
-    <None Remove="wwwroot\node_modules\**" />
-    <None Remove="wwwroot\public\**" />
-    <None Remove="wwwroot\src\**" />
-    <None Remove="wwwroot\tests\**" />
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
+		<Compile Remove="wwwroot\node_modules\**" />
+		<Compile Remove="wwwroot\public\**" />
+		<Compile Remove="wwwroot\src\**" />
+		<Compile Remove="wwwroot\tests\**" />
+		<EmbeddedResource Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
+		<EmbeddedResource Remove="wwwroot\node_modules\**" />
+		<EmbeddedResource Remove="wwwroot\public\**" />
+		<EmbeddedResource Remove="wwwroot\src\**" />
+		<EmbeddedResource Remove="wwwroot\tests\**" />
+		<None Remove="wwwroot\dist\image\theme\tomorrow-night-blue\**" />
+		<None Remove="wwwroot\node_modules\**" />
+		<None Remove="wwwroot\public\**" />
+		<None Remove="wwwroot\src\**" />
+		<None Remove="wwwroot\tests\**" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="wwwroot\.browserslistrc" />
@@ -42,7 +46,8 @@
 		<None Remove="wwwroot\.postcssrc.js" />
 		<None Remove="wwwroot\babel.config.js" />
 		<None Remove="wwwroot\d2-admin.babel" />
-		<None Remove="wwwroot\dependencies-cdn.js" />		<None Remove="wwwroot\dist\css\app.634fb024.css" />
+		<None Remove="wwwroot\dependencies-cdn.js" />
+		<None Remove="wwwroot\dist\css\app.634fb024.css" />
 		<None Remove="wwwroot\dist\css\app.634fb024.css.gz" />
 		<None Remove="wwwroot\dist\css\app.e8b298b4.css" />
 		<None Remove="wwwroot\dist\css\app.e8b298b4.css.gz" />
@@ -112,7 +117,9 @@
 		<None Remove="wwwroot\dist\image\theme\violet\logo\icon-only.png" />
 		<None Remove="wwwroot\dist\image\theme\violet\preview%402x.png" />
 		<None Remove="wwwroot\dist\img\darkblue%402x.6dc8e790.png" />
-		<None Remove="wwwroot\dist\img\login-code.10fef840.png" />		<None Remove="wwwroot\dist\img\logo%402x.26d9a408.png" />		<None Remove="wwwroot\dist\img\logo%402x.47df8ae2.png" />
+		<None Remove="wwwroot\dist\img\login-code.10fef840.png" />
+		<None Remove="wwwroot\dist\img\logo%402x.26d9a408.png" />
+		<None Remove="wwwroot\dist\img\logo%402x.47df8ae2.png" />
 		<None Remove="wwwroot\dist\img\logo%402x111.05fe4930.png" />
 		<None Remove="wwwroot\dist\img\qq.89eb5e1a.svg" />
 		<None Remove="wwwroot\dist\img\qr%402x.c0f04adb.png" />
@@ -271,7 +278,7 @@
 		<EmbeddedResource Include="wwwroot\dist\css\app.e8b298b4.css.gz" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-021e5078.b8e0bbf8.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-20005747.6ce34d49.css">
-		  <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
 		</EmbeddedResource>
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-27938a61.726ea031.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-293b217d.d39edb96.css" />
@@ -320,7 +327,8 @@
 		<EmbeddedResource Include="wwwroot\dist\image\theme\violet\logo\all.png" />
 		<EmbeddedResource Include="wwwroot\dist\image\theme\violet\logo\icon-only.png" />
 		<EmbeddedResource Include="wwwroot\dist\image\theme\violet\preview@2x.png" />
-		<EmbeddedResource Include="wwwroot\dist\img\login-code.10fef840.png" />		<EmbeddedResource Include="wwwroot\dist\img\logo@2x.47df8ae2.png" />
+		<EmbeddedResource Include="wwwroot\dist\img\login-code.10fef840.png" />
+		<EmbeddedResource Include="wwwroot\dist\img\logo@2x.47df8ae2.png" />
 		<EmbeddedResource Include="wwwroot\dist\index.html" />
 		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js.gz" />
@@ -359,7 +367,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-    <ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
-  </ItemGroup>
+		<ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
+	</ItemGroup>
 
 </Project>

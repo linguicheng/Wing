@@ -8,13 +8,17 @@
 	</PropertyGroup>
 	<Import Project="..\..\build\noStyleCopCommon.props" />
 	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Wing\Wing.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Wing\Wing.csproj" />
+	</ItemGroup>
 
 </Project>

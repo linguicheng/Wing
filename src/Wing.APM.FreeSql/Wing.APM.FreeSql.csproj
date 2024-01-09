@@ -6,15 +6,19 @@
 		<Description>Wing微服务框架-支持FreeSql ORM框架链路追踪</Description>
 		<PackageTags>Wing;Wing.APM.FreeSql;APM;FreeSql;微服务</PackageTags>
 	</PropertyGroup>
-  <Import Project="..\..\build\common.props" />
+	<Import Project="..\..\build\common.props" />
 	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 		<None Include="..\..\LICENSE">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Wing.APM\Wing.APM.csproj" />
+	</ItemGroup>
 
 </Project>
