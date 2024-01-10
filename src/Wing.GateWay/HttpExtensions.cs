@@ -2,11 +2,14 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Wing.Gateway.Config;
 
 namespace Wing.Gateway
 {
     public static class HttpExtensions
     {
+        public static readonly HeadersTransform HEADERS_TRANSFORM = App.GetConfig<HeadersTransform>("Gateway:HeadersTransform");
+
         public static async Task<ServiceContext> Request(this HttpRequest req, ServiceContext serviceContext)
         {
             string method = serviceContext.Method;
@@ -27,14 +30,7 @@ namespace Wing.Gateway
                 foreach (var header in req.Headers)
                 {
                     var key = header.Key.ToLower();
-                    if (key == "accept"
-                        || key == "connection"
-                        || key == "user-agent"
-                        || key == "content-type"
-                        || key == "content-length"
-                        || key == "origin"
-                        || key == "accept-encoding"
-                        || key == "host")
+                    if (Tag.DO_NOT_TRANSFORM_HEADERS.Any(x => x == key))
                     {
                         continue;
                     }
