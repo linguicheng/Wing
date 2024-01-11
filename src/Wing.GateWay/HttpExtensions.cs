@@ -39,6 +39,40 @@ namespace Wing.Gateway
                 }
             }
 
+            List<Header> transformHeaders = [];
+            if (HEADERS_TRANSFORM != null && HEADERS_TRANSFORM.Request != null)
+            {
+                if (HEADERS_TRANSFORM.Request.Services != null)
+                {
+                    var downstreamService = HEADERS_TRANSFORM.Request.Services.Where(x => x.ServiceName == serviceContext.ServiceName).FirstOrDefault();
+                    if (downstreamService != null
+                        && downstreamService.Headers != null
+                        && downstreamService.Headers.Count > 0)
+                    {
+                        transformHeaders.AddRange(downstreamService.Headers);
+                    }
+                }
+
+                if (HEADERS_TRANSFORM.Request.Global != null && HEADERS_TRANSFORM.Request.Global.Count > 0)
+                {
+                    foreach (var header in HEADERS_TRANSFORM.Request.Global)
+                    {
+                        if (!transformHeaders.Any(x => x.Name == header.Name))
+                        {
+                            transformHeaders.Add(header);
+                        }
+                    }
+                }
+
+                if (transformHeaders.Count > 0)
+                {
+                    foreach (var header in transformHeaders)
+                    {
+                        client.DefaultRequestHeaders.Where(x=>x.Key)
+                    }
+                }
+            }
+
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
