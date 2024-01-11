@@ -39,9 +39,10 @@ namespace Wing.Gateway
                 }
             }
 
-            List<Header> transformHeaders = [];
+            #region 配置请求头转发到下游服务
             if (HEADERS_TRANSFORM != null && HEADERS_TRANSFORM.Request != null)
             {
+                Dictionary<string, string> transformHeaders = new();
                 if (HEADERS_TRANSFORM.Request.Services != null)
                 {
                     var downstreamService = HEADERS_TRANSFORM.Request.Services.Where(x => x.ServiceName == serviceContext.ServiceName).FirstOrDefault();
@@ -49,7 +50,7 @@ namespace Wing.Gateway
                         && downstreamService.Headers != null
                         && downstreamService.Headers.Count > 0)
                     {
-                        transformHeaders.AddRange(downstreamService.Headers);
+                        transformHeaders = downstreamService.Headers;
                     }
                 }
 
@@ -57,9 +58,9 @@ namespace Wing.Gateway
                 {
                     foreach (var header in HEADERS_TRANSFORM.Request.Global)
                     {
-                        if (!transformHeaders.Any(x => x.Name == header.Name))
+                        if (!transformHeaders.ContainsKey(header.Key))
                         {
-                            transformHeaders.Add(header);
+                            transformHeaders.Add(header.Key, header.Value);
                         }
                     }
                 }
@@ -68,10 +69,16 @@ namespace Wing.Gateway
                 {
                     foreach (var header in transformHeaders)
                     {
-                        client.DefaultRequestHeaders.Where(x=>x.Key)
+                        if (client.DefaultRequestHeaders.Any(x => x.Key == header.Key))
+                        {
+                            client.DefaultRequestHeaders.Remove(header.Key);
+                        }
+
+                        client.DefaultRequestHeaders.Add(header.Key, header.Value);
                     }
                 }
             }
+            #endregion
 
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
@@ -103,6 +110,46 @@ namespace Wing.Gateway
         public static async Task Response(this HttpResponse response, ServiceContext serviceContext)
         {
             response.StatusCode = serviceContext.StatusCode;
+            #region 配置响应头返回客户端
+            if (HEADERS_TRANSFORM != null && HEADERS_TRANSFORM.Response != null)
+            {
+                Dictionary<string, string> transformHeaders = new();
+                if (HEADERS_TRANSFORM.Response.Services != null)
+                {
+                    var downstreamService = HEADERS_TRANSFORM.Response.Services.Where(x => x.ServiceName == serviceContext.ServiceName).FirstOrDefault();
+                    if (downstreamService != null
+                        && downstreamService.Headers != null
+                        && downstreamService.Headers.Count > 0)
+                    {
+                        transformHeaders = downstreamService.Headers;
+                    }
+                }
+
+                if (HEADERS_TRANSFORM.Response.Global != null && HEADERS_TRANSFORM.Response.Global.Count > 0)
+                {
+                    foreach (var header in HEADERS_TRANSFORM.Response.Global)
+                    {
+                        if (!transformHeaders.ContainsKey(header.Key))
+                        {
+                            transformHeaders.Add(header.Key, header.Value);
+                        }
+                    }
+                }
+
+                if (transformHeaders.Count > 0)
+                {
+                    foreach (var header in transformHeaders)
+                    {
+                        if (response.Headers.Any(x => x.Key == header.Key))
+                        {
+                            response.Headers.Remove(header.Key);
+                        }
+
+                        response.Headers.Add(header.Key, header.Value);
+                    }
+                }
+            }
+            #endregion
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
                 response.ContentType = "text/plain; charset=utf-8";

@@ -20,15 +20,18 @@ namespace Sample.AspNetCoreService2.Controllers
 
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IAuth _auth;
-        public WeatherForecastController(IHttpClientFactory httpClientFactory, IAuth auth)
+        private readonly IHttpContextAccessor _contextAccessor;
+        public WeatherForecastController(IHttpClientFactory httpClientFactory, IAuth auth, IHttpContextAccessor context)
         {
             _httpClientFactory = httpClientFactory;
             _auth = auth;
+            _contextAccessor = context;
         }
 
         [HttpGet("{name}")]
         public IEnumerable<WeatherForecast> Get(string name)
         {
+            var headers = _contextAccessor.HttpContext.Request.Headers;
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
             {

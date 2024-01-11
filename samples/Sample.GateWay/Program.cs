@@ -6,7 +6,6 @@ builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddWing()
                     .AddJwt()
-                    .AddPersistence()
                     .AddGateWay(new WebSocketOptions
                     {
                         KeepAliveInterval = TimeSpan.FromMinutes(2)
