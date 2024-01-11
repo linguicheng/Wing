@@ -90,12 +90,13 @@ namespace Wing.Gateway
             }
 
             var content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
+            var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
             HttpResponseMessage response = method switch
             {
-                "get" => await client.GetAsync(serviceContext.DownstreamPath),
-                "post" => await client.PostAsync(serviceContext.DownstreamPath, content),
-                "put" => await client.PutAsync(serviceContext.DownstreamPath, content),
-                "delete" => await client.DeleteAsync(serviceContext.DownstreamPath),
+                "get" => await client.GetAsync(requestUri),
+                "post" => await client.PostAsync(requestUri, content),
+                "put" => await client.PutAsync(requestUri, content),
+                "delete" => await client.DeleteAsync(requestUri),
                 _ => throw new Exception($"网关不支持该请求方式：{method} 的转发！"),
             };
             serviceContext.StatusCode = (int)response.StatusCode;
