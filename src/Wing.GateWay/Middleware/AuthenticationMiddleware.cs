@@ -24,6 +24,7 @@ namespace Wing.Gateway.Middleware
         {
             string authKey;
             bool useJWTAuth;
+
             if (serviceContext.Route == null)
             {
                 if (serviceContext.Policy is null)
@@ -77,6 +78,32 @@ namespace Wing.Gateway.Middleware
                 }
 
                 _logger.LogInformation($"请求路由：{context.Request.Path}，JWT权限认证通过");
+
+                if (serviceContext.Authorization != null)
+                {
+                    var downStreamUrl = new List<string>();
+                    if (serviceContext.Route == null)
+                    {
+                        downStreamUrl.Add(serviceContext.DownstreamPath);
+                    }
+                    else
+                    {
+                        foreach (var item in serviceContext.DownstreamServices)
+                        {
+                            downStreamUrl.Add(item.Downstream.Url);
+                        }
+                    }
+
+                    var authResult = await serviceContext.Authorization.Invoke(downStreamUrl, serviceContext.HttpContext);
+                    if (!authResult)
+                    {
+                        _logger.LogInformation($"请求路由：{context.Request.Path}，JWT策略鉴权不通过");
+                        await Forbidden(serviceContext);
+                        return;
+                    }
+
+                    _logger.LogInformation($"请求路由：{context.Request.Path}，JWT策略鉴权通过");
+                }
             }
 
             await _next(serviceContext);
@@ -97,6 +124,25 @@ namespace Wing.Gateway.Middleware
             }
 
             serviceContext.StatusCode = (int)HttpStatusCode.Unauthorized;
+            context.Response.StatusCode = serviceContext.StatusCode;
+            await _logProvider.Add(serviceContext);
+        }
+
+        private async Task Forbidden(ServiceContext serviceContext)
+        {
+            var context = serviceContext.HttpContext;
+            if (serviceContext.IsWebSocket)
+            {
+                WebSocketCloseStatus status = WebSocketCloseStatus.PolicyViolation;
+                serviceContext.StatusCode = (int)status;
+                serviceContext.Exception = "权限认证不通过";
+                await _logProvider.Add(serviceContext);
+                using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
+                await webSocket.CloseAsync(status, null, CancellationToken.None);
+                return;
+            }
+
+            serviceContext.StatusCode = (int)HttpStatusCode.Forbidden;
             context.Response.StatusCode = serviceContext.StatusCode;
             await _logProvider.Add(serviceContext);
         }

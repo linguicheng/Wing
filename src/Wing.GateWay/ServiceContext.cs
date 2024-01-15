@@ -51,6 +51,8 @@ namespace Wing.Gateway
         /// 聚合服务
         /// </summary>
         public List<DownstreamService> DownstreamServices { get; set; }
+
+        public Func<IEnumerable<string>, HttpContext, Task<bool>> Authorization { get; set; }
     }
 
     public class DownstreamService
