@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Wing.Gateway.Config;
 using Wing.Gateway.Middleware;
 
 namespace Wing.Gateway
 {
     internal class WingStartupFilter
     {
-        public Action<IApplicationBuilder> Configure(Func<IEnumerable<string>, HttpContext, Task<bool>> authorization, WebSocketOptions webSocketOptions)
+        public Action<IApplicationBuilder> Configure(Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization, WebSocketOptions webSocketOptions)
         {
             return app =>
             {

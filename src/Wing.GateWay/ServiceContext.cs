@@ -52,7 +52,7 @@ namespace Wing.Gateway
         /// </summary>
         public List<DownstreamService> DownstreamServices { get; set; }
 
-        public Func<IEnumerable<string>, HttpContext, Task<bool>> Authorization { get; set; }
+        public Func<IEnumerable<Downstream>, HttpContext, Task<bool>> Authorization { get; set; }
     }
 
     public class DownstreamService

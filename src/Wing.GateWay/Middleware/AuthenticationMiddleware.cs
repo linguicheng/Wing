@@ -2,6 +2,7 @@
 using System.Net.WebSockets;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
+using Wing.Gateway.Config;
 
 namespace Wing.Gateway.Middleware
 {
@@ -81,28 +82,38 @@ namespace Wing.Gateway.Middleware
 
                 if (serviceContext.Authorization != null)
                 {
-                    var downStreamUrl = new List<string>();
+                    var downStreams = new List<Downstream>();
                     if (serviceContext.Route == null)
                     {
-                        downStreamUrl.Add(serviceContext.DownstreamPath);
+                        downStreams.Add(new Downstream
+                        {
+                            ServiceName = serviceContext.ServiceName,
+                            Url = serviceContext.DownstreamPath,
+                            Method = serviceContext.HttpContext.Request.Method
+                        });
                     }
                     else
                     {
                         foreach (var item in serviceContext.DownstreamServices)
                         {
-                            downStreamUrl.Add(item.Downstream.Url);
+                            downStreams.Add(new Downstream
+                            {
+                                ServiceName = item.Downstream.ServiceName,
+                                Url = item.Downstream.Url,
+                                Method = item.Downstream.Method
+                            });
                         }
                     }
 
-                    var authResult = await serviceContext.Authorization.Invoke(downStreamUrl, serviceContext.HttpContext);
+                    var authResult = await serviceContext.Authorization.Invoke(downStreams, serviceContext.HttpContext);
                     if (!authResult)
                     {
-                        _logger.LogInformation($"请求路由：{context.Request.Path}，JWT策略鉴权不通过");
+                        _logger.LogInformation($"请求路由：{context.Request.Path}，JWT授权不通过");
                         await Forbidden(serviceContext);
                         return;
                     }
 
-                    _logger.LogInformation($"请求路由：{context.Request.Path}，JWT策略鉴权通过");
+                    _logger.LogInformation($"请求路由：{context.Request.Path}，JWT授权通过");
                 }
             }
 
@@ -135,7 +146,7 @@ namespace Wing.Gateway.Middleware
             {
                 WebSocketCloseStatus status = WebSocketCloseStatus.PolicyViolation;
                 serviceContext.StatusCode = (int)status;
-                serviceContext.Exception = "权限认证不通过";
+                serviceContext.Exception = "授权不通过";
                 await _logProvider.Add(serviceContext);
                 using var webSocket = await context.WebSockets.AcceptWebSocketAsync();
                 await webSocket.CloseAsync(status, null, CancellationToken.None);
