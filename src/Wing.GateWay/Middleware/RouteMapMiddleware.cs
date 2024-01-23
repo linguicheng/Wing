@@ -27,24 +27,32 @@ namespace Wing.Gateway.Middleware
             }
 
             var routes = _configuration.GetSection("Gateway:Routes").Get<List<Route>>();
-            foreach (var route in routes)
+            if (routes != null)
             {
-                var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
-                if (paths.Length == keys.Length)
+                foreach (var route in routes)
                 {
-                    var count = UrlTemplateMatch(keys, paths, (key, path) =>
+                    if (route.Upstream == null)
                     {
-                        serviceContext.TemplateParameterName = key;
-                        serviceContext.TemplateParameterValue = path;
-                    });
+                        continue;
+                    }
 
-                    if (count == keys.Length
-                        && route.Downstreams != null
-                        && route.Downstreams.Count > 0)
+                    var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                    if (paths.Length == keys.Length)
                     {
-                        serviceContext.Route = route;
-                        serviceContext.UpstreamPath = fullPath;
-                        break;
+                        var count = UrlTemplateMatch(keys, paths, (key, path) =>
+                        {
+                            serviceContext.TemplateParameterName = key;
+                            serviceContext.TemplateParameterValue = path;
+                        });
+
+                        if (count == keys.Length
+                            && route.Downstreams != null
+                            && route.Downstreams.Count > 0)
+                        {
+                            serviceContext.Route = route;
+                            serviceContext.UpstreamPath = fullPath;
+                            break;
+                        }
                     }
                 }
             }
