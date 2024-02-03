@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Wing.Gateway.Config;
 using Wing.Gateway.Middleware;
 
 namespace Wing.Gateway
 {
     internal class WingStartupFilter
     {
-        public Action<IApplicationBuilder> Configure(WebSocketOptions webSocketOptions = null)
+        public Action<IApplicationBuilder> Configure(Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization, WebSocketOptions webSocketOptions)
         {
             return app =>
             {
@@ -31,6 +32,7 @@ namespace Wing.Gateway
                 async Task Middleware(HttpContext context, Func<Task> next)
                 {
                     var serviceContext = new ServiceContext(context);
+                    serviceContext.Authorization = authorization;
                     await firstDelegate.Invoke(serviceContext);
                 }
 

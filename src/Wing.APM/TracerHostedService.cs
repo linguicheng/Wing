@@ -65,10 +65,6 @@ namespace Wing.APM
                           return;
                       }
 
-                      // Http请求
-                      var toListenerUrls = App.GetConfig<List<string>>("Apm:ToListenerUrl");
-                      var doNotListenerUrls = App.GetConfig<List<string>>("Apm:DoNotListenerUrl");
-
                       // 执行Sql
                       var toListenerSqls = App.GetConfig<List<string>>("Apm:ToListenerSql");
                       var doNotListenerSqls = App.GetConfig<List<string>>("Apm:DoNotListenerSql");
@@ -79,80 +75,12 @@ namespace Wing.APM
                               var tracer = item.Value;
                               if (tracer.Tracer != null)
                               {
-                                  if (toListenerUrls != null && toListenerUrls.Count > 0)
-                                  {
-                                      foreach (var url in toListenerUrls)
-                                      {
-                                          if (tracer.Tracer != null && tracer.Tracer.RequestUrl.Contains(url))
-                                          {
-                                              _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                              break;
-                                          }
-                                      }
-
-                                      continue;
-                                  }
-
-                                  if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
-                                  {
-                                      var isAdd = true;
-                                      foreach (var url in doNotListenerUrls)
-                                      {
-                                          if (tracer.Tracer.RequestUrl.Contains(url))
-                                          {
-                                              isAdd = false;
-                                              break;
-                                          }
-                                      }
-
-                                      if (isAdd)
-                                      {
-                                          _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                      }
-
-                                      continue;
-                                  }
-
                                   _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
                                   continue;
                               }
 
                               if (tracer.HttpTracer != null)
                               {
-                                  if (toListenerUrls != null && toListenerUrls.Count > 0)
-                                  {
-                                      foreach (var url in toListenerUrls)
-                                      {
-                                          if (tracer.HttpTracer != null && tracer.HttpTracer.RequestUrl.Contains(url))
-                                          {
-                                              _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                              break;
-                                          }
-                                      }
-
-                                      continue;
-                                  }
-
-                                  if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
-                                  {
-                                      var isAdd = true;
-                                      foreach (var url in doNotListenerUrls)
-                                      {
-                                          if (tracer.HttpTracer.RequestUrl.Contains(url))
-                                          {
-                                              isAdd = false;
-                                              break;
-                                          }
-                                      }
-
-                                      if (isAdd)
-                                      {
-                                          _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                      }
-
-                                      continue;
-                                  }
-
                                   _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
                                   continue;
                               }

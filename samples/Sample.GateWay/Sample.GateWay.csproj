@@ -4,11 +4,11 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>disable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-	</PropertyGroup>
+	  <UserSecretsId>d78b6513-035c-4b27-9888-fa2b1e8e904d</UserSecretsId>
+  </PropertyGroup>
 
   <ItemGroup>
 	<ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
-	<ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.GateWay\Wing.Gateway.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />

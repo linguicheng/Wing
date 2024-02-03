@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -34,14 +35,15 @@ namespace Wing.Consul
                      {
                          _services = _discoveryServiceProvider.Get().ConfigureAwait(false).GetAwaiter().GetResult();
                      }
-                     catch
+                     catch (Exception ex)
                      {
+                         App.GetRequiredService<ILogger<IntervalConsulProvider>>().LogCritical(ex, "获取Consul服务信息异常");
                      }
 
                      _wait = false;
                  }
 
-             }, null, 0, interval);
+             }, null, 5, interval);
         }
 
         public async Task<bool> Deregister(string serviceId)

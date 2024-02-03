@@ -24,19 +24,45 @@ namespace Wing.APM
                 return;
             }
 
+            var toListenerUrls = App.GetConfig<List<string>>("Apm:ToListenerUrl");
+            if (toListenerUrls != null && toListenerUrls.Count > 0)
+            {
+                foreach (var url in toListenerUrls)
+                {
+                    if (path.Contains(url))
+                    {
+                        await Invoke(context);
+                        return;
+                    }
+                }
+            }
+
+            var doNotListenerUrls = App.GetConfig<List<string>>("Apm:DoNotListenerUrl");
+
+            if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
+            {
+                foreach (var url in doNotListenerUrls)
+                {
+                    if (path.Contains(url))
+                    {
+                        await _next(context);
+                        return;
+                    }
+                }
+            }
+
+            await Invoke(context);
+        }
+
+        private async Task Invoke(HttpContext context)
+        {
             if ((context.Request.ContentType?.Contains("application/grpc")).GetValueOrDefault())
             {
                 await GrpcInvoke(context);
                 return;
             }
 
-            if (!path.Contains("."))
-            {
-                await HttpInvoke(context);
-                return;
-            }
-
-            await _next(context);
+            await HttpInvoke(context);
         }
 
         private Task GrpcInvoke(HttpContext context)
