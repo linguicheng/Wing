@@ -7,6 +7,6 @@ namespace Wing.Saga.Server
         /// <summary>
         /// 设置请求头
         /// </summary>
-        public Dictionary<string, string> Headers { get; set; }
+        public Func<Dictionary<string, string>> Headers { get; set; }
     }
 }
