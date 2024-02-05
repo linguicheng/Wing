@@ -16,7 +16,7 @@ namespace Wing.Saga.Server
 {
     public class TranRetryHostedService : BackgroundService
     {
-        private static readonly object _lock = new ();
+        private static readonly object _lock = new();
         private readonly ILogger<TranRetryHostedService> _logger;
         private readonly IServiceFactory _serviceFactory;
         private readonly IHttpClientFactory _httpClientFactory;
@@ -311,14 +311,20 @@ namespace Wing.Saga.Server
         private Metadata SetHeaders()
         {
             if (_sagaOptions == null
-                || _sagaOptions.Headers == null
-                || !_sagaOptions.Headers.Any())
+                || _sagaOptions.Headers == null)
+            {
+                return null;
+            }
+
+            var headers = _sagaOptions.Headers();
+
+            if (headers == null || !headers.Any())
             {
                 return null;
             }
 
             var metadata = new Metadata();
-            foreach (var item in _sagaOptions.Headers)
+            foreach (var item in headers)
             {
                 metadata.Add(item.Key, item.Value);
             }
@@ -326,18 +332,24 @@ namespace Wing.Saga.Server
             return metadata;
         }
 
-        private void SetHeaders(HttpRequestHeaders headers)
+        private void SetHeaders(HttpRequestHeaders httpHeaders)
         {
             if (_sagaOptions == null
-                || _sagaOptions.Headers == null
-                || !_sagaOptions.Headers.Any())
+                || _sagaOptions.Headers == null)
             {
                 return;
             }
 
-            foreach (var item in _sagaOptions.Headers)
+            var headers = _sagaOptions.Headers();
+
+            if (headers == null || !headers.Any())
             {
-                headers.Add(item.Key, item.Value);
+                return;
+            }
+
+            foreach (var item in headers)
+            {
+                httpHeaders.Add(item.Key, item.Value);
             }
         }
     }
