@@ -173,7 +173,7 @@ namespace Wing.Persistence
                 eb.Property(x => x.Dept).HasColumnType("NVARCHAR2(50)");
                 eb.Property(x => x.Station).HasColumnType("NVARCHAR2(50)");
                 eb.Property(x => x.Phone).HasColumnType("VARCHAR2(50)");
-                eb.Property(x => x.Remark).HasColumnType("NCLOB");
+                eb.Property(x => x.Remark).HasColumnType("NVARCHAR2(1000)");
             });
             #endregion
             return fsql;

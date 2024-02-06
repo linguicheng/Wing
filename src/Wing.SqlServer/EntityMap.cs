@@ -155,6 +155,27 @@ namespace Wing.Persistence
                 eb.Property(x => x.ServiceName).HasColumnType("nvarchar(200)");
             });
             #endregion
+
+            #region User entity config
+            fsql.CodeFirst.Entity<Wing.Persistence.User.User>(eb =>
+            {
+                eb.ToTable("Sys_User");
+                eb.HasIndex(x => x.UserName).HasName("IX_User_UserName");
+                eb.HasIndex(x => x.UserAccount).HasName("IX_User_UserAccount");
+                eb.Property(x => x.Id).HasColumnType("varchar(50)");
+                eb.Property(x => x.UserName).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.UserAccount).HasColumnType("varchar(50)");
+                eb.Property(x => x.Password).HasColumnType("varchar(200)");
+                eb.Property(x => x.CreatedName).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.CreatedAccount).HasColumnType("varchar(50)");
+                eb.Property(x => x.ModifiedName).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.ModifiedAccount).HasColumnType("varchar(50)");
+                eb.Property(x => x.Dept).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.Station).HasColumnType("nvarchar(50)");
+                eb.Property(x => x.Phone).HasColumnType("varchar(50)");
+                eb.Property(x => x.Remark).HasColumnType("nvarchar(1000)");
+            });
+            #endregion
             return fsql;
         }
     }

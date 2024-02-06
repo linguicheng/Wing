@@ -173,7 +173,7 @@ namespace Wing.Persistence
                 eb.Property(x => x.Dept).HasColumnType("varchar(50)");
                 eb.Property(x => x.Station).HasColumnType("varchar(50)");
                 eb.Property(x => x.Phone).HasColumnType("varchar(50)");
-                eb.Property(x => x.Remark).HasColumnType("text");
+                eb.Property(x => x.Remark).HasColumnType("varchar(1000)");
             });
             #endregion
             return fsql;

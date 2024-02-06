@@ -17,16 +17,26 @@ namespace Wing.Persistence.User
            return _fsql.Insert(user).ExecuteAffrowsAsync();
         }
 
+        public Task<int> Update(User user)
+        {
+            return _fsql.Update<User>(user).ExecuteAffrowsAsync();
+        }
+
+        public Task<int> Delete(string id)
+        {
+            return _fsql.Delete<User>(id).ExecuteAffrowsAsync();
+        }
+
         public async Task<PageResult<List<UserDto>>> List(PageModel<UserSearchDto> dto)
         {
             var result = await _fsql.Select<User>()
                     .WhereIf(!string.IsNullOrWhiteSpace(dto.Data.UserName), u => u.UserName.Contains(dto.Data.UserName))
                     .WhereIf(!string.IsNullOrWhiteSpace(dto.Data.UserAccount), u => u.UserAccount.Contains(dto.Data.UserAccount))
-                    .OrderByDescending(x => x.RequestTime)
+                    .OrderByDescending(x => x.CreationTime)
                     .Count(out var total)
                     .Page(dto.PageIndex, dto.PageSize)
-                    .ToListAsync();
-            return new PageResult<List<Log>>
+                    .ToListAsync<UserDto>();
+            return new PageResult<List<UserDto>>
             {
                 TotalCount = total,
                 Items = result
