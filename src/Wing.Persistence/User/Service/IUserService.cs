@@ -7,6 +7,10 @@ namespace Wing.Persistence.User
     {
         Task<int> Add(User user);
 
+        Task<int> Update(User user);
+
+        Task<int> Delete(string id);
+
         Task<PageResult<List<UserDto>>> List(PageModel<UserSearchDto> dto);
     }
 }
