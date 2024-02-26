@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Wing.Gateway.Config;
@@ -89,7 +90,49 @@ namespace Wing.Gateway
                 }
             }
 
-            var content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
+            HttpContent content = null;
+            switch (req.ContentType)
+            {
+                case "application/json":
+                    content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
+                    break;
+                case "multipart/form-data":
+                    MultipartFormDataContent multipartForm = new MultipartFormDataContent();
+                    if (req.Form.Files != null)
+                    {
+                        foreach (var file in req.Form.Files)
+                        {
+                            var streamContent = new StreamContent(file.OpenReadStream());
+                            streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
+                            {
+                                Name = file.Name,
+                                FileName = file.FileName
+                            };
+                            streamContent.Headers.Add("ContentType", req.Headers["Content-Type"].ToString());
+                            multipartForm.Add(streamContent);
+                        }
+                    }
+
+                    foreach (var form in req.Form)
+                    {
+                        multipartForm.Add(new StringContent(form.Value), form.Key);
+                    }
+
+                    content = multipartForm;
+                    break;
+                case "application/x-www-form-urlencoded":
+                    var formDic = new Dictionary<string, string>();
+                    foreach (var form in req.Form)
+                    {
+                        formDic.Add(form.Key, form.Value);
+                    }
+
+                    content = new FormUrlEncodedContent(formDic);
+                    break;
+                default:
+                    throw new Exception($"网关不支持该请求类型：{req.ContentType} 的转发！");
+            }
+
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
             HttpResponseMessage response = method switch
             {
