@@ -37,7 +37,16 @@ namespace Wing.Consul
                      }
                      catch (Exception ex)
                      {
-                         App.GetRequiredService<ILogger<IntervalConsulProvider>>().LogCritical(ex, "获取Consul服务信息异常");
+                         if (App.ServiceProvider == null)
+                         {
+                             throw;
+                         }
+                         var logger= App.GetService<ILogger<IntervalConsulProvider>>();
+                         if (logger == null)
+                         {
+                             throw;
+                         }
+                         logger.LogCritical(ex, "获取Consul服务信息异常");
                      }
 
                      _wait = false;
