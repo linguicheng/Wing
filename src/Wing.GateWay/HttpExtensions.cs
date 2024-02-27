@@ -86,12 +86,12 @@ namespace Wing.Gateway
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
-                using MemoryStream ms = new MemoryStream();
+                using MemoryStream ms = new();
                 await req.Body.CopyToAsync(ms);
                 byte[] data = ms.ToArray();
                 content = new ByteArrayContent(data);
                 content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
-                serviceContext.RequestValue = System.Text.Encoding.UTF8.GetString(data);
+                serviceContext.RequestValue = Encoding.UTF8.GetString(data);
             }
 
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
