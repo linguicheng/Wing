@@ -81,56 +81,16 @@ namespace Wing.Gateway
             }
             #endregion
 
+            ByteArrayContent content = null;
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
-                using (var reader = new StreamReader(req.Body))
-                {
-                    serviceContext.RequestValue = await reader.ReadToEndAsync();
-                }
-            }
-
-            HttpContent content = null;
-            switch (req.ContentType)
-            {
-                case "application/json":
-                    content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
-                    break;
-                case "multipart/form-data":
-                    MultipartFormDataContent multipartForm = new MultipartFormDataContent();
-                    if (req.Form.Files != null)
-                    {
-                        foreach (var file in req.Form.Files)
-                        {
-                            var streamContent = new StreamContent(file.OpenReadStream());
-                            streamContent.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data")
-                            {
-                                Name = file.Name,
-                                FileName = file.FileName
-                            };
-                            streamContent.Headers.Add("ContentType", req.Headers["Content-Type"].ToString());
-                            multipartForm.Add(streamContent);
-                        }
-                    }
-
-                    foreach (var form in req.Form)
-                    {
-                        multipartForm.Add(new StringContent(form.Value), form.Key);
-                    }
-
-                    content = multipartForm;
-                    break;
-                case "application/x-www-form-urlencoded":
-                    var formDic = new Dictionary<string, string>();
-                    foreach (var form in req.Form)
-                    {
-                        formDic.Add(form.Key, form.Value);
-                    }
-
-                    content = new FormUrlEncodedContent(formDic);
-                    break;
-                default:
-                    throw new Exception($"网关不支持该请求类型：{req.ContentType} 的转发！");
+                using MemoryStream ms = new MemoryStream();
+                await req.Body.CopyToAsync(ms);
+                byte[] data = ms.ToArray();
+                content = new ByteArrayContent(data);
+                content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
+                serviceContext.RequestValue = BitConverter.ToString(data);
             }
 
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
