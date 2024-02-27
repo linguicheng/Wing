@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Text;
@@ -90,7 +91,7 @@ namespace Wing.Gateway
                 byte[] data = ms.ToArray();
                 content = new ByteArrayContent(data);
                 content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
-                serviceContext.RequestValue = BitConverter.ToString(data);
+                serviceContext.RequestValue = System.Text.Encoding.UTF8.GetString(data);
             }
 
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
