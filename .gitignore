@@ -345,3 +345,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/samples/Sample.GateWay/.config
+/samples/Sample.AspNetCoreService2/.config

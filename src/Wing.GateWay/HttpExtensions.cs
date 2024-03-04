@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
-using System.Net.Mime;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Wing.Gateway.Config;
@@ -95,14 +93,11 @@ namespace Wing.Gateway
             }
 
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
-            HttpResponseMessage response = method switch
+            var request = new HttpRequestMessage(new HttpMethod(method), requestUri)
             {
-                "get" => await client.GetAsync(requestUri),
-                "post" => await client.PostAsync(requestUri, content),
-                "put" => await client.PutAsync(requestUri, content),
-                "delete" => await client.DeleteAsync(requestUri),
-                _ => throw new Exception($"网关不支持该请求方式：{method} 的转发！"),
+                Content = content
             };
+            var response = await client.SendAsync(request);
             serviceContext.StatusCode = (int)response.StatusCode;
             if (response.StatusCode == HttpStatusCode.OK)
             {
