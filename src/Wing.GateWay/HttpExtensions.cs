@@ -80,25 +80,24 @@ namespace Wing.Gateway
             }
             #endregion
 
+            ByteArrayContent content = null;
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
-                using (var reader = new StreamReader(req.Body))
-                {
-                    serviceContext.RequestValue = await reader.ReadToEndAsync();
-                }
+                using MemoryStream ms = new();
+                await req.Body.CopyToAsync(ms);
+                byte[] data = ms.ToArray();
+                content = new ByteArrayContent(data);
+                content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
+                serviceContext.RequestValue = Encoding.UTF8.GetString(data);
             }
 
-            var content = new StringContent(serviceContext.RequestValue, Encoding.UTF8, "application/json");
             var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
-            HttpResponseMessage response = method switch
+            var request = new HttpRequestMessage(new HttpMethod(method), requestUri)
             {
-                "get" => await client.GetAsync(requestUri),
-                "post" => await client.PostAsync(requestUri, content),
-                "put" => await client.PutAsync(requestUri, content),
-                "delete" => await client.DeleteAsync(requestUri),
-                _ => throw new Exception($"网关不支持该请求方式：{method} 的转发！"),
+                Content = content
             };
+            var response = await client.SendAsync(request);
             serviceContext.StatusCode = (int)response.StatusCode;
             if (response.StatusCode == HttpStatusCode.OK)
             {
