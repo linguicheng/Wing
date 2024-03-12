@@ -97,6 +97,7 @@ namespace Wing.Gateway.Middleware
                      var serviceContextCopy = new ServiceContext(serviceContext.HttpContext);
                      await InvokeDownstreamService(serviceContextCopy, downstreamService);
                      serviceContext.RequestValue = serviceContextCopy.RequestValue;
+                     serviceContext.ContentType = serviceContextCopy.ContentType;
                      logDetail.StatusCode = serviceContextCopy.StatusCode;
                      logDetail.ResponseTime = DateTime.Now;
                      logDetail.ResponseValue = serviceContextCopy.ResponseValue;
