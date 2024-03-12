@@ -101,6 +101,7 @@ namespace Wing.Gateway
             serviceContext.StatusCode = (int)response.StatusCode;
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
                 serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
             }
 
@@ -152,7 +153,7 @@ namespace Wing.Gateway
             #endregion
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
-                response.ContentType = "text/plain; charset=utf-8";
+                response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
                 await response.WriteAsync(serviceContext.ResponseValue);
             }
         }

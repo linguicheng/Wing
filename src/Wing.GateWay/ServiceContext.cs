@@ -47,6 +47,8 @@ namespace Wing.Gateway
 
         public bool IsReadRequestBody { get; set; } = false;
 
+        public string ContentType { get; set; }
+
         /// <summary>
         /// 聚合服务
         /// </summary>
