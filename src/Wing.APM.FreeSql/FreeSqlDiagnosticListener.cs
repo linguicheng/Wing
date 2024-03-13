@@ -84,6 +84,11 @@ namespace Wing.APM.FreeSql
                 return;
             }
 
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
+                return;
+            }
+
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             tracerDto.SqlTracerDetails ??= new ConcurrentDictionary<string, SqlTracerDetail>();
             tracerDto.SqlTracerDetails.TryAdd(id, new SqlTracerDetail
@@ -116,6 +121,11 @@ namespace Wing.APM.FreeSql
                 sqlTracer.UsedMillSeconds = data.ElapsedMilliseconds;
                 sqlTracer.Sql = ApmTools.SqlFormat(data.Sql, data.DbParms);
                 tracerDto.IsStop = true;
+                return;
+            }
+
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
                 return;
             }
 
@@ -158,6 +168,11 @@ namespace Wing.APM.FreeSql
                 return;
             }
 
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
+                return;
+            }
+
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             tracerDto.SqlTracerDetails ??= new ConcurrentDictionary<string, SqlTracerDetail>();
             tracerDto.SqlTracerDetails.TryAdd(id, new SqlTracerDetail
@@ -190,6 +205,11 @@ namespace Wing.APM.FreeSql
                 sqlTracer.UsedMillSeconds = data.ElapsedMilliseconds;
                 sqlTracer.Sql = data.Sql;
                 tracerDto.IsStop = true;
+                return;
+            }
+
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
                 return;
             }
 

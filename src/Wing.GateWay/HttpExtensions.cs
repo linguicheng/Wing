@@ -21,10 +21,18 @@ namespace Wing.Gateway
             method = method.ToLower();
 
             var httpClientFactory = App.GetRequiredService<IHttpClientFactory>();
+            var aa = req.Headers.Accept;
             var client = httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(serviceContext.ServiceAddress);
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("text/plain"));
+            if (!string.IsNullOrWhiteSpace(req.Headers.Accept))
+            {
+                foreach (var accept in req.Headers.Accept)
+                {
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+                }
+            }
+
             if (req.Headers != null && req.Headers.Count > 0)
             {
                 foreach (var header in req.Headers)

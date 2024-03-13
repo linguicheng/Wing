@@ -79,6 +79,11 @@ namespace Wing.APM.SqlSugar
                 return;
             }
 
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
+                return;
+            }
+
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             tracerDto.SqlTracerDetails ??= new ConcurrentDictionary<string, SqlTracerDetail>();
             tracerDto.SqlTracerDetails.TryAdd(id, new SqlTracerDetail
@@ -107,6 +112,11 @@ namespace Wing.APM.SqlSugar
                 return;
             }
 
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
+                return;
+            }
+
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
             var traceDetail = tracerDto.SqlTracerDetails[id];
             traceDetail.EndTime = data.EndTime;
@@ -125,6 +135,11 @@ namespace Wing.APM.SqlSugar
                 var sqlTracer = tracerDto.SqlTracer;
                 sqlTracer.Exception = data.Exception.ToString();
                 tracerDto.IsStop = true;
+                return;
+            }
+
+            if (!context.Items.ContainsKey(ApmTools.TraceId))
+            {
                 return;
             }
 
