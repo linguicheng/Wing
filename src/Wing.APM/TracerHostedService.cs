@@ -43,104 +43,176 @@ namespace Wing.APM
             var persistenceSeconds = App.Configuration["Apm:PersistenceSeconds"];
             var seconds = string.IsNullOrWhiteSpace(persistenceSeconds) ? 3 : Convert.ToDouble(persistenceSeconds);
             _timer = new Timer(x =>
-              {
-                  lock (_lock)
-                  {
-                      if (_wait)
-                      {
-                          return;
-                      }
+            {
+                lock (_lock)
+                {
+                    if (_wait)
+                    {
+                        return;
+                    }
 
-                      _wait = true;
-                      var tracers = ListenerTracer.Data.Where(x => !x.Value.IsStop && (DateTime.Now - x.Value.BeginTime).TotalHours > 12).ToList();
-                      if (tracers != null && tracers.Any())
-                      {
-                          ListenerTracer.Remove(tracers);
-                      }
+                    _wait = true;
+                    var tracers = ListenerTracer.Data.Where(x => !x.Value.IsStop && (DateTime.Now - x.Value.BeginTime).TotalHours > 12).ToList();
+                    if (tracers != null && tracers.Any())
+                    {
+                        ListenerTracer.Remove(tracers);
+                    }
 
-                      tracers = ListenerTracer.Data.Where(x => x.Value.IsStop).ToList();
-                      if (tracers == null || !tracers.Any())
-                      {
-                          _wait = false;
-                          return;
-                      }
+                    tracers = ListenerTracer.Data.Where(x => x.Value.IsStop).ToList();
+                    if (tracers == null || !tracers.Any())
+                    {
+                        _wait = false;
+                        return;
+                    }
 
-                      // 执行Sql
-                      var toListenerSqls = App.GetConfig<List<string>>("Apm:ToListenerSql");
-                      var doNotListenerSqls = App.GetConfig<List<string>>("Apm:DoNotListenerSql");
-                      try
-                      {
-                          foreach (var item in tracers)
-                          {
-                              var tracer = item.Value;
-                              if (tracer.Tracer != null)
-                              {
-                                  _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                  continue;
-                              }
+                    // Http请求
+                    var toListenerUrls = App.GetConfig<List<string>>("Apm:ToListenerUrl");
+                    var doNotListenerUrls = App.GetConfig<List<string>>("Apm:DoNotListenerUrl");
 
-                              if (tracer.HttpTracer != null)
-                              {
-                                  _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                  continue;
-                              }
+                    // 执行Sql
+                    var toListenerSqls = App.GetConfig<List<string>>("Apm:ToListenerSql");
+                    var doNotListenerSqls = App.GetConfig<List<string>>("Apm:DoNotListenerSql");
+                    try
+                    {
+                        foreach (var item in tracers)
+                        {
+                            var tracer = item.Value;
+                            if (tracer.Tracer != null)
+                            {
+                                if (toListenerUrls != null && toListenerUrls.Count > 0)
+                                {
+                                    foreach (var url in toListenerUrls)
+                                    {
+                                        if (tracer.Tracer != null && tracer.Tracer.RequestUrl.Contains(url))
+                                        {
+                                            _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                            break;
+                                        }
+                                    }
 
-                              if (tracer.SqlTracer != null)
-                              {
-                                  if (string.IsNullOrWhiteSpace(tracer.SqlTracer.Sql) && tracer.SqlTracer.Action == ApmTools.Sql_Action_SyncStructure)
-                                  {
-                                      continue;
-                                  }
+                                    continue;
+                                }
 
-                                  if (toListenerSqls != null && toListenerSqls.Count > 0)
-                                  {
-                                      foreach (var sql in toListenerSqls)
-                                      {
-                                          if (tracer.SqlTracer != null && tracer.SqlTracer.Sql != null && tracer.SqlTracer.Sql.Contains(sql))
-                                          {
-                                              _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                              break;
-                                          }
-                                      }
+                                if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
+                                {
+                                    var isAdd = true;
+                                    foreach (var url in doNotListenerUrls)
+                                    {
+                                        if (tracer.Tracer.RequestUrl.Contains(url))
+                                        {
+                                            isAdd = false;
+                                            break;
+                                        }
+                                    }
 
-                                      continue;
-                                  }
+                                    if (isAdd)
+                                    {
+                                        _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                    }
 
-                                  if (doNotListenerSqls != null && doNotListenerSqls.Count > 0)
-                                  {
-                                      var isAdd = true;
-                                      foreach (var sql in doNotListenerSqls)
-                                      {
-                                          if (tracer.SqlTracer.Sql != null && tracer.SqlTracer.Sql.Contains(sql))
-                                          {
-                                              isAdd = false;
-                                          }
-                                      }
+                                    continue;
+                                }
 
-                                      if (isAdd)
-                                      {
-                                          _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                                      }
+                                _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                continue;
+                            }
 
-                                      continue;
-                                  }
+                            if (tracer.HttpTracer != null)
+                            {
+                                if (toListenerUrls != null && toListenerUrls.Count > 0)
+                                {
+                                    foreach (var url in toListenerUrls)
+                                    {
+                                        if (tracer.HttpTracer != null && tracer.HttpTracer.RequestUrl.Contains(url))
+                                        {
+                                            _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                            break;
+                                        }
+                                    }
 
-                                  _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
-                              }
-                          }
+                                    continue;
+                                }
 
-                          ListenerTracer.Remove(tracers);
-                      }
-                      catch (Exception ex)
-                      {
-                          _logger.LogError(ex, "Wing.APM链路跟踪平台持久化异常");
-                      }
-                      finally
-                      {
-                          _wait = false;
-                      }
-                  }
-              }, null, TimeSpan.FromSeconds(seconds), TimeSpan.FromSeconds(seconds));
+                                if (doNotListenerUrls != null && doNotListenerUrls.Count > 0)
+                                {
+                                    var isAdd = true;
+                                    foreach (var url in doNotListenerUrls)
+                                    {
+                                        if (tracer.HttpTracer.RequestUrl.Contains(url))
+                                        {
+                                            isAdd = false;
+                                            break;
+                                        }
+                                    }
+
+                                    if (isAdd)
+                                    {
+                                        _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                    }
+
+                                    continue;
+                                }
+
+                                _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                continue;
+                            }
+
+                            if (tracer.SqlTracer != null)
+                            {
+                                if (string.IsNullOrWhiteSpace(tracer.SqlTracer.Sql) && tracer.SqlTracer.Action == ApmTools.Sql_Action_SyncStructure)
+                                {
+                                    continue;
+                                }
+
+                                if (toListenerSqls != null && toListenerSqls.Count > 0)
+                                {
+                                    foreach (var sql in toListenerSqls)
+                                    {
+                                        if (tracer.SqlTracer != null && tracer.SqlTracer.Sql != null && tracer.SqlTracer.Sql.Contains(sql))
+                                        {
+                                            _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                            break;
+                                        }
+                                    }
+
+                                    continue;
+                                }
+
+                                if (doNotListenerSqls != null && doNotListenerSqls.Count > 0)
+                                {
+                                    var isAdd = true;
+                                    foreach (var sql in doNotListenerSqls)
+                                    {
+                                        if (tracer.SqlTracer.Sql != null && tracer.SqlTracer.Sql.Contains(sql))
+                                        {
+                                            isAdd = false;
+                                        }
+                                    }
+
+                                    if (isAdd)
+                                    {
+                                        _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                                    }
+
+                                    continue;
+                                }
+
+                                _tracerService.Add(tracer).ConfigureAwait(false).GetAwaiter().GetResult();
+                            }
+                        }
+
+                        ListenerTracer.Remove(tracers);
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogError(ex, "Wing.APM链路跟踪平台持久化异常");
+                    }
+                    finally
+                    {
+                        _wait = false;
+                    }
+                }
+            }, null, TimeSpan.FromSeconds(seconds), TimeSpan.FromSeconds(seconds));
             return Task.CompletedTask;
         }
     }
