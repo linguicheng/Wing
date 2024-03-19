@@ -48,8 +48,10 @@ namespace Wing.Consul
                          }
                          logger.LogCritical(ex, "获取Consul服务信息异常");
                      }
-
-                     _wait = false;
+                     finally
+                     {
+                         _wait = false;
+                     }
                  }
 
              }, null, 5, interval);
