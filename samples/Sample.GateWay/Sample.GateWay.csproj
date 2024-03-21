@@ -7,6 +7,10 @@
 	  <UserSecretsId>d78b6513-035c-4b27-9888-fa2b1e8e904d</UserSecretsId>
   </PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+	</ItemGroup>
+
   <ItemGroup>
 	<ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />

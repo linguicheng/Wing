@@ -10,7 +10,7 @@ namespace Wing
 {
     public static class WingBuilderExtensions
     {
-        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder, Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization = null, WebSocketOptions webSocketOptions = null)
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder, Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization = null, WebSocketOptions webSocketOptions = null, Action<IApplicationBuilder> app = null)
         {
             wingBuilder.Services.AddScoped<ILogProvider, LogProvider>();
             if (DataProvider.LogConfig != null
@@ -18,6 +18,11 @@ namespace Wing
                 && !DataProvider.LogConfig.UseEventBus)
             {
                 wingBuilder.Services.AddSingleton<IHostedService, LogHostedService>();
+            }
+
+            if (app != null)
+            {
+                wingBuilder.AppBuilder += app;
             }
 
             wingBuilder.AppBuilder += new WingStartupFilter().Configure(authorization, webSocketOptions);
