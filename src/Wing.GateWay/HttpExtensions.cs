@@ -27,9 +27,16 @@ namespace Wing.Gateway
             client.DefaultRequestHeaders.Accept.Clear();
             if (!string.IsNullOrWhiteSpace(req.Headers.Accept))
             {
-                foreach (var accept in req.Headers.Accept)
+                foreach (var accepts in req.Headers.Accept)
                 {
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+                    var accptArr = accepts.Split(';', ',', '|');
+                    foreach (var accept in accptArr)
+                    {
+                        if (MediaTypeWithQualityHeaderValue.TryParse(accept, out var parsedValue))
+                        {
+                            client.DefaultRequestHeaders.Accept.Add(parsedValue);
+                        }
+                    }
                 }
             }
 
