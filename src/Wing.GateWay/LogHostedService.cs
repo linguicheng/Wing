@@ -53,22 +53,25 @@ namespace Wing.Gateway
                     _wait = true;
                     if (!DataProvider.Data.IsEmpty)
                     {
-                        if (DataProvider.Data.TryDequeue(out var logDto))
+                        for (var i = 0; i < DataProvider.Data.Count; i++)
                         {
-                            try
+                            if (DataProvider.Data.TryDequeue(out var logDto))
                             {
-                                _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                                try
+                                {
+                                    _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                                }
                             }
                         }
                     }
 
                     _wait = false;
                 }
-            }, null, TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.1));
+            }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             return Task.CompletedTask;
         }
     }
