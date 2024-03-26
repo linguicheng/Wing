@@ -1,13 +1,14 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wing.Converter;
+using Wing.Gateway.Config;
 using Wing.Persistence.Gateway;
 
 namespace Wing.Gateway
 {
     public class LogHostedService : BackgroundService
     {
-        private static readonly object _lock = new object();
+        private static readonly object _lock = new();
         private readonly ILogger<LogHostedService> _logger;
         private readonly ILogService _logService;
         private readonly IJson _json;
@@ -51,24 +52,69 @@ namespace Wing.Gateway
                     }
 
                     _wait = true;
+                    var logConfig = App.GetConfig<LogConfig>("Gateway:Log");
                     if (!DataProvider.Data.IsEmpty)
                     {
-                        if (DataProvider.Data.TryDequeue(out var logDto))
+                        for (var i = 0; i < DataProvider.Data.Count; i++)
                         {
-                            try
+                            if (DataProvider.Data.TryDequeue(out var logDto))
                             {
-                                _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
-                            }
-                            catch (Exception ex)
-                            {
-                                _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                                try
+                                {
+                                    if (logConfig != null)
+                                    {
+                                        if (!logConfig.IsEnabled)
+                                        {
+                                            DataProvider.Data.Clear();
+                                            return;
+                                        }
+
+                                        var filter = logConfig.Filter;
+                                        if (filter != null)
+                                        {
+                                            if (filter.ServiceName != null && filter.ServiceName.Count > 0)
+                                            {
+                                                if (filter.ServiceName.Exists(x => x == logDto.Log.ServiceName))
+                                                {
+                                                    continue;
+                                                }
+                                            }
+
+                                            if (filter.RequestUrl != null && filter.RequestUrl.Count > 0)
+                                            {
+                                                if (filter.RequestUrl.Exists(x => logDto.Log.RequestUrl.Contains(x)))
+                                                {
+                                                    continue;
+                                                }
+                                            }
+
+                                            if (filter.DownstreamUrl != null && filter.DownstreamUrl.Count > 0)
+                                            {
+                                                if (filter.DownstreamUrl.Exists(x => logDto.Log.DownstreamUrl.Contains(x)))
+                                                {
+                                                    continue;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
+                                }
+                                catch (Exception ex)
+                                {
+                                    _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
+                                }
+                                finally
+                                {
+                                    _wait = false;
+                                }
                             }
                         }
                     }
 
                     _wait = false;
                 }
-            }, null, TimeSpan.FromSeconds(0.1), TimeSpan.FromSeconds(0.1));
+            }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
             return Task.CompletedTask;
         }
     }
