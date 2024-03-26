@@ -78,6 +78,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.WebSocket", "samples
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Wing.Sqlite", "src\Wing.Sqlite\Wing.Sqlite.csproj", "{0EEE818E-B9BF-4089-A4AE-1F0D413E630D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{38A115DC-B291-448F-983F-E08A156CEF7A}"
+	ProjectSection(SolutionItems) = preProject
+		build\common.props = build\common.props
+		build\noStyleCopCommon.props = build\noStyleCopCommon.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
