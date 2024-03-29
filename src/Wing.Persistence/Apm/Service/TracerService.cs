@@ -15,6 +15,12 @@ namespace Wing.Persistence.Apm
 
         public async Task Add(TracerDto tracerDto)
         {
+            var exists = await Any(tracerDto.Tracer.Id);
+            if (exists)
+            {
+                return;
+            }
+
             using var uow = _fsql.CreateUnitOfWork();
             await uow.Orm.Insert(tracerDto.Tracer).ExecuteAffrowsAsync();
             await uow.Orm.Insert(tracerDto.HttpTracer).ExecuteAffrowsAsync();
