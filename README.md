@@ -6,13 +6,3 @@
 文档地址：https://linguicheng.gitee.io/wing
 
 `Wing`技术交流群：`183015352`
-
-
-
-### 捐赠
-
-如果你觉得好用，就请我喝一杯咖啡！
-
-<div><img src="samples/%E6%8D%90%E8%B5%A0/wechat.jpg" width = "400" height = "500" align=center /></div>
-
-<div><img src="samples/%E6%8D%90%E8%B5%A0/alipay.jpg" width = "400" height = "550" align=center /></div>
