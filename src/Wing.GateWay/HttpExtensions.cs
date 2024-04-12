@@ -117,7 +117,15 @@ namespace Wing.Gateway
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
-                serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
+                if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
+                {
+                    serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
+                    serviceContext.IsFile = false;
+                    return serviceContext;
+                }
+
+                serviceContext.ResponseStream = await response.Content.ReadAsStreamAsync();
+                serviceContext.IsFile = true;
             }
 
             return serviceContext;
@@ -169,6 +177,12 @@ namespace Wing.Gateway
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
                 response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
+                if (serviceContext.IsFile)
+                {
+                    response.Body = serviceContext.ResponseStream;
+                    return;
+                }
+
                 await response.WriteAsync(serviceContext.ResponseValue);
             }
         }

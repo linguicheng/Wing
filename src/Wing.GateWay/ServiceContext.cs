@@ -41,6 +41,10 @@ namespace Wing.Gateway
 
         public string ResponseValue { get; set; }
 
+        public Stream ResponseStream { get; set; }
+
+        public bool IsFile { get; set; }
+
         public bool IsWebSocket { get; set; } = false;
 
         public string Exception { get; set; }

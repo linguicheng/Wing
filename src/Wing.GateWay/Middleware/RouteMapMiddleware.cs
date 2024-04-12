@@ -49,6 +49,13 @@ namespace Wing.Gateway.Middleware
                             && route.Downstreams != null
                             && route.Downstreams.Count > 0)
                         {
+                            route.Downstreams.ForEach(x =>
+                            {
+                                if (x.ServiceName.StartsWith("{") && x.ServiceName.EndsWith("}"))
+                                {
+                                    x.ServiceName = paths[0];
+                                }
+                            });
                             serviceContext.Route = route;
                             serviceContext.UpstreamPath = fullPath;
                             break;
@@ -218,7 +225,11 @@ namespace Wing.Gateway.Middleware
             int count = 0;
             for (var i = 0; i < keys.Length; i++)
             {
-                if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
+                if (keys[i].Contains(Tag.WILDCARD))
+                { 
+                    //通配符
+                }
+                else if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
                 {
                     count++;
                     action?.Invoke(keys[i], paths[i]);
