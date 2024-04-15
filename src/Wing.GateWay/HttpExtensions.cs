@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -26,6 +25,8 @@ namespace Wing.Gateway
             var client = httpClientFactory.CreateClient();
             client.BaseAddress = new Uri(serviceContext.ServiceAddress);
             client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Add("X-Real-IP", Tools.RemoteIp);
+            client.DefaultRequestHeaders.Add("X-Forwarded-For", Tools.RemoteIp);
             if (!string.IsNullOrWhiteSpace(req.Headers.Accept))
             {
                 foreach (var accepts in req.Headers.Accept)
