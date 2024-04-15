@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.IO;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
@@ -42,10 +43,17 @@ namespace Wing.Gateway
 
             if (req.Headers != null && req.Headers.Count > 0)
             {
+                var donotTransformHeaders = App.GetConfig<List<string>>("Gateway:DoNotTransformHeaders");
+                if (donotTransformHeaders == null)
+                {
+                    donotTransformHeaders = new List<string>();
+                }
+
+                donotTransformHeaders.AddRange(Tag.DO_NOT_TRANSFORM_HEADERS);
                 foreach (var header in req.Headers)
                 {
                     var key = header.Key.ToLower();
-                    if (Tag.DO_NOT_TRANSFORM_HEADERS.Any(x => x == key))
+                    if (donotTransformHeaders.Any(x => x == key))
                     {
                         continue;
                     }
@@ -174,15 +182,23 @@ namespace Wing.Gateway
                 }
             }
             #endregion
+            if (serviceContext.IsFile)
+            {
+                response.ContentType = serviceContext.ContentType;
+                var bytes = new byte[4096];
+                int len = 0;
+                while ((len = serviceContext.ResponseStream.Read(bytes, 0, bytes.Length)) > 0)
+                {
+                    await response.Body.WriteAsync(bytes, 0, len);
+                }
+
+                serviceContext.ResponseStream?.Dispose();
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
                 response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
-                if (serviceContext.IsFile)
-                {
-                    response.Body = serviceContext.ResponseStream;
-                    return;
-                }
-
                 await response.WriteAsync(serviceContext.ResponseValue);
             }
         }

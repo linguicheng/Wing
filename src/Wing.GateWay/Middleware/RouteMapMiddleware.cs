@@ -49,13 +49,13 @@ namespace Wing.Gateway.Middleware
                             && route.Downstreams != null
                             && route.Downstreams.Count > 0)
                         {
-                            route.Downstreams.ForEach(x =>
-                            {
-                                if (x.ServiceName.StartsWith("{") && x.ServiceName.EndsWith("}"))
-                                {
-                                    x.ServiceName = paths[0];
-                                }
-                            });
+                            //route.Downstreams.ForEach(x =>
+                            //{
+                            //    if (x.ServiceName.StartsWith("{") && x.ServiceName.EndsWith("}"))
+                            //    {
+                            //        x.ServiceName = paths[0];
+                            //    }
+                            //});
                             serviceContext.Route = route;
                             serviceContext.UpstreamPath = fullPath;
                             break;
