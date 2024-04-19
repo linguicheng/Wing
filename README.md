@@ -105,3 +105,26 @@ app.Run();
 * 程序运行后，打开consul UI管理界面，可以看到注册服务`Wing.Demo_1.2`，如下图：
 
 ![输入图片说明](samples/Doc/quick-start/register.png)
+
+## 启动UI
+
+### 简介
+
+`Wing.UI`是`Wing`微服务框架中的一个可视化操作管理系统，主要功能有服务治理、配置中心、APM管理、Saga分布式事务查询。
+
+### 创建一个Web Api项目
+
+* 提前准备：安装并启动Consul、数据库支持(SqlServer、Oracle、MySql、PostgreSql、Sqlite)
+
+* 打开 Visual Studio 2022 并创建Web Api项目([点击查看完整示例代码1.3](https://gitee.com/linguicheng/wing-demo/tree/master/1.3))
+
+### 安装依赖包
+安装服务注册nuget包`Wing.Consul`，UI可视化界面管理nuget包`Wing.UI`，选择对应的数据库包，以SqlServer为例，安装`Wing.SqlServer`。
+
+```bash
+dotnet add package Wing.Consul
+
+dotnet add package Wing.UI
+
+dotnet add package Wing.SqlServer(可选Wing.MySql/Wing.Oracle/Wing.PostgreSQL)
+```
