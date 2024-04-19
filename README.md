@@ -138,3 +138,4 @@ public void ConfigureServices(IServiceCollection services)
 
 * 程序运行后，打开consul UI管理界面，可以看到注册服务`Wing.Demo_1.2`，如下图：
 
+![输入图片说明](samples/Doc/quick-start/register.png)
