@@ -33,7 +33,7 @@ dotnet add package Wing.Consul
 
 ### Program代码
 
-```
+```cs
 using Wing;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,7 +61,7 @@ app.Run();
 
 ### 添加配置
 
-```
+```json
 {
   // 是否启用配置中心，默认启用
   "ConfigCenterEnabled": false,
