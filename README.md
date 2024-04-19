@@ -204,3 +204,156 @@ app.Run();
 * 可以看到示例 [1.2](register.md) 注入的服务`Wing.Demo_1.2`
 
 ![输入图片说明](samples/Doc/quick-start/1.3-4.png)
+
+## 服务发现与调用
+
+### 什么是服务发现?
+
+`服务发现`是指服务启动后将服务注册信息定时同步刷新到本地或实时获取`Consul`的服务信息。
+
+### 创建一个Grpc Service项目
+
+* 提前准备：安装并启动Consul
+
+* 打开 Visual Studio 2022 并创建Grpc Service项目([点击查看完整示例代码1.4](https://gitee.com/linguicheng/wing-demo/tree/master/1.4))
+
+### 安装依赖包
+
+```bash
+dotnet add package Wing.Consul
+```
+
+### Grpc健康检查
+
+protobuf文件
+```protobuf
+syntax = "proto3";
+package grpc.health.v1;
+
+message HealthCheckRequest {
+	string service = 1;
+}
+
+message HealthCheckResponse {
+	enum ServingStatus {
+		UNKNOWN = 0;
+		SERVING = 1;
+		NOT_SERVING = 2;
+	}
+	ServingStatus status = 1;
+}
+
+service Health {
+	rpc Check(HealthCheckRequest) returns (HealthCheckResponse);
+
+	rpc Watch(HealthCheckRequest) returns (stream HealthCheckResponse);
+}
+```
+HealthCheck代码
+
+```cs
+public class HealthCheck : Health.HealthBase
+{
+    public override Task<HealthCheckResponse> Check(HealthCheckRequest request, ServerCallContext context)
+    {
+        return Task.FromResult(new HealthCheckResponse() { Status = HealthCheckResponse.Types.ServingStatus.Serving });
+    }
+
+    public override async Task Watch(HealthCheckRequest request, IServerStreamWriter<HealthCheckResponse> responseStream, ServerCallContext context)
+    {
+        await responseStream.WriteAsync(new HealthCheckResponse()
+        { Status = HealthCheckResponse.Types.ServingStatus.Serving });
+    }
+}
+```
+
+### Program代码
+
+```cs
+using Wing;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.AddWing(builder => builder.AddConsul());
+
+// Add services to the container.
+
+builder.Services.AddGrpc();
+
+builder.Services.AddWing();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+app.MapGrpcService<GreeterService>();
+app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+
+app.Run();
+```
+
+### 添加配置
+
+```json
+{
+  // 是否启用配置中心，默认启用
+  "ConfigCenterEnabled": false,
+  "Consul": {
+    "Url": "http://localhost:8500",
+    "Service": {
+      //Http  Grpc
+      "Option": "Grpc",
+      "HealthCheck": {
+        "Url": "localhost:1410",
+        //单位：秒
+        "Timeout": 10,
+        //单位：秒
+        "Interval": 10,
+        "GRPCUseTLS": false
+      },
+      "Name": "Wing.Demo_1.4",
+      "Host": "localhost",
+      "Port": 1410,
+      "Tag": "",
+      "LoadBalancer": {
+        //RoundRobin  WeightRoundRobin LeastConnection
+        "Option": "WeightRoundRobin",
+        //权重
+        "Weight": 4
+      },
+      "Scheme": "http",
+      "Developer": "linguicheng"
+    },
+    //定时同步数据时间间隔，单位：秒 小于等于0表示立即响应
+    "Interval": 10,
+    //数据中心
+    "DataCenter": "dc1",
+    //等待时间,单位：分钟
+    "WaitTime": 3
+  }
+}
+```
+### 查看运行效果
+
+* 运行当前程序并启动示例 [1.3](ui.md)，浏览器访问 http://localhost:1310/wing ，可以看到注入的Grpc服务`Wing.Demo_1.4`，运行效果如下图：
+
+![输入图片说明](samples/Doc/quick-start/1.4-1.png)
+
+* 在示例 [1.2](register.md) 中调用当前Grpc服务中`SayHello`方法，代码如下：
+
+```cs
+[HttpGet("hello")]
+public Task<string> SayHello()
+{
+    return _serviceFactory.InvokeAsync("Wing.Demo_1.4", async serviceAddr =>
+    {
+        var channel = GrpcChannel.ForAddress(serviceAddr.ToString());
+        var greeterClient = new Greeter.GreeterClient(channel);
+        var result = await greeterClient.SayHelloAsync(new HelloRequest { Name = "Wing" });
+        return result.Message;
+    });
+}
+```
+
+* 运行示例 [1.2](register.md)，浏览器访问 http://localhost:1210/weatherforecast/hello ，运行效果如下图：
+
+![输入图片说明](samples/Doc/quick-start/1.4-2.png)
