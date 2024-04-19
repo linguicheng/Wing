@@ -26,37 +26,14 @@ https://linguicheng.gitee.io/wing
 * 打开 Visual Studio 2022 并创建Web Api项目([点击查看完整示例代码1.2](https://gitee.com/linguicheng/wing-demo/tree/master/1.2))
 
 ### 安装依赖包
-::: code-tabs
-@tab .NET CLI
 
-```bash
+```
 dotnet add package Wing.Consul
 ```
 
-@tab Package Manager
-
-```bash
-Install-Package Wing.Consul 
-```
-:::
-
 ### Program代码
 
-::: code-tabs
-@tab .NET Core 3.1
-
-```cs{6}
-public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                }).AddWing(builder => builder.AddConsul());
 ```
-
-@tab .NET 6.0
-
-```cs{1,5,11}
 using Wing;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -81,21 +58,10 @@ app.MapControllers();
 
 app.Run();
 ```
-:::
-
-### Startup代码
-
-```cs{4}
-public void ConfigureServices(IServiceCollection services)
-{
-    services.AddControllers();
-    services.AddWing();
-}
-```
 
 ### 添加配置
 
-```json
+```
 {
   // 是否启用配置中心，默认启用
   "ConfigCenterEnabled": false,
