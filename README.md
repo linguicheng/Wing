@@ -12,3 +12,130 @@ https://linguicheng.gitee.io/wing
 
 ### 技术交流群
 `QQ`:`183015352`
+
+## 服务注册
+
+### 什么是服务注册?
+
+`服务注册`是指服务启动后将该服务的IP、端口等信息注册到`Consul`。
+
+### 创建一个Web Api项目
+
+* 提前准备：安装并启动Consul
+
+* 打开 Visual Studio 2022 并创建Web Api项目([点击查看完整示例代码1.2](https://gitee.com/linguicheng/wing-demo/tree/master/1.2))
+
+### 安装依赖包
+::: code-tabs
+@tab .NET CLI
+
+```bash
+dotnet add package Wing.Consul
+```
+
+@tab Package Manager
+
+```bash
+Install-Package Wing.Consul 
+```
+:::
+
+### Program代码
+
+::: code-tabs
+@tab .NET Core 3.1
+
+```cs{6}
+public static IHostBuilder CreateHostBuilder(string[] args) =>
+            Host.CreateDefaultBuilder(args)
+                .ConfigureWebHostDefaults(webBuilder =>
+                {
+                    webBuilder.UseStartup<Startup>();
+                }).AddWing(builder => builder.AddConsul());
+```
+
+@tab .NET 6.0
+
+```cs{1,5,11}
+using Wing;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.AddWing(builder => builder.AddConsul());
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+
+builder.Services.AddWing();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+```
+:::
+
+### Startup代码
+
+```cs{4}
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllers();
+    services.AddWing();
+}
+```
+
+### 添加配置
+
+```json
+{
+  // 是否启用配置中心，默认启用
+  "ConfigCenterEnabled": false,
+  "Consul": {
+    "Url": "http://localhost:8500",
+    "Service": {
+      //Http  Grpc
+      "Option": "Http",
+      "HealthCheck": {
+        "Url": "http://localhost:1210/health",
+        //单位：秒
+        "Timeout": 10,
+        //单位：秒
+        "Interval": 10
+      },
+      "Name": "Wing.Demo_1.2.1",
+      "Host": "localhost",
+      "Port": 1210,
+      "Tag": "",
+      "LoadBalancer": {
+        //RoundRobin  WeightRoundRobin LeastConnection
+        "Option": "WeightRoundRobin",
+        //权重
+        "Weight": 60
+      },
+      "Scheme": "http",
+      "Developer": "linguicheng"
+    },
+    //定时同步数据时间间隔，单位：秒 小于等于0表示立即响应
+    "Interval": 10,
+    //数据中心
+    "DataCenter": "dc1",
+    //等待时间,单位：分钟
+    "WaitTime": 3
+  }
+}
+```
+
+### 查看运行效果
+
+* 程序运行后，打开consul UI管理界面，可以看到注册服务`Wing.Demo_1.2`，如下图：
+
+![](./image/1.2-2.png)
