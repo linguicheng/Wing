@@ -104,7 +104,7 @@ app.Run();
 
 * 程序运行后，打开consul UI管理界面，可以看到注册服务`Wing.Demo_1.2`，如下图：
 
-![输入图片说明](samples/Doc/quick-start/register.png)
+![输入图片说明](samples/Doc/quick-start/1.2-2.png)
 
 ## 启动UI
 
@@ -119,6 +119,7 @@ app.Run();
 * 打开 Visual Studio 2022 并创建Web Api项目([点击查看完整示例代码1.3](https://gitee.com/linguicheng/wing-demo/tree/master/1.3))
 
 ### 安装依赖包
+
 安装服务注册nuget包`Wing.Consul`，UI可视化界面管理nuget包`Wing.UI`，选择对应的数据库包，以SqlServer为例，安装`Wing.SqlServer`。
 
 ```bash
@@ -128,3 +129,78 @@ dotnet add package Wing.UI
 
 dotnet add package Wing.SqlServer(可选Wing.MySql/Wing.Oracle/Wing.PostgreSQL)
 ```
+
+### Program代码
+
+```cs
+using Wing;
+
+var builder = WebApplication.CreateBuilder(args);
+
+builder.Host.AddWing(builder => builder.AddConsul());
+
+// Add services to the container.
+
+builder.Services.AddControllers();
+
+builder.Services.AddWing().AddWingUI().AddPersistence();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+```
+
+### 添加配置
+
+```json
+{
+  // 是否启用配置中心，默认启用
+  "ConfigCenterEnabled": false,
+  "Consul": {
+    "Url": "http://localhost:8500",
+    //定时同步数据时间间隔，单位：秒 小于等于0表示立即响应
+    "Interval": 10,
+    //数据中心
+    "DataCenter": "dc1",
+    //等待时间,单位：分钟
+    "WaitTime": 3
+  },
+  // 数据库链接
+  "ConnectionStrings": {
+    "Wing": "Data Source=192.168.56.96;User Id=sa;Password=wing123.;Initial Catalog=Wing;TrustServerCertificate=true;Pooling=true;Min Pool Size=1"
+  },
+  //自动同步实体结构到数据库
+  "UseAutoSyncStructure": true,
+  // 首页
+  "Home": {
+    // 指标耗时异常统计 单位：毫秒  默认60秒
+    "Timeout": {
+      "Gateway": 2000,
+      "Apm": {
+        "Http": 2000,
+        "WorkServiceHttp": 2000,
+        "WorkServiceSql": 2000
+      },
+      // 查询统计时间 默认：最近一个月
+      "SearchTime": "2020-01-01"
+    }
+  },
+}
+```
+### 查看运行效果
+
+* 程序运行后，浏览器访问 http://localhost:1310/wing ，运行效果如下图：
+
+![输入图片说明](samples/Doc/quick-start/1.3-3.png)
+
+* 可以看到示例 [1.2](register.md) 注入的服务`Wing.Demo_1.2`
+
+![输入图片说明](samples/Doc/quick-start/1.3-4.png)
