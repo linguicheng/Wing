@@ -51,8 +51,9 @@ namespace Wing
         {
             if (string.IsNullOrWhiteSpace(key))
             {
-                key = typeof(T).Name.Replace("config", "", StringComparison.OrdinalIgnoreCase);
+                key = typeof(T).Name.Replace("config", string.Empty, StringComparison.OrdinalIgnoreCase);
             }
+
             return Configuration.GetSection(key).Get<T>();
         }
     }

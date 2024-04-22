@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Wing.Converter;
 using Wing.Gateway.Config;
 using Wing.Persistence.Gateway;
+using Wing.Persistence.GateWay;
 
 namespace Wing.Gateway
 {
@@ -42,6 +43,13 @@ namespace Wing.Gateway
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var logConfig = App.GetConfig<LogConfig>("Gateway:Log:Interval");
+            int interval = 10;
+            if (logConfig.Interval != null)
+            {
+                interval = logConfig.Interval.Value;
+            }
+
             _timer = new Timer(x =>
             {
                 lock (_lock)
@@ -52,14 +60,14 @@ namespace Wing.Gateway
                     }
 
                     _wait = true;
-                    var logConfig = App.GetConfig<LogConfig>("Gateway:Log");
                     if (!DataProvider.Data.IsEmpty)
                     {
-                        for (var i = 0; i < DataProvider.Data.Count; i++)
+                        List<LogAddDto> logs = new();
+                        try
                         {
-                            if (DataProvider.Data.TryDequeue(out var logDto))
+                            for (var i = 0; i < DataProvider.Data.Count; i++)
                             {
-                                try
+                                if (DataProvider.Data.TryDequeue(out var logDto))
                                 {
                                     if (logConfig != null)
                                     {
@@ -98,23 +106,29 @@ namespace Wing.Gateway
                                         }
                                     }
 
-                                    _logService.Add(logDto).ConfigureAwait(false).GetAwaiter().GetResult();
-                                }
-                                catch (Exception ex)
-                                {
-                                    _logger.LogError(ex, "数据库保存发生异常,请求日志：{0}", _json.Serialize(logDto));
-                                }
-                                finally
-                                {
-                                    _wait = false;
+                                    logs.Add(logDto);
                                 }
                             }
+
+                            if (logs.Count > 0)
+                            {
+                                _logService.BatchInsert(logs).ConfigureAwait(false).GetAwaiter().GetResult();
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "网关日志写入发生异常,请求日志：{0}", _json.Serialize(logs));
+                        }
+                        finally
+                        {
+                            logConfig = App.GetConfig<LogConfig>("Gateway:Log");
+                            _wait = false;
                         }
                     }
 
                     _wait = false;
                 }
-            }, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(5));
+            }, null, TimeSpan.FromSeconds(interval), TimeSpan.FromSeconds(interval));
             return Task.CompletedTask;
         }
     }

@@ -6,6 +6,8 @@
 
         public bool UseEventBus { get; set; }
 
+        public int? Interval { get; set; }
+
         public Filter Filter { get; set; }
     }
 

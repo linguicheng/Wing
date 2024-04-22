@@ -17,7 +17,7 @@
         public const string WILDCARD = "{*}";
 
         public static readonly List<string> DO_NOT_TRANSFORM_HEADERS = new()
-        { "accept", "content-type" };
+        { "accept", "content-type", "content-length" };
 
         public static string ExceptionFormat(string tip, Exception exception)
         {
