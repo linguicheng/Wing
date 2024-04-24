@@ -19,10 +19,13 @@ namespace Wing.Gateway
             }
 
             method = method.ToLower();
-
             var httpClientFactory = App.GetRequiredService<IHttpClientFactory>();
-            var aa = req.Headers.Accept;
             var client = httpClientFactory.CreateClient();
+            if (serviceContext.Policy != null && serviceContext.Policy.HttpClientTimeOut != null)
+            {
+                client.Timeout = TimeSpan.FromSeconds(serviceContext.Policy.HttpClientTimeOut.Value);
+            }
+
             client.BaseAddress = new Uri(serviceContext.ServiceAddress);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("X-Real-IP", Tools.RemoteIp);

@@ -54,6 +54,11 @@ namespace Wing.Gateway
         public string ContentType { get; set; }
 
         /// <summary>
+        /// 请求超时，单位：秒
+        /// </summary>
+        public double TimeOut { get; set; }
+
+        /// <summary>
         /// 聚合服务
         /// </summary>
         public List<DownstreamService> DownstreamServices { get; set; }
