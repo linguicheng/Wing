@@ -18,7 +18,7 @@
 
         public bool? UseJWTAuth { get; set; }
 
-        public int? HttpClientTimeOut { get; set; }
+        public double? HttpClientTimeOut { get; set; }
 
         public override bool Equals(object obj)
         {

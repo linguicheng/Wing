@@ -23,7 +23,7 @@ namespace Wing.Gateway
             var client = httpClientFactory.CreateClient();
             if (serviceContext.Policy != null && serviceContext.Policy.HttpClientTimeOut != null)
             {
-                client.Timeout = TimeSpan.FromSeconds(serviceContext.Policy.HttpClientTimeOut.Value);
+                client.Timeout = TimeSpan.FromMilliseconds(serviceContext.Policy.HttpClientTimeOut.Value);
             }
 
             client.BaseAddress = new Uri(serviceContext.ServiceAddress);
