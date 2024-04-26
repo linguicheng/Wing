@@ -3,7 +3,7 @@
     <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	<Version>1.9.3</Version>
+	<Version>1.9.4</Version>
 	<Authors>linguicheng</Authors>
 	<PackageProjectUrl>https://gitee.com/linguicheng/Wing</PackageProjectUrl>
     <Copyright>https://gitee.com/linguicheng/Wing</Copyright>
