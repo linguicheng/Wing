@@ -5,7 +5,8 @@
 `Saga分布式事务`，支持三种恢复策略：向前恢复、向后恢复、先前再后。自带`配置中心`，服务配置可以在线集中统一管理。支持http/grpc/sql链路追踪`APM`及耗时分析统计。内置`服务网关`，支持全局服务策略和个性化服务策略配置。支持`RabbitMQ`事件总线，自带人性化的`Dashboard`管理界面。
 
 ### 文档地址
-https://linguicheng.gitee.io/wing
+gitee：https://linguicheng.gitee.io/wing
+github：https://linguicheng.github.io/Wing/
 
 ### 依赖
 需要用到的第三方中间件：`Consul`(强依赖)、`RabbitMQ`(弱依赖)、`数据库`(强依赖，目前支持SqlServer、Oracle、MySql、PostgreSql、Sqlite)
