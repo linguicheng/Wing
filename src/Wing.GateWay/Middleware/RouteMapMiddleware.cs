@@ -37,7 +37,11 @@ namespace Wing.Gateway.Middleware
                     }
 
                     var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
-                    if (paths.Length == keys.Length)
+                    if (keys.Any(x => x.Contains("{*}")))
+                    {
+                        
+                    }
+                    else if (paths.Length == keys.Length)
                     {
                         var count = UrlTemplateMatch(keys, paths, (key, path) =>
                         {
@@ -225,11 +229,7 @@ namespace Wing.Gateway.Middleware
             int count = 0;
             for (var i = 0; i < keys.Length; i++)
             {
-                if (keys[i].Contains(Tag.WILDCARD))
-                { 
-                    //通配符
-                }
-                else if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
+                if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
                 {
                     count++;
                     action?.Invoke(keys[i], paths[i]);
