@@ -43,7 +43,7 @@ namespace Wing.Gateway
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            var logConfig = App.GetConfig<LogConfig>("Gateway:Log:Interval");
+            var logConfig = App.GetConfig<LogConfig>("Gateway:Log");
             int interval = 10;
             if (logConfig.Interval != null)
             {
