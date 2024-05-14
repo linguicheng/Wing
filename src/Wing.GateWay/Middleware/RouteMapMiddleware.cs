@@ -39,7 +39,9 @@ namespace Wing.Gateway.Middleware
                     var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
                     if (keys.Any(x => x.Contains("{*}")))
                     {
-                        
+                        for (var i = 0; i < keys.Length; i++)
+                        {
+                        }
                     }
                     else if (paths.Length == keys.Length)
                     {
