@@ -14,8 +14,6 @@
 
         public const string BULK_HEAD_FALLBACK = $"{POLICY_TIP}，舱壁异常降级";
 
-        public const string WILDCARD = "{*}";
-
         public static readonly List<string> DO_NOT_TRANSFORM_HEADERS = new()
         { "accept", "content-type", "content-length" };
 

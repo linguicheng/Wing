@@ -37,10 +37,55 @@ namespace Wing.Gateway.Middleware
                     }
 
                     var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
-                    if (keys.Any(x => x.Contains("{*}")))
+                    if (keys[0] == "{*}" || keys[^1].StartsWith("{*}"))
                     {
-                        for (var i = 0; i < keys.Length; i++)
+                        var fixedKeys = new List<string>();
+                        if (keys[0] == "{*}")
                         {
+                            if (keys[^1].StartsWith("{*}"))
+                            {
+                                for (var i = 1; i < keys.Length - 1; i++)
+                                {
+                                    fixedKeys.Add(keys[i]);
+                                }
+
+                                if (fixedKeys.Count > 0)
+                                {
+                                    var firstFixedKey = fixedKeys.First();
+                                    var firstFixedKeyArray = fixedKeys.ToArray();
+                                    if (paths.Any(x => x == firstFixedKey))
+                                    {
+                                        for (var j = 1; j < paths.Length - 1; j++)
+                                        {
+                                            if (paths[j] == firstFixedKey)
+                                            {
+                                                var isMatch = true;
+                                                for (var k = j; k < j + fixedKeys.Count; k++)
+                                                {
+                                                    if (k >= paths.Length - 1 || paths[k] != firstFixedKeyArray[k - j])
+                                                    {
+                                                        isMatch = false;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (isMatch)
+                                                {
+                                                    // 匹配到了
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                for (var j = 1; j < keys.Length; j++)
+                                {
+
+                                }
+                            }
                         }
                     }
                     else if (paths.Length == keys.Length)
