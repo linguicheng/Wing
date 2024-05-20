@@ -42,8 +42,11 @@ namespace Wing.Gateway.Middleware
                         var fixedKeys = new List<string>();
                         if (keys[0] == "{*}")
                         {
-                            if (keys[^1].StartsWith("{*}"))
+                            var lastWildchar = keys[^1];
+                            // 开头有通配符
+                            if (lastWildchar.StartsWith("{*}"))
                             {
+                                #region 结尾有通配符
                                 for (var i = 1; i < keys.Length - 1; i++)
                                 {
                                     fixedKeys.Add(keys[i]);
@@ -71,13 +74,36 @@ namespace Wing.Gateway.Middleware
 
                                                 if (isMatch)
                                                 {
+                                                    if (lastWildchar != "{*}")
+                                                    {
+                                                        var suffix = lastWildchar.Substring(3, lastWildchar.Length - 3);
+                                                        if (!paths[paths.Length - 1].EndsWith(suffix))
+                                                        {
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    serviceContext.ServiceName = paths[0];
                                                     // 匹配到了
+                                                    for (var h = 0; h < j; h++)
+                                                    {
+                                                        serviceContext.FirstWildcardMatchPath.Add(paths[h]);
+                                                    }
+
+                                                    for (var g = j + fixedKeys.Count; g < paths.Length; g++)
+                                                    {
+                                                        serviceContext.FirstWildcardMatchPath.Add(paths[g]);
+                                                    }
+
+                                                    serviceContext.Route = route;
+                                                    serviceContext.UpstreamPath = fullPath;
                                                     break;
                                                 }
                                             }
                                         }
                                     }
                                 }
+                                #endregion
                             }
                             else
                             {

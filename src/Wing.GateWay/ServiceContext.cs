@@ -19,6 +19,10 @@ namespace Wing.Gateway
         /// </summary>
         public Route Route { get; set; }
 
+        public List<string> FirstWildcardMatchPath { get; set; }
+
+        public List<string> LastWildcardMatchPath { get; set; }
+
         public string TemplateParameterName { get; set; }
 
         public string TemplateParameterValue { get; set; }
