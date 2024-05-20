@@ -41,6 +41,10 @@ namespace Wing.Gateway
 
         public string ResponseValue { get; set; }
 
+        public Stream ResponseStream { get; set; }
+
+        public bool IsFile { get; set; }
+
         public bool IsWebSocket { get; set; } = false;
 
         public string Exception { get; set; }
@@ -48,6 +52,11 @@ namespace Wing.Gateway
         public bool IsReadRequestBody { get; set; } = false;
 
         public string ContentType { get; set; }
+
+        /// <summary>
+        /// 请求超时，单位：秒
+        /// </summary>
+        public double TimeOut { get; set; }
 
         /// <summary>
         /// 聚合服务

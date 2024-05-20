@@ -18,6 +18,8 @@
 
         public bool? UseJWTAuth { get; set; }
 
+        public double? HttpClientTimeOut { get; set; }
+
         public override bool Equals(object obj)
         {
             return base.Equals(obj);
@@ -49,7 +51,8 @@
                left.Retry == right.Retry &&
                left.BulkHead == right.BulkHead &&
                left.RateLimit == right.RateLimit &&
-               left.TimeOut == right.TimeOut;
+               left.TimeOut == right.TimeOut
+               && left.HttpClientTimeOut == right.HttpClientTimeOut;
         }
 
         public static bool operator !=(Policy left, Policy right)
@@ -68,7 +71,8 @@
                   left.Retry != right.Retry ||
                   left.BulkHead != right.BulkHead ||
                   left.RateLimit != right.RateLimit ||
-                  left.TimeOut != right.TimeOut;
+                  left.TimeOut != right.TimeOut ||
+                  left.HttpClientTimeOut != right.HttpClientTimeOut;
         }
 
         public List<Policy> MethodPolicies { get; set; }

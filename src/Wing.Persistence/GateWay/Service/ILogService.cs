@@ -6,6 +6,8 @@ namespace Wing.Persistence.Gateway
 {
     public interface ILogService
     {
+        Task<int> BatchInsert(List<LogAddDto> logDtos);
+
         Task<int> Add(LogAddDto logDto);
 
         Task<bool> Any(string id);

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Sample.Auth;
+using Wing;
 
 namespace Sample.AspNetCoreService2.Controllers
 {
@@ -79,7 +80,7 @@ namespace Sample.AspNetCoreService2.Controllers
         [HttpGet("CustomRoute/{name}")]
         public string CustomRoute(string name)
         {
-            return $"自定义路由测试：{name}";
+            return $"自定义路由测试：{name}，客户端IP:{Tools.RemoteIp}";
         }
     }
 }

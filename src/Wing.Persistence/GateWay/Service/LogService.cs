@@ -29,6 +29,28 @@ namespace Wing.Persistence.Gateway
             return result;
         }
 
+        public async Task<int> BatchInsert(List<LogAddDto> logDtos)
+        {
+            var logs = new List<Log>();
+            var logDetails = new List<LogDetail>();
+            logDtos.ForEach(x =>
+            {
+                logs.Add(x.Log);
+                if (x.LogDetails != null && !x.LogDetails.IsEmpty)
+                {
+                    logDetails.AddRange(x.LogDetails.ToList());
+                }
+            });
+            var result = await _fsql.Insert(logs).ExecuteAffrowsAsync();
+            if (result < 1)
+            {
+                return result;
+            }
+
+            result = await _fsql.Insert(logDetails).ExecuteAffrowsAsync();
+            return result;
+        }
+
         public Task<bool> Any(string id)
         {
             return _fsql.Select<Log>().AnyAsync(x => x.Id == id);

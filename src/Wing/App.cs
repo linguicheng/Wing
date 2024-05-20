@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
@@ -47,8 +47,13 @@ namespace Wing
             return ServiceProvider.GetServices(serviceType);
         }
 
-        public static T GetConfig<T>(string key)
+        public static T GetConfig<T>(string key = "")
         {
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                key = typeof(T).Name.Replace("config", string.Empty, StringComparison.OrdinalIgnoreCase);
+            }
+
             return Configuration.GetSection(key).Get<T>();
         }
     }

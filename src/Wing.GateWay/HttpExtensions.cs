@@ -19,12 +19,17 @@ namespace Wing.Gateway
             }
 
             method = method.ToLower();
-
             var httpClientFactory = App.GetRequiredService<IHttpClientFactory>();
-            var aa = req.Headers.Accept;
             var client = httpClientFactory.CreateClient();
+            if (serviceContext.Policy != null && serviceContext.Policy.HttpClientTimeOut != null)
+            {
+                client.Timeout = TimeSpan.FromMilliseconds(serviceContext.Policy.HttpClientTimeOut.Value);
+            }
+
             client.BaseAddress = new Uri(serviceContext.ServiceAddress);
             client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Add("X-Real-IP", Tools.RemoteIp);
+            client.DefaultRequestHeaders.Add("X-Forwarded-For", Tools.RemoteIp);
             if (!string.IsNullOrWhiteSpace(req.Headers.Accept))
             {
                 foreach (var accepts in req.Headers.Accept)
@@ -42,10 +47,17 @@ namespace Wing.Gateway
 
             if (req.Headers != null && req.Headers.Count > 0)
             {
+                var donotTransformHeaders = App.GetConfig<List<string>>("Gateway:DoNotTransformHeaders");
+                if (donotTransformHeaders == null)
+                {
+                    donotTransformHeaders = new List<string>();
+                }
+
+                donotTransformHeaders.AddRange(Tag.DO_NOT_TRANSFORM_HEADERS);
                 foreach (var header in req.Headers)
                 {
                     var key = header.Key.ToLower();
-                    if (Tag.DO_NOT_TRANSFORM_HEADERS.Any(x => x == key))
+                    if (donotTransformHeaders.Any(x => x == key))
                     {
                         continue;
                     }
@@ -117,7 +129,15 @@ namespace Wing.Gateway
             if (response.StatusCode == HttpStatusCode.OK)
             {
                 serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
-                serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
+                if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
+                {
+                    serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
+                    serviceContext.IsFile = false;
+                    return serviceContext;
+                }
+
+                serviceContext.ResponseStream = await response.Content.ReadAsStreamAsync();
+                serviceContext.IsFile = true;
             }
 
             return serviceContext;
@@ -166,6 +186,20 @@ namespace Wing.Gateway
                 }
             }
             #endregion
+            if (serviceContext.IsFile)
+            {
+                response.ContentType = serviceContext.ContentType;
+                var bytes = new byte[4096];
+                int len = 0;
+                while ((len = serviceContext.ResponseStream.Read(bytes, 0, bytes.Length)) > 0)
+                {
+                    await response.Body.WriteAsync(bytes, 0, len);
+                }
+
+                serviceContext.ResponseStream?.Dispose();
+                return;
+            }
+
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
                 response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
