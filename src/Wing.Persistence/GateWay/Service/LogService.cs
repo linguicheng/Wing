@@ -36,7 +36,10 @@ namespace Wing.Persistence.Gateway
             logDtos.ForEach(x =>
             {
                 logs.Add(x.Log);
-                logDetails.AddRange(x.LogDetails.ToList());
+                if (x.LogDetails != null && !x.LogDetails.IsEmpty)
+                {
+                    logDetails.AddRange(x.LogDetails.ToList());
+                }
             });
             var result = await _fsql.Insert(logs).ExecuteAffrowsAsync();
             if (result < 1)
