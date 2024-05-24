@@ -102,6 +102,11 @@ namespace Wing.Gateway.Middleware
                                                 }
                                             }
                                         }
+
+                                        if (serviceContext.Route != null)
+                                        {
+                                            break;
+                                        }
                                     }
                                 }
                                 #endregion
@@ -141,6 +146,7 @@ namespace Wing.Gateway.Middleware
 
                                             serviceContext.Route = route;
                                             serviceContext.UpstreamPath = fullPath;
+                                            break;
                                         }
                                     }
                                 }
@@ -190,6 +196,7 @@ namespace Wing.Gateway.Middleware
 
                                         serviceContext.Route = route;
                                         serviceContext.UpstreamPath = fullPath;
+                                        break;
                                     }
                                 }
                             }
