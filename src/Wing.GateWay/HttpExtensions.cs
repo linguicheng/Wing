@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Wing.Gateway.Config;
 
 namespace Wing.Gateway
@@ -128,6 +129,15 @@ namespace Wing.Gateway
             serviceContext.StatusCode = (int)response.StatusCode;
             if (response.StatusCode == HttpStatusCode.OK)
             {
+                if (response.Headers != null)
+                {
+                    serviceContext.ResponseHeaders = new Dictionary<string, StringValues>();
+                    foreach (var header in response.Headers)
+                    {
+                        serviceContext.ResponseHeaders.Add(header.Key, new StringValues(header.Value.ToArray()));
+                    }
+                }
+
                 serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
                 if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
                 {
@@ -181,6 +191,17 @@ namespace Wing.Gateway
                             response.Headers.Remove(header.Key);
                         }
 
+                        response.Headers.Add(header.Key, header.Value);
+                    }
+                }
+            }
+
+            if (serviceContext.ResponseHeaders != null)
+            {
+                foreach (var header in serviceContext.ResponseHeaders)
+                {
+                    if (!response.Headers.Any(x => x.Key == header.Key))
+                    {
                         response.Headers.Add(header.Key, header.Value);
                     }
                 }

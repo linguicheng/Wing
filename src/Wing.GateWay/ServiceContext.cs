@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Wing.Gateway.Config;
 
 namespace Wing.Gateway
@@ -44,6 +45,8 @@ namespace Wing.Gateway
         public string RequestValue { get; set; }
 
         public string ResponseValue { get; set; }
+
+        public Dictionary<string, StringValues> ResponseHeaders { get; set; }
 
         public Stream ResponseStream { get; set; }
 
