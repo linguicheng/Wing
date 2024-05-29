@@ -131,9 +131,21 @@ namespace Wing.Gateway
             {
                 if (response.Headers != null)
                 {
+                    var doNotTransformResponseHeaders = App.GetConfig<List<string>>("Gateway:DoNotTransformResponseHeaders");
+                    if (doNotTransformResponseHeaders == null)
+                    {
+                        doNotTransformResponseHeaders = new List<string>();
+                    }
+
+                    doNotTransformResponseHeaders.AddRange(Tag.DO_NOT_TRANSFORM_RESPONSE_HEADERS);
                     serviceContext.ResponseHeaders = new Dictionary<string, StringValues>();
                     foreach (var header in response.Headers)
                     {
+                        if (doNotTransformResponseHeaders.Any(x => x == header.Key))
+                        {
+                            continue;
+                        }
+
                         serviceContext.ResponseHeaders.Add(header.Key, new StringValues(header.Value.ToArray()));
                     }
                 }
