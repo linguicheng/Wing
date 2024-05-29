@@ -103,9 +103,9 @@ namespace Wing.Gateway.Middleware
                          serviceContext.ResponseHeaders = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
                      }
 
-                     if (serviceContextCopy.ResponseHeaders != null)
+                     foreach (var header in serviceContextCopy.ResponseHeaders)
                      {
-                         foreach (var header in serviceContextCopy.ResponseHeaders)
+                         if (!serviceContext.ResponseHeaders.Any(x => x.Key == header.Key))
                          {
                              serviceContext.ResponseHeaders.Add(header.Key, header.Value);
                          }
