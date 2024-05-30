@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http.Headers;
+﻿using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
@@ -139,13 +138,24 @@ namespace Wing.Gateway
                 }
 
                 requestData = await serviceContext.RequestBefore(requestData);
+                if (requestData.RequestBreak)
+                {
+                    serviceContext.ResponseValue = requestData.ResponseValue;
+                    serviceContext.StatusCode = requestData.StatusCode;
+                    serviceContext.IsFile = false;
+                    return serviceContext;
+                }
+
                 foreach (var header in requestData.Headers)
                 {
                     client.DefaultRequestHeaders.Clear();
                     client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
 
-                requestUri = QueryHelpers.AddQueryString(serviceContext.DownstreamPath, requestData.QueryParams);
+                if (requestData.QueryParams != null && requestData.QueryParams.Count > 0)
+                {
+                    requestUri = QueryHelpers.AddQueryString(serviceContext.DownstreamPath, requestData.QueryParams);
+                }
             }
 
             if (requestData.Body != null && requestData.Body.Length > 0)

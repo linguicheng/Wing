@@ -97,6 +97,12 @@ namespace Wing.Gateway
         public Dictionary<string, StringValues> QueryParams { get; set; }
 
         public byte[] Body { get; set; }
+
+        public bool RequestBreak { get; set; } = false;
+
+        public string ResponseValue { get; set; }
+
+        public int StatusCode { get; set; } = 200;
     }
 
     public class ResponseData
