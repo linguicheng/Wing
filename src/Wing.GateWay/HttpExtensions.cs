@@ -161,40 +161,37 @@ namespace Wing.Gateway
             };
             var response = await client.SendAsync(request);
             serviceContext.StatusCode = (int)response.StatusCode;
-            if (response.StatusCode == HttpStatusCode.OK)
+            if (response.Headers != null)
             {
-                if (response.Headers != null)
+                var doNotTransformResponseHeaders = App.GetConfig<List<string>>("Gateway:DoNotTransformResponseHeaders");
+                if (doNotTransformResponseHeaders == null)
                 {
-                    var doNotTransformResponseHeaders = App.GetConfig<List<string>>("Gateway:DoNotTransformResponseHeaders");
-                    if (doNotTransformResponseHeaders == null)
-                    {
-                        doNotTransformResponseHeaders = new List<string>();
-                    }
-
-                    doNotTransformResponseHeaders.AddRange(Tag.DO_NOT_TRANSFORM_RESPONSE_HEADERS);
-                    serviceContext.ResponseHeaders = new Dictionary<string, StringValues>();
-                    foreach (var header in response.Headers)
-                    {
-                        if (doNotTransformResponseHeaders.Any(x => x == header.Key))
-                        {
-                            continue;
-                        }
-
-                        serviceContext.ResponseHeaders.Add(header.Key, new StringValues(header.Value.ToArray()));
-                    }
+                    doNotTransformResponseHeaders = new();
                 }
 
-                serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
-                if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
+                doNotTransformResponseHeaders.AddRange(Tag.DO_NOT_TRANSFORM_RESPONSE_HEADERS);
+                serviceContext.ResponseHeaders = new Dictionary<string, StringValues>();
+                foreach (var header in response.Headers)
                 {
-                    serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
-                    serviceContext.IsFile = false;
-                    return serviceContext;
-                }
+                    if (doNotTransformResponseHeaders.Any(x => x == header.Key))
+                    {
+                        continue;
+                    }
 
-                serviceContext.ResponseStream = await response.Content.ReadAsStreamAsync();
-                serviceContext.IsFile = true;
+                    serviceContext.ResponseHeaders.Add(header.Key, new StringValues(header.Value.ToArray()));
+                }
             }
+
+            serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
+            if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
+            {
+                serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
+                serviceContext.IsFile = false;
+                return serviceContext;
+            }
+
+            serviceContext.ResponseStream = await response.Content.ReadAsStreamAsync();
+            serviceContext.IsFile = true;
 
             return serviceContext;
         }
