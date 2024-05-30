@@ -2,6 +2,7 @@
 using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using Wing.Gateway.Config;
 
@@ -109,18 +110,51 @@ namespace Wing.Gateway
             #endregion
 
             ByteArrayContent content = null;
+            RequestData requestData = new()
+            {
+                ServiceName = serviceContext.ServiceName,
+                DownstreamPath = serviceContext.DownstreamPath
+            };
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
                 using MemoryStream ms = new();
                 await req.Body.CopyToAsync(ms);
-                byte[] data = ms.ToArray();
-                content = new ByteArrayContent(data);
-                content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
-                serviceContext.RequestValue = Encoding.UTF8.GetString(data);
+                requestData.Body = ms.ToArray();
             }
 
-            var requestUri = serviceContext.DownstreamPath + req.QueryString.Value;
+            var queryString = req.QueryString.Value;
+            var requestUri = serviceContext.DownstreamPath + queryString;
+            if (serviceContext.RequestBefore != null)
+            {
+                requestData.Headers = new Dictionary<string, IEnumerable<string>>();
+                foreach (var header in client.DefaultRequestHeaders)
+                {
+                    requestData.Headers.Add(header.Key, header.Value);
+                }
+
+                if (!string.IsNullOrEmpty(queryString))
+                {
+                    requestData.QueryParams = QueryHelpers.ParseQuery(queryString);
+                }
+
+                requestData = await serviceContext.RequestBefore(requestData);
+                foreach (var header in requestData.Headers)
+                {
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Add(header.Key, header.Value);
+                }
+
+                requestUri = QueryHelpers.AddQueryString(serviceContext.DownstreamPath, requestData.QueryParams);
+            }
+
+            if (requestData.Body != null && requestData.Body.Length > 0)
+            {
+                content = new ByteArrayContent(requestData.Body);
+                content.Headers.Add("Content-Type", req.ContentType ?? "application/json; charset=utf-8");
+                serviceContext.RequestValue = Encoding.UTF8.GetString(requestData.Body);
+            }
+
             var request = new HttpRequestMessage(new HttpMethod(method), requestUri)
             {
                 Content = content
@@ -236,6 +270,29 @@ namespace Wing.Gateway
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
                 response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
+                if (serviceContext.ResponseAfter != null)
+                {
+                    ResponseData responseData = new()
+                    {
+                        ServiceName = serviceContext.ServiceName,
+                        DownstreamPath = serviceContext.DownstreamPath,
+                        Body = serviceContext.ResponseValue
+                    };
+
+                    foreach (var header in response.Headers)
+                    {
+                        responseData.Headers.Add(header.Key, header.Value);
+                    }
+
+                    responseData = await serviceContext.ResponseAfter(responseData);
+                    serviceContext.ResponseValue = responseData.Body;
+                    foreach (var header in responseData.Headers)
+                    {
+                        response.Headers.Clear();
+                        response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
+                    }
+                }
+
                 await response.WriteAsync(serviceContext.ResponseValue);
             }
         }

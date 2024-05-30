@@ -70,7 +70,44 @@ namespace Wing.Gateway
         /// </summary>
         public List<DownstreamService> DownstreamServices { get; set; }
 
+        /// <summary>
+        /// 权限认证
+        /// </summary>
         public Func<IEnumerable<Downstream>, HttpContext, Task<bool>> Authorization { get; set; }
+
+        /// <summary>
+        /// 请求下游服务之前请求参数的回调
+        /// </summary>
+        public Func<RequestData, Task<RequestData>> RequestBefore { get; set; }
+
+        /// <summary>
+        /// 请求下游服务之后返回值的回调
+        /// </summary>
+        public Func<ResponseData, Task<ResponseData>> ResponseAfter { get; set; }
+    }
+
+    public class RequestData
+    {
+        public string ServiceName { get; set; }
+
+        public string DownstreamPath { get; set; }
+
+        public Dictionary<string, IEnumerable<string>> Headers { get; set; }
+
+        public Dictionary<string, StringValues> QueryParams { get; set; }
+
+        public byte[] Body { get; set; }
+    }
+
+    public class ResponseData
+    {
+        public string ServiceName { get; set; }
+
+        public string DownstreamPath { get; set; }
+
+        public Dictionary<string, IEnumerable<string>> Headers { get; set; }
+
+        public string Body { get; set; }
     }
 
     public class DownstreamService
