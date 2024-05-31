@@ -114,6 +114,15 @@ namespace Wing.Gateway
                 ServiceName = serviceContext.ServiceName,
                 DownstreamPath = serviceContext.DownstreamPath
             };
+            if (serviceContext.Route != null)
+            {
+                requestData.UseJWTAuth = serviceContext.Route.UseJWTAuth;
+            }
+            else
+            {
+                requestData.UseJWTAuth = serviceContext.Policy?.UseJWTAuth;
+            }
+
             if (!serviceContext.IsReadRequestBody && req.Body != null)
             {
                 serviceContext.IsReadRequestBody = true;
@@ -142,13 +151,18 @@ namespace Wing.Gateway
                 {
                     serviceContext.ResponseValue = requestData.ResponseValue;
                     serviceContext.StatusCode = requestData.StatusCode;
+                    serviceContext.ContentType = requestData.ContentType;
                     serviceContext.IsFile = false;
                     return serviceContext;
                 }
 
                 foreach (var header in requestData.Headers)
                 {
-                    client.DefaultRequestHeaders.Clear();
+                    if (client.DefaultRequestHeaders.Any(x => x.Key == header.Key))
+                    {
+                        client.DefaultRequestHeaders.Remove(header.Key);
+                    }
+
                     client.DefaultRequestHeaders.Add(header.Key, header.Value);
                 }
 
@@ -295,7 +309,11 @@ namespace Wing.Gateway
                     serviceContext.ResponseValue = responseData.Body;
                     foreach (var header in responseData.Headers)
                     {
-                        response.Headers.Clear();
+                        if (response.Headers.Any(x => x.Key == header.Key))
+                        {
+                            response.Headers.Remove(header.Key);
+                        }
+
                         response.Headers.Add(header.Key, new StringValues(header.Value.ToArray()));
                     }
                 }

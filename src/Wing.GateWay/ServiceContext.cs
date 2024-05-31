@@ -102,7 +102,11 @@ namespace Wing.Gateway
 
         public string ResponseValue { get; set; }
 
+        public string ContentType { get; set; }
+
         public int StatusCode { get; set; } = 200;
+
+        public bool? UseJWTAuth { get; set; }
     }
 
     public class ResponseData
