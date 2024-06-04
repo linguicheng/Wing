@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
 using Wing.Gateway.Config;
 
 namespace Wing.Gateway
@@ -18,6 +19,10 @@ namespace Wing.Gateway
         /// 服务聚合路由和自定义路由
         /// </summary>
         public Route Route { get; set; }
+
+        public List<string> FirstWildcardMatchPath { get; set; }
+
+        public List<string> LastWildcardMatchPath { get; set; }
 
         public string TemplateParameterName { get; set; }
 
@@ -41,6 +46,8 @@ namespace Wing.Gateway
 
         public string ResponseValue { get; set; }
 
+        public Dictionary<string, StringValues> ResponseHeaders { get; set; }
+
         public Stream ResponseStream { get; set; }
 
         public bool IsFile { get; set; }
@@ -63,7 +70,54 @@ namespace Wing.Gateway
         /// </summary>
         public List<DownstreamService> DownstreamServices { get; set; }
 
+        /// <summary>
+        /// 权限认证
+        /// </summary>
         public Func<IEnumerable<Downstream>, HttpContext, Task<bool>> Authorization { get; set; }
+
+        /// <summary>
+        /// 请求下游服务之前请求参数的回调
+        /// </summary>
+        public Func<RequestData, Task<RequestData>> RequestBefore { get; set; }
+
+        /// <summary>
+        /// 请求下游服务之后返回值的回调
+        /// </summary>
+        public Func<ResponseData, Task<ResponseData>> ResponseAfter { get; set; }
+    }
+
+    public class RequestData
+    {
+        public string ServiceName { get; set; }
+
+        public string DownstreamPath { get; set; }
+
+        public Dictionary<string, IEnumerable<string>> Headers { get; set; }
+
+        public Dictionary<string, StringValues> QueryParams { get; set; }
+
+        public byte[] Body { get; set; }
+
+        public bool RequestBreak { get; set; } = false;
+
+        public string ResponseValue { get; set; }
+
+        public string ContentType { get; set; }
+
+        public int StatusCode { get; set; } = 200;
+
+        public bool? UseJWTAuth { get; set; }
+    }
+
+    public class ResponseData
+    {
+        public string ServiceName { get; set; }
+
+        public string DownstreamPath { get; set; }
+
+        public Dictionary<string, IEnumerable<string>> Headers { get; set; }
+
+        public string Body { get; set; }
     }
 
     public class DownstreamService

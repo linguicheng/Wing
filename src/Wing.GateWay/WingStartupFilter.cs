@@ -7,7 +7,10 @@ namespace Wing.Gateway
 {
     internal class WingStartupFilter
     {
-        public Action<IApplicationBuilder> Configure(Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization, WebSocketOptions webSocketOptions)
+        public Action<IApplicationBuilder> Configure(Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            WebSocketOptions webSocketOptions,
+            Func<RequestData, Task<RequestData>> requestBefore,
+            Func<ResponseData, Task<ResponseData>> responseAfter)
         {
             return app =>
             {
@@ -31,8 +34,12 @@ namespace Wing.Gateway
                 var firstDelegate = middlewareBuilder.Build();
                 async Task Middleware(HttpContext context, Func<Task> next)
                 {
-                    var serviceContext = new ServiceContext(context);
-                    serviceContext.Authorization = authorization;
+                    var serviceContext = new ServiceContext(context)
+                    {
+                        Authorization = authorization,
+                        RequestBefore = requestBefore,
+                        ResponseAfter = responseAfter
+                    };
                     await firstDelegate.Invoke(serviceContext);
                 }
 

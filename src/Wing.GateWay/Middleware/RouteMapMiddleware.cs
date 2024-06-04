@@ -37,7 +37,172 @@ namespace Wing.Gateway.Middleware
                     }
 
                     var keys = route.Upstream.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
-                    if (paths.Length == keys.Length)
+                    var lastWildchar = keys[^1];
+                    if (keys.Length > 1 && (keys[0] == "{*}" || lastWildchar.StartsWith("{*}")))
+                    {
+                        serviceContext.FirstWildcardMatchPath = new();
+                        serviceContext.LastWildcardMatchPath = new();
+                        var fixedKeys = new List<string>();
+                        if (keys[0] == "{*}")
+                        {
+                            if (lastWildchar.StartsWith("{*}") && keys.Length > 2)
+                            {
+                                #region 结尾有通配符
+                                for (var i = 1; i < keys.Length - 1; i++)
+                                {
+                                    fixedKeys.Add(keys[i]);
+                                }
+
+                                if (fixedKeys.Count > 0)
+                                {
+                                    var firstFixedKey = fixedKeys.First();
+                                    var firstFixedKeyArray = fixedKeys.ToArray();
+                                    if (paths.Any(x => x == firstFixedKey))
+                                    {
+                                        for (var j = 1; j < paths.Length - 1; j++)
+                                        {
+                                            if (paths[j] == firstFixedKey)
+                                            {
+                                                var isMatch = true;
+                                                for (var k = j; k < j + fixedKeys.Count; k++)
+                                                {
+                                                    if (k >= paths.Length - 1 || paths[k] != firstFixedKeyArray[k - j])
+                                                    {
+                                                        isMatch = false;
+                                                        break;
+                                                    }
+                                                }
+
+                                                if (isMatch)
+                                                {
+                                                    if (lastWildchar != "{*}")
+                                                    {
+                                                        var suffix = lastWildchar[3..];
+                                                        if (!paths[paths.Length - 1].EndsWith(suffix))
+                                                        {
+                                                            break;
+                                                        }
+                                                    }
+
+                                                    serviceContext.ServiceName = paths[0];
+                                                    // 匹配到了
+                                                    for (var h = 1; h < j; h++)
+                                                    {
+                                                        serviceContext.FirstWildcardMatchPath.Add(paths[h]);
+                                                    }
+
+                                                    for (var g = j + fixedKeys.Count; g < paths.Length; g++)
+                                                    {
+                                                        serviceContext.LastWildcardMatchPath.Add(paths[g]);
+                                                    }
+
+                                                    serviceContext.Route = route;
+                                                    serviceContext.UpstreamPath = fullPath;
+                                                    break;
+                                                }
+                                            }
+                                        }
+
+                                        if (serviceContext.Route != null)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+                            else
+                            {
+                                #region 结尾无通配符
+                                for (var i = 1; i < keys.Length; i++)
+                                {
+                                    fixedKeys.Add(keys[i]);
+                                }
+
+                                if (fixedKeys.Count > 0)
+                                {
+                                    if (paths[^1] == fixedKeys.Last() && paths.Length > fixedKeys.Count)
+                                    {
+                                        int i = paths.Length - fixedKeys.Count;
+                                        var isMatch = true;
+                                        foreach (var key in fixedKeys)
+                                        {
+                                            if (key != paths[i])
+                                            {
+                                                isMatch = false;
+                                                break;
+                                            }
+
+                                            i++;
+                                        }
+
+                                        if (isMatch)
+                                        {
+                                            serviceContext.ServiceName = paths[0];
+                                            for (var j = 1; j < paths.Length - fixedKeys.Count; j++)
+                                            {
+                                                serviceContext.FirstWildcardMatchPath.Add(paths[j]);
+                                            }
+
+                                            serviceContext.Route = route;
+                                            serviceContext.UpstreamPath = fullPath;
+                                            break;
+                                        }
+                                    }
+                                }
+                                #endregion
+                            }
+                        }
+                        else if (lastWildchar.StartsWith("{*}"))
+                        {
+                            for (var i = 0; i < keys.Length - 1; i++)
+                            {
+                                fixedKeys.Add(keys[i]);
+                            }
+
+                            if (fixedKeys.Count > 0)
+                            {
+                                if (paths[0] == fixedKeys.First() && paths.Length > fixedKeys.Count)
+                                {
+                                    int i = 0;
+                                    var isMatch = true;
+                                    foreach (var key in fixedKeys)
+                                    {
+                                        if (key != paths[i])
+                                        {
+                                            isMatch = false;
+                                            break;
+                                        }
+
+                                        i++;
+                                    }
+
+                                    if (isMatch)
+                                    {
+                                        if (lastWildchar != "{*}")
+                                        {
+                                            var suffix = lastWildchar[3..];
+                                            if (!paths[^1].EndsWith(suffix))
+                                            {
+                                                break;
+                                            }
+                                        }
+
+                                        serviceContext.ServiceName = paths[0];
+                                        for (var j = fixedKeys.Count; j < paths.Length; j++)
+                                        {
+                                            serviceContext.LastWildcardMatchPath.Add(paths[j]);
+                                        }
+
+                                        serviceContext.Route = route;
+                                        serviceContext.UpstreamPath = fullPath;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else if (paths.Length == keys.Length)
                     {
                         var count = UrlTemplateMatch(keys, paths, (key, path) =>
                         {
@@ -49,13 +214,6 @@ namespace Wing.Gateway.Middleware
                             && route.Downstreams != null
                             && route.Downstreams.Count > 0)
                         {
-                            //route.Downstreams.ForEach(x =>
-                            //{
-                            //    if (x.ServiceName.StartsWith("{") && x.ServiceName.EndsWith("}"))
-                            //    {
-                            //        x.ServiceName = paths[0];
-                            //    }
-                            //});
                             serviceContext.Route = route;
                             serviceContext.UpstreamPath = fullPath;
                             break;
@@ -181,9 +339,44 @@ namespace Wing.Gateway.Middleware
         {
             serviceContext.Route.Downstreams.ForEach(x =>
             {
+                if (x.ServiceName == "{*}")
+                {
+                    x.ServiceName = serviceContext.ServiceName;
+                }
+
                 if (!string.IsNullOrEmpty(serviceContext.TemplateParameterName))
                 {
                     x.Url = x.Url.Replace(serviceContext.TemplateParameterName, serviceContext.TemplateParameterValue);
+                }
+
+                if (serviceContext.FirstWildcardMatchPath != null && serviceContext.FirstWildcardMatchPath.Count > 0)
+                {
+                    var paths = x.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                    var wildcardMatchPath = string.Join('/', serviceContext.FirstWildcardMatchPath);
+                    if (paths[0] == "{*}")
+                    {
+                        x.Url = wildcardMatchPath;
+                        for (var i = 1; i < paths.Length; i++)
+                        {
+                            x.Url += "/" + paths[i];
+                        }
+                    }
+                }
+
+                if (serviceContext.LastWildcardMatchPath != null && serviceContext.LastWildcardMatchPath.Count > 0)
+                {
+                    var paths = x.Url.Split("/", StringSplitOptions.RemoveEmptyEntries);
+                    var wildcardMatchPath = string.Join('/', serviceContext.LastWildcardMatchPath);
+                    if (paths[^1].StartsWith("{*}"))
+                    {
+                        x.Url = string.Empty;
+                        for (var i = 0; i < paths.Length - 1; i++)
+                        {
+                            x.Url += paths[i] + "/";
+                        }
+
+                        x.Url += wildcardMatchPath;
+                    }
                 }
 
                 action(x);
@@ -225,11 +418,7 @@ namespace Wing.Gateway.Middleware
             int count = 0;
             for (var i = 0; i < keys.Length; i++)
             {
-                if (keys[i].Contains(Tag.WILDCARD))
-                { 
-                    //通配符
-                }
-                else if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
+                if (keys[i].StartsWith('{') && keys[i].EndsWith('}'))
                 {
                     count++;
                     action?.Invoke(keys[i], paths[i]);

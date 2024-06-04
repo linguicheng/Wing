@@ -98,6 +98,19 @@ namespace Wing.Gateway.Middleware
                      await InvokeDownstreamService(serviceContextCopy, downstreamService);
                      serviceContext.RequestValue = serviceContextCopy.RequestValue;
                      serviceContext.ContentType = serviceContextCopy.ContentType;
+                     if (serviceContext.ResponseHeaders == null)
+                     {
+                         serviceContext.ResponseHeaders = new Dictionary<string, Microsoft.Extensions.Primitives.StringValues>();
+                     }
+
+                     foreach (var header in serviceContextCopy.ResponseHeaders)
+                     {
+                         if (!serviceContext.ResponseHeaders.Any(x => x.Key == header.Key))
+                         {
+                             serviceContext.ResponseHeaders.Add(header.Key, header.Value);
+                         }
+                     }
+
                      logDetail.StatusCode = serviceContextCopy.StatusCode;
                      logDetail.ResponseTime = DateTime.Now;
                      logDetail.ResponseValue = serviceContextCopy.ResponseValue;

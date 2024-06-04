@@ -10,7 +10,45 @@ namespace Wing
 {
     public static class WingBuilderExtensions
     {
-        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder, Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization = null, WebSocketOptions webSocketOptions = null, Action<IApplicationBuilder> app = null)
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder)
+        {
+            return AddGateWay(wingBuilder, null, null, null, null, null);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder, Action<IApplicationBuilder> app)
+        {
+            return AddGateWay(wingBuilder, null, null, null, null, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            WebSocketOptions webSocketOptions,
+            Action<IApplicationBuilder> app = null)
+        {
+            return AddGateWay(wingBuilder, null, webSocketOptions, null, null, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            WebSocketOptions webSocketOptions,
+            Action<IApplicationBuilder> app = null)
+        {
+            return AddGateWay(wingBuilder, authorization, webSocketOptions, null, null, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            Func<RequestData, Task<RequestData>> requestBefore,
+            Func<ResponseData, Task<ResponseData>> responseAfter, Action<IApplicationBuilder> app = null)
+        {
+            return AddGateWay(wingBuilder, authorization, null, requestBefore, responseAfter, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            WebSocketOptions webSocketOptions,
+            Func<RequestData, Task<RequestData>> requestBefore,
+            Func<ResponseData, Task<ResponseData>> responseAfter,
+            Action<IApplicationBuilder> app = null)
         {
             wingBuilder.Services.AddScoped<ILogProvider, LogProvider>();
             if (DataProvider.LogConfig != null
@@ -25,7 +63,11 @@ namespace Wing
                 wingBuilder.AppBuilder += app;
             }
 
-            wingBuilder.AppBuilder += new WingStartupFilter().Configure(authorization, webSocketOptions);
+            wingBuilder.AppBuilder += new WingStartupFilter()
+                .Configure(authorization,
+                           webSocketOptions,
+                           requestBefore,
+                           responseAfter);
             return wingBuilder;
         }
     }

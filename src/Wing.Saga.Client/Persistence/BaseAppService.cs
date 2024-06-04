@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
 using Wing.Converter;
 using Wing.EventBus;
 
