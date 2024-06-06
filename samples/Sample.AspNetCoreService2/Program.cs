@@ -17,7 +17,13 @@ builder.Services.AddWing().AddJwt(context =>
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-
+app.UseCors(options =>
+{
+    options.AllowAnyHeader()
+    .AllowAnyMethod()
+    .SetIsOriginAllowed(x => true)
+    .AllowCredentials();
+});
 app.UseStaticFiles();
 
 app.UseHttpsRedirection();

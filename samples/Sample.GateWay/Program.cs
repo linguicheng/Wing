@@ -25,6 +25,13 @@ builder.Services.AddWing()
                {
                    services.ForEach(s => c.SwaggerEndpoint($"{s.ServiceAddress}/swagger/v1/swagger.json", s.Name));
                });
+    //app.UseCors(options =>
+    //{
+    //    options.AllowAnyHeader()
+    //    .AllowAnyMethod()
+    //    .SetIsOriginAllowed(x => true)
+    //    .AllowCredentials();
+    //});
 
 });
 //.AddEventBus();
