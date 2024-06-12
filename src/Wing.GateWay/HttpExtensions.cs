@@ -207,7 +207,9 @@ namespace Wing.Gateway
             }
 
             serviceContext.ContentType = response.Content.Headers.ContentType?.ToString();
-            if (serviceContext.ContentType.Contains("application/json") || serviceContext.ContentType.Contains("text/plain"))
+            if (string.IsNullOrWhiteSpace(serviceContext.ContentType)
+                || serviceContext.ContentType.Contains("application/json")
+                || serviceContext.ContentType.Contains("text/plain"))
             {
                 serviceContext.ResponseValue = await response.Content.ReadAsStringAsync();
                 serviceContext.IsFile = false;
@@ -288,9 +290,9 @@ namespace Wing.Gateway
                 return;
             }
 
+            response.ContentType = serviceContext.ContentType;
             if (!string.IsNullOrWhiteSpace(serviceContext.ResponseValue))
             {
-                response.ContentType = serviceContext.ContentType ?? "text/plain; charset=utf-8";
                 if (serviceContext.ResponseAfter != null)
                 {
                     ResponseData responseData = new()

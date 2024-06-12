@@ -29,10 +29,24 @@ namespace Wing
 
         public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
             Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            Action<IApplicationBuilder> app = null)
+        {
+            return AddGateWay(wingBuilder, authorization, null, null, null, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
             WebSocketOptions webSocketOptions,
             Action<IApplicationBuilder> app = null)
         {
             return AddGateWay(wingBuilder, authorization, webSocketOptions, null, null, app);
+        }
+
+        public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
+            Func<IEnumerable<Downstream>, HttpContext, Task<bool>> authorization,
+            Func<RequestData, Task<RequestData>> requestBefore, Action<IApplicationBuilder> app = null)
+        {
+            return AddGateWay(wingBuilder, authorization, null, requestBefore, null, app);
         }
 
         public static IWingServiceBuilder AddGateWay(this IWingServiceBuilder wingBuilder,
