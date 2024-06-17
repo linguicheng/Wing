@@ -18,6 +18,15 @@ namespace Wing.APM
         public const string Http = "http";
         public const string Grpc = "grpc";
 
+        public static bool IsEnabled
+        {
+            get
+            {
+                var isEnabled = App.GetConfig<bool?>("Apm:IsEnabled");
+                return isEnabled == null || isEnabled.Value;
+            }
+        }
+
         public static string SqlFormat(string sql, DbParameter[] parameters)
         {
             for (var i = parameters.Length - 1; i >= 0; i--)
