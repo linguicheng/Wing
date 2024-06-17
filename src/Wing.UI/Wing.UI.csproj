@@ -370,8 +370,4 @@
 		<ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Auth\" />
-	</ItemGroup>
-
 </Project>
