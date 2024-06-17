@@ -112,7 +112,8 @@ namespace Wing.Gateway
             RequestData requestData = new()
             {
                 ServiceName = serviceContext.ServiceName,
-                DownstreamPath = serviceContext.DownstreamPath
+                DownstreamPath = serviceContext.DownstreamPath,
+                Method = method
             };
             if (serviceContext.Route != null)
             {
