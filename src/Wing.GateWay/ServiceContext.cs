@@ -92,6 +92,8 @@ namespace Wing.Gateway
 
         public string DownstreamPath { get; set; }
 
+        public string Method { get; set; }
+
         public Dictionary<string, IEnumerable<string>> Headers { get; set; }
 
         public Dictionary<string, StringValues> QueryParams { get; set; }
