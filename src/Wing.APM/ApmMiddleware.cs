@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Extensions;
 using Wing.APM.Listeners;
-using Wing.Persistence.Apm;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
+using Wing.APM.Persistence;
 
 namespace Wing.APM
 {

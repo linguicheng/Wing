@@ -1,6 +1,4 @@
-﻿using FreeSql.DataAnnotations;
-
-namespace Wing.Persistence.User
+﻿namespace Wing.Persistence.User
 {
     public class UserDto
     {
@@ -17,5 +15,12 @@ namespace Wing.Persistence.User
         public string Phone { get; set; }
 
         public string Remark { get; set; }
+
+        /// <summary>
+        /// 是否可用
+        /// </summary>
+        public string Enabled { get; set; } = "Y";
+
+        public string Token { get; set; }
     }
 }

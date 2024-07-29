@@ -7,7 +7,7 @@ builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddControllers();
 builder.Services.AddWing()
-                .AddPersistence()
+                .AddPersistence(FreeSql.DataType.SqlServer)
                 .AddAPM(x => x.AddSqlSugar());
 builder.Services.AddScoped<ISqlSugarClient>(s =>
 {

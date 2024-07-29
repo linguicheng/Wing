@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
-using Wing.Persistence.Apm;
+using Wing.APM.Persistence;
 
 namespace Wing.APM
 {

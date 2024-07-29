@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using SqlSugar;
 using Wing.APM.FreeSql;
 using Wing.APM.Listeners;
-using Wing.Persistence.Apm;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
+using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.SqlSugar

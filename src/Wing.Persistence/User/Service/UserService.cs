@@ -3,7 +3,7 @@ using Wing.Result;
 
 namespace Wing.Persistence.User
 {
-    public class UserService : IUserService
+    public class UserService
     {
         private readonly IFreeSql<WingDbFlag> _fsql;
 
@@ -12,14 +12,39 @@ namespace Wing.Persistence.User
             _fsql = fsql;
         }
 
-        public Task<int> Add(User user)
+        public Task<UserDto> Login(User user)
         {
-           return _fsql.Insert(user).ExecuteAffrowsAsync();
+            user.Password = new Encrption().ToMd5(user.Password);
+            return _fsql.Select<User>()
+                 .Where(x => x.UserAccount == user.UserAccount && x.Password == user.Password)
+                 .FirstAsync<UserDto>();
         }
 
-        public Task<int> Update(User user)
+        public async Task<int> Add(User user)
         {
-            return _fsql.Update<User>(user).ExecuteAffrowsAsync();
+            user.Id = Guid.NewGuid().ToString();
+            user.CreationTime = DateTime.Now;
+            user.Password = new Encrption().ToMd5(user.Password);
+            var exists = await _fsql.Select<User>().AnyAsync(x => x.UserAccount == user.UserAccount);
+            if (exists)
+            {
+                throw new AccountExistsException($"登录账号({user.UserAccount})已存在！");
+            }
+
+            return await _fsql.Insert(user).ExecuteAffrowsAsync();
+        }
+
+        public async Task<int> Update(User user)
+        {
+            user.Password = new Encrption().ToMd5(user.Password);
+            user.ModificationTime = DateTime.Now;
+            var exists = await _fsql.Select<User>().AnyAsync(x => x.UserAccount == user.UserAccount && x.Id != user.Id);
+            if (exists)
+            {
+                throw new Exception($"登录账号({user.UserAccount})已存在！");
+            }
+
+            return await _fsql.Update<User>(user).ExecuteAffrowsAsync();
         }
 
         public Task<int> Delete(string id)

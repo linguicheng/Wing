@@ -13,7 +13,7 @@ builder.Services.AddDbContext<EFCoreDemoContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("Wing.Demo")));
 
 builder.Services.AddWing()
-       .AddPersistence()
+       .AddPersistence(FreeSql.DataType.SqlServer)
        .AddAPM(x => x.AddEFCore());
 
 var app = builder.Build();

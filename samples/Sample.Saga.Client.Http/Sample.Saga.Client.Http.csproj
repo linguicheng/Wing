@@ -6,11 +6,15 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.833" />
+	</ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
+    <ProjectReference Include="..\..\src\Wing.Persistence\Wing.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing.Saga.Client\Wing.Saga.Client.csproj" />
-    <ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
     <ProjectReference Include="..\Sample.Auth\Sample.Auth.csproj" />
   </ItemGroup>
 

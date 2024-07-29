@@ -4,19 +4,24 @@ using Wing.ServiceProvider.Config;
 
 namespace Wing.Persistence.Saga
 {
+    [Table(Name = "Saga_Tran")]
+    [Index("IX_CTime", "CreatedTime", false)]
+    [Index("IX_Name", "Name", false)]
     public class SagaTran : EventMessage
     {
-        [Column(IsPrimary = true)]
+        [Column(IsPrimary = true, StringLength = 50)]
         public string Id { get; set; }
 
         /// <summary>
         /// 事务名称
         /// </summary>
+        [Column(StringLength = 200)]
         public string Name { get; set; }
 
         /// <summary>
         /// 服务名称
         /// </summary>
+        [Column(StringLength = 200)]
         public string ServiceName { get; set; }
 
         /// <summary>
@@ -37,6 +42,7 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 重试动作
         /// </summary>
+        [Column(StringLength = 50)]
         public string RetryAction { get; set; }
 
         public TranPolicy Policy { get; set; }

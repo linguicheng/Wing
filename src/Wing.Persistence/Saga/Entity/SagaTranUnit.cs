@@ -3,13 +3,19 @@ using Wing.EventBus;
 
 namespace Wing.Persistence.Saga
 {
+    [Table(Name = "Saga_TranUnit")]
+    [Index("IX_CTime", "CreatedTime", false)]
+    [Index("IX_Name", "Name", false)]
+    [Index("IX_TranId", "TranId", false)]
     public class SagaTranUnit : EventMessage
     {
-        [Column(IsPrimary = true)]
+        [Column(IsPrimary = true, StringLength = 50)]
         public string Id { get; set; }
 
+        [Column(StringLength = 200)]
         public string Name { get; set; }
 
+        [Column(StringLength = 50)]
         public string TranId { get; set; }
 
         public int OrderNo { get; set; }
@@ -24,6 +30,7 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 重试动作
         /// </summary>
+        [Column(StringLength = 50)]
         public string RetryAction { get; set; }
 
         /// <summary>
@@ -59,11 +66,13 @@ namespace Wing.Persistence.Saga
         /// <summary>
         /// 事务单元命名空间
         /// </summary>
+        [Column(StringLength = 800)]
         public string UnitNamespace { get; set; }
 
         /// <summary>
         /// 事务单元模型命名空间
         /// </summary>
+        [Column(StringLength = 800)]
         public string UnitModelNamespace { get; set; }
 
         /// <summary>
@@ -71,6 +80,7 @@ namespace Wing.Persistence.Saga
         /// </summary>
         public string ParamsValue { get; set; }
 
+        [Column(StringLength = 1000)]
         public string Description { get; set; }
 
         public string ErrorMsg { get; set; }

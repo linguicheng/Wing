@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Builder;
+using FreeSql;
 using Wing;
 using Wing.ServiceProvider;
 
@@ -9,7 +9,7 @@ builder.Host.AddWing(builder => builder.AddConsul());
 builder.Services.AddAuthorization();
 builder.Services.AddAuthentication("Bearer").AddJwtBearer();
 builder.Services.AddWing()
-                .AddPersistence()
+                .AddPersistence(DataType.SqlServer)
 .AddGateWay((downstreams, context) =>
 {
     //此处添加业务授权逻辑，也可以将payload解析的内容通过请求头转发到下游服务context.Request.Headers.Add()

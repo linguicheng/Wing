@@ -1,6 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.DependencyInjection;
-using Wing.Persistence.Apm;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Wing.APM.Persistence;
 using Wing.Persistence.Gateway;
 using Wing.Persistence.Saga;
 using Wing.Persistence.User;
@@ -20,7 +19,7 @@ namespace Wing.Persistence
             services.AddSingleton<ITracerWorkService, TracerWorkService>();
             services.AddScoped<ISagaTranService, SagaTranService>();
             services.AddScoped<ISagaTranUnitService, SagaTranUnitService>();
-            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<UserService>();
             services.AddFreeRepository();
         }
     }

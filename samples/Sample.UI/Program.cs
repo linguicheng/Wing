@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddWing()
                  .AddWingUI()
-                 .AddPersistence()
+                 .AddPersistence(FreeSql.DataType.SqlServer)
                  .AddAPM();
 
 var app = builder.Build();

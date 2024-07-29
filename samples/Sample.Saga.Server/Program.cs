@@ -10,7 +10,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddWing()
                 .AddJwt()
-                .AddPersistence()
+                .AddPersistence(FreeSql.DataType.SqlServer)
                 .AddSaga(new SagaOptions
                      {
                          Headers = () =>

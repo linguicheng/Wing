@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
 
 namespace Wing.APM.Listeners
 {

@@ -6,7 +6,7 @@ builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddControllers();
 
-builder.Services.AddWing().AddPersistence().AddSaga().AddJwt();
+builder.Services.AddWing().AddPersistence(FreeSql.DataType.SqlServer).AddSaga().AddJwt();
 
 var app = builder.Build();
 

@@ -1,8 +1,8 @@
 ﻿using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Wing.Persistence.Apm;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
+using Wing.APM.Persistence;
 
 namespace Wing.APM.Listeners
 {

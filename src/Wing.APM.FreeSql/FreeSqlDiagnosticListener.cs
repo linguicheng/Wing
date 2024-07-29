@@ -3,8 +3,8 @@ using FreeSql.Aop;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
-using Wing.Persistence.Apm;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
+using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.FreeSql

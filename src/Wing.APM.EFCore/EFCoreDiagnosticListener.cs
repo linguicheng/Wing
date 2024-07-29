@@ -4,8 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
-using Wing.Persistence.Apm;
-using Wing.Persistence.APM;
+using Wing.APM.Persistence;
+using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.EFCore
@@ -46,6 +46,7 @@ namespace Wing.APM.EFCore
                         CommandExecuted(value);
                         break;
                     case EFCoreKey.CommandError:
+                        CommandError(value);
                         break;
                 }
             }
@@ -123,7 +124,7 @@ namespace Wing.APM.EFCore
             traceDetail.UsedMillSeconds = Convert.ToInt64(data.Duration.TotalMilliseconds);
         }
 
-        private void OnError(KeyValuePair<string, object> value)
+        private void CommandError(KeyValuePair<string, object> value)
         {
             var data = (CommandErrorEventData)value.Value;
             var id = data.CommandId.ToString();

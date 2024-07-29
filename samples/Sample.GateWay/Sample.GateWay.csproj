@@ -8,13 +8,14 @@
   </PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="FreeSql.Provider.SqlServer" Version="3.2.833" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
 	</ItemGroup>
 
   <ItemGroup>
-	<ProjectReference Include="..\..\src\Wing.SqlServer\Wing.SqlServer.csproj" />
     <ProjectReference Include="..\..\src\Wing.Consul\Wing.Consul.csproj" />
     <ProjectReference Include="..\..\src\Wing.GateWay\Wing.Gateway.csproj" />
+    <ProjectReference Include="..\..\src\Wing.Persistence\Wing.Persistence.csproj" />
     <ProjectReference Include="..\..\src\Wing.RabbitMQ\Wing.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\src\Wing\Wing.csproj" />
   </ItemGroup>

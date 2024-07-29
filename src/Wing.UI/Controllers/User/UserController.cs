@@ -9,23 +9,33 @@ namespace Wing.UI.Controllers
 {
     public class UserController : BaseController
     {
-        private readonly IUserService _userService;
+        private readonly UserService _userService;
 
-        public UserController(IUserService userService)
+        public UserController(UserService userService)
         {
             _userService = userService;
         }
 
         [HttpPost]
         [AllowAnonymous]
-        public Task<int> Login(User dto)
+        public async Task<UserDto> Login(User dto)
         {
-            dto.Password = new Encrption().ToMd5(dto.Password);
-            return _userService.Add(dto);
+            if (UserContext.UserLoginBefore != null)
+            {
+                dto = UserContext.UserLoginBefore(dto);
+            }
+
+            var result = await _userService.Login(dto);
+            if (UserContext.UserLoginAfter != null)
+            {
+                result = UserContext.UserLoginAfter(result);
+            }
+
+            return result;
         }
 
-        [HttpGet]
-        public Task<PageResult<List<UserDto>>> List([FromQuery] PageModel<UserSearchDto> dto)
+        [HttpPost]
+        public Task<PageResult<List<UserDto>>> List(PageModel<UserSearchDto> dto)
         {
             return _userService.List(dto);
         }
@@ -33,14 +43,12 @@ namespace Wing.UI.Controllers
         [HttpPost]
         public Task<int> Add(User dto)
         {
-            dto.Password = new Encrption().ToMd5(dto.Password);
             return _userService.Add(dto);
         }
 
         [HttpPost]
         public Task<int> Update(User dto)
         {
-            dto.Password = new Encrption().ToMd5(dto.Password);
             return _userService.Update(dto);
         }
 
