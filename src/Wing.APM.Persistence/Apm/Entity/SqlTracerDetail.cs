@@ -21,6 +21,7 @@ namespace Wing.APM.Persistence
 
         public DateTime BeginTime { get; set; }
 
+        [Column(StringLength = -1)]
         public string Sql { get; set; }
 
         public DateTime EndTime { get; set; }
@@ -30,6 +31,7 @@ namespace Wing.APM.Persistence
         /// </summary>
         public long UsedMillSeconds { get; set; }
 
+        [Column(StringLength = -1)]
         public string Exception { get; set; }
     }
 }

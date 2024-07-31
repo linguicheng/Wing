@@ -13,8 +13,10 @@ namespace Wing.Persistence.Gateway
         [Column(StringLength = 200)]
         public string ServiceName { get; set; }
 
+        [Column(StringLength = -1)]
         public string DownstreamUrl { get; set; }
 
+        [Column(StringLength = -1)]
         public string RequestUrl { get; set; }
 
         /// <summary>
@@ -40,10 +42,12 @@ namespace Wing.Persistence.Gateway
         [Column(StringLength = 20)]
         public string RequestMethod { get; set; }
 
+        [Column(StringLength = -1)]
         public string RequestValue { get; set; }
 
         public DateTime ResponseTime { get; set; }
 
+        [Column(StringLength = -1)]
         public string ResponseValue { get; set; }
 
         /// <summary>
@@ -53,12 +57,16 @@ namespace Wing.Persistence.Gateway
 
         public int StatusCode { get; set; }
 
+        [Column(StringLength = -1)]
         public string Policy { get; set; }
 
+        [Column(StringLength = -1)]
         public string AuthKey { get; set; }
 
+        [Column(StringLength = -1)]
         public string Token { get; set; }
 
+        [Column(StringLength = -1)]
         public string Exception { get; set; }
     }
 }

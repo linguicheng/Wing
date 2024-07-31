@@ -83,6 +83,7 @@ namespace Wing.Persistence.Saga
         [Column(StringLength = 1000)]
         public string Description { get; set; }
 
+        [Column(StringLength = -1)]
         public string ErrorMsg { get; set; }
     }
 }

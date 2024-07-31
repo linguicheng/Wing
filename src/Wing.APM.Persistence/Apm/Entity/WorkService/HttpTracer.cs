@@ -25,6 +25,7 @@ namespace Wing.APM.Persistence
         [Column(StringLength = 20)]
         public string RequestType { get; set; }
 
+        [Column(StringLength = -1)]
         public string RequestUrl { get; set; }
 
         public DateTime RequestTime { get; set; }
@@ -32,10 +33,12 @@ namespace Wing.APM.Persistence
         [Column(StringLength = 20)]
         public string RequestMethod { get; set; }
 
+        [Column(StringLength = -1)]
         public string RequestValue { get; set; }
 
         public DateTime ResponseTime { get; set; }
 
+        [Column(StringLength = -1)]
         public string ResponseValue { get; set; }
 
         /// <summary>
@@ -45,6 +48,7 @@ namespace Wing.APM.Persistence
 
         public int? StatusCode { get; set; }
 
+        [Column(StringLength = -1)]
         public string Exception { get; set; }
     }
 }

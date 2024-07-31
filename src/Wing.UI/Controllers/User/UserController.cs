@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Wing.Model;
 using Wing.Persistence.User;
 using Wing.Result;
-using Wing.UI.Helper;
 
 namespace Wing.UI.Controllers
 {

@@ -87,6 +87,7 @@ namespace Wing.Persistence.Saga
         /// </summary>
         public long UsedMillSeconds { get; set; }
 
+        [Column(StringLength = 1000)]
         public string Description { get; set; }
     }
 }

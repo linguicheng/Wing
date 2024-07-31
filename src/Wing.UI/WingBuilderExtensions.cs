@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FreeSql;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Wing.Configuration.ServiceBuilder;
 using Wing.Filters;
 using Wing.Persistence.User;
@@ -10,8 +10,9 @@ namespace Wing
 {
     public static class WingBuilderExtensions
     {
-        public static IWingServiceBuilder AddWingUI(this IWingServiceBuilder wingBuilder)
+        public static IWingServiceBuilder AddWingUI(this IWingServiceBuilder wingBuilder, DataType dataType, string connectionString = "")
         {
+            wingBuilder.AddPersistence(dataType, connectionString);
             wingBuilder.Services.AddControllers(options =>
             {
                 options.Filters.Add(typeof(ApiExceptionFilter));
@@ -24,11 +25,11 @@ namespace Wing
                 options.SuppressModelStateInvalidFilter = true;
             });
             wingBuilder.AppBuilder += new WingStartupFilter().Configure();
-            AddDefaultUser();
+            AddDefaultUser(wingBuilder);
             return wingBuilder;
         }
 
-        private static void AddDefaultUser()
+        private static void AddDefaultUser(IWingServiceBuilder wingBuilder)
         {
             try
             {
@@ -39,8 +40,18 @@ namespace Wing
                     throw new Exception("请设置默认登录账号和密码！");
                 }
 
-                var userService = App.GetService<UserService>();
-                userService.Add(new User { UserAccount = account, Password = password }).GetAwaiter().GetResult();
+                var userService = wingBuilder.Services.BuildServiceProvider().GetService<UserService>();
+                userService.Add(new User
+                {
+                    UserName = account,
+                    CreatedAccount = account,
+                    CreatedName = account,
+                    UserAccount = account,
+                    Password = password
+                }).GetAwaiter().GetResult();
+            }
+            catch (AccountExistsException)
+            {
             }
             catch (Exception)
             {

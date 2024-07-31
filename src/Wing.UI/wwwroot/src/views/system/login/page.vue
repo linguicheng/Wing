@@ -16,7 +16,7 @@
         flex="dir:top main:justify cross:stretch box:justify">
         <div class="page-login--content-header">
           <p class="page-login--content-header-motto">
-            时间是一切财富中最宝贵的财富
+            致力于打造最接地气的.NET微服务框架
           </p>
         </div>
         <div
