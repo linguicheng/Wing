@@ -1,4 +1,6 @@
-﻿namespace Wing.Persistence.User
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Wing.Persistence.User
 {
     public class UserDto
     {
@@ -6,7 +8,11 @@
 
         public string UserName { get; set; }
 
+        [Required]
         public string UserAccount { get; set; }
+
+        [Required]
+        public string Password { get; set; }
 
         public string Dept { get; set; }
 

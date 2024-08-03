@@ -51,5 +51,15 @@ namespace Wing.Persistence.User
         /// </summary>
         [Column(StringLength = 1)]
         public string Enabled { get; set; } = "Y";
+
+        /// <summary>
+        /// 密码错误次数
+        /// </summary>
+        public int? ErrorCount { get; set; }
+
+        /// <summary>
+        /// 锁定时间
+        /// </summary>
+        public DateTime? LockedTime { get; set; }
     }
 }

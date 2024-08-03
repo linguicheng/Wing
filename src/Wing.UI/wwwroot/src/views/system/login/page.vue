@@ -49,7 +49,7 @@
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
                   </el-input>
                 </el-form-item>
-                <el-form-item prop="code">
+                <!-- <el-form-item prop="code">
                   <el-input
                     type="text"
                     v-model="formLogin.code"
@@ -58,7 +58,7 @@
                       <img class="login-code" src="./image/login-code.png">
                     </template>
                   </el-input>
-                </el-form-item>
+                </el-form-item> -->
                 <el-button
                   size="default"
                   @click="submit"
@@ -68,56 +68,28 @@
                 </el-button>
               </el-form>
             </el-card>
-            <p
-              class="page-login--options"
-              flex="main:justify cross:center">
-              <span><d2-icon name="question-circle"/> 忘记密码</span>
-              <span>注册用户</span>
-            </p>
-            <!-- quick login -->
-            <el-button class="page-login--quick" size="default" type="info" @click="dialogVisible = true">
-              快速选择用户（测试功能）
-            </el-button>
           </div>
         </div>
         <div class="page-login--content-footer">
-          <p class="page-login--content-footer-locales">
+          <!-- <p class="page-login--content-footer-locales">
             <a
               v-for="language in $languages"
               :key="language.value"
               @click="onChangeLocale(language.value)">
               {{ language.label }}
             </a>
-          </p>
+          </p> -->
           <p class="page-login--content-footer-copyright">
             Copyright
             <d2-icon name="copyright"/>
-            2018 D2 Projects 开源组织出品
-            <a href="https://github.com/FairyEver">
-              @FairyEver
+            2023 Wing | MIT协议
+            <a href="https://gitee.com/linguicheng/Wing">
+              @linguicheng
             </a>
-          </p>
-          <p class="page-login--content-footer-options">
-            <a href="#">帮助</a>
-            <a href="#">隐私</a>
-            <a href="#">条款</a>
           </p>
         </div>
       </div>
     </div>
-    <el-dialog
-      title="快速选择用户"
-      :visible.sync="dialogVisible"
-      width="400px">
-      <el-row :gutter="10" style="margin: -20px 0px -10px 0px;">
-        <el-col v-for="(user, index) in users" :key="index" :span="8">
-          <div class="page-login--quick-user" @click="handleUserBtnClick(user)">
-            <d2-icon name="user-circle-o"/>
-            <span>{{user.name}}</span>
-          </div>
-        </el-col>
-      </el-row>
-    </el-dialog>
   </div>
 </template>
 
@@ -133,8 +105,6 @@ export default {
     return {
       timeInterval: null,
       time: dayjs().format('HH:mm:ss'),
-      // 快速选择用户
-      dialogVisible: false,
       users: [
         {
           name: 'Admin',
@@ -198,15 +168,6 @@ export default {
     ]),
     refreshTime () {
       this.time = dayjs().format('HH:mm:ss')
-    },
-    /**
-     * @description 接收选择一个用户快速登录的事件
-     * @param {Object} user 用户信息
-     */
-    handleUserBtnClick (user) {
-      this.formLogin.username = user.username
-      this.formLogin.password = user.password
-      this.submit()
     },
     /**
      * @description 提交表单

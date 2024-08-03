@@ -17,19 +17,27 @@ namespace Wing.UI.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<UserDto> Login(User dto)
+        public async Task<ApiResult<object>> Login(UserDto dto)
         {
+            var result = new ApiResult<object>();
             if (UserContext.UserLoginBefore != null)
             {
-                dto = UserContext.UserLoginBefore(dto);
+                result = UserContext.UserLoginBefore(dto) as ApiResult<object>;
+                if (result.Code != ResultType.Success)
+                {
+                    result.Data = dto;
+                    return result;
+                }
             }
 
-            var result = await _userService.Login(dto);
+            var user = await _userService.Login(dto);
+
             if (UserContext.UserLoginAfter != null)
             {
-                result = UserContext.UserLoginAfter(result);
+                result = UserContext.UserLoginAfter(user) as ApiResult<object>;
             }
 
+            result.Data = user;
             return result;
         }
 

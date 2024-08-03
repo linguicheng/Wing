@@ -11,9 +11,16 @@ namespace Wing.Filters
             if (context.Result is ObjectResult)
             {
                 var objectResult = context.Result as ObjectResult;
-                if (objectResult.Value is ApiResult result)
+
+                if (objectResult.Value is ApiResult)
                 {
-                    context.Result = new ObjectResult(result);
+                    context.Result = new ObjectResult(objectResult.Value);
+                    return;
+                }
+
+                if (objectResult.Value is ApiResult<object>)
+                {
+                    context.Result = new ObjectResult(objectResult.Value);
                     return;
                 }
 

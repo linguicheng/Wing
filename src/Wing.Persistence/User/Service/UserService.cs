@@ -1,4 +1,6 @@
-﻿using Wing.Model;
+﻿using Mapster;
+using System.Runtime.InteropServices;
+using Wing.Model;
 using Wing.Result;
 
 namespace Wing.Persistence.User
@@ -12,12 +14,46 @@ namespace Wing.Persistence.User
             _fsql = fsql;
         }
 
-        public Task<UserDto> Login(User user)
+        public async Task<UserDto> Login(UserDto dto)
         {
-            user.Password = new Encrption().ToMd5(user.Password);
-            return _fsql.Select<User>()
-                 .Where(x => x.UserAccount == user.UserAccount && x.Password == user.Password)
-                 .FirstAsync<UserDto>();
+            var user = await _fsql.Select<User>()
+                .Where(x => x.UserAccount == dto.UserAccount)
+                .FirstAsync();
+            if (user == null)
+            {
+                throw new Exception("您输入的账号或密码错误！");
+            }
+
+            var errorCount = user.ErrorCount.GetValueOrDefault();
+            var lockedTime = user.LockedTime.GetValueOrDefault();
+            var now = DateTime.Now;
+            if (errorCount > 3 && errorCount <= 5 && lockedTime.AddMinutes(1) > now)
+            {
+                throw new Exception("当前账号已被限制1分钟内不允许登录！");
+            }
+
+            if (errorCount > 5 && errorCount <= 7 && lockedTime.AddMinutes(20) > now)
+            {
+                throw new Exception("当前账号已被限制20分钟内不允许登录！");
+            }
+
+            if (errorCount > 7)
+            {
+                throw new Exception("当前账号已被永久锁定，请联系管理员解锁！");
+            }
+
+            dto.Password = new Encrption().ToMd5(dto.Password);
+
+            if (user.Password != dto.Password)
+            {
+                await _fsql.Update<User>()
+                  .Set(x => x.ErrorCount, errorCount + 1)
+                  .Set(x => x.LockedTime, DateTime.Now)
+                  .ExecuteAffrowsAsync();
+                throw new Exception("您输入的账号或密码错误！");
+            }
+
+            return user.Adapt<UserDto>();
         }
 
         public async Task<int> Add(User user)

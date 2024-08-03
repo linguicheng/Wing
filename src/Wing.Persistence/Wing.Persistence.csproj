@@ -17,6 +17,9 @@
 			<PackagePath>\</PackagePath>
 		</None>
 	</ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="Mapster" Version="7.4.0" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Wing.APM.Persistence\Wing.APM.Persistence.csproj" />
