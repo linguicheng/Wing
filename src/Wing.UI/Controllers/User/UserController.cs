@@ -17,28 +17,23 @@ namespace Wing.UI.Controllers
 
         [HttpPost]
         [AllowAnonymous]
-        public async Task<ApiResult<object>> Login(UserDto dto)
+        public async Task<UserDto> Login(UserDto dto)
         {
-            var result = new ApiResult<object>();
-            if (UserContext.UserLoginBefore != null)
-            {
-                result = UserContext.UserLoginBefore(dto) as ApiResult<object>;
-                if (result.Code != ResultType.Success)
-                {
-                    result.Data = dto;
-                    return result;
-                }
-            }
-
             var user = await _userService.Login(dto);
 
-            if (UserContext.UserLoginAfter != null)
+            if (UserContext.UserLoginAfter == null)
             {
-                result = UserContext.UserLoginAfter(user) as ApiResult<object>;
+                throw new Exception("未定义回调方法：UserContext.UserLoginAfter");
             }
 
-            result.Data = user;
-            return result;
+            user = UserContext.UserLoginAfter(user);
+
+            if (string.IsNullOrWhiteSpace(user.Token))
+            {
+                throw new Exception("token不能为空");
+            }
+
+            return user;
         }
 
         [HttpPost]

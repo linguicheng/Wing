@@ -80,7 +80,7 @@ function createRequestFunction (service) {
     const token = util.cookies.get('token')
     const configDefault = {
       headers: {
-        Authorization: token,
+        Authorization: `Bearer ${token}`,
         'Content-Type': get(config, 'headers.Content-Type', 'application/json')
       },
       timeout: 30000,

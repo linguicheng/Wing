@@ -33,11 +33,11 @@
                 :rules="rules"
                 :model="formLogin"
                 size="default">
-                <el-form-item prop="username">
+                <el-form-item prop="userAccount">
                   <el-input
                     type="text"
-                    v-model="formLogin.username"
-                    placeholder="用户名">
+                    v-model="formLogin.userAccount"
+                    placeholder="账号">
                     <i slot="prepend" class="fa fa-user-circle-o"></i>
                   </el-input>
                 </el-form-item>
@@ -45,6 +45,7 @@
                   <el-input
                     type="password"
                     v-model="formLogin.password"
+                    @change="submit"
                     placeholder="密码">
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
                   </el-input>
@@ -63,6 +64,7 @@
                   size="default"
                   @click="submit"
                   type="primary"
+                  :loading="loading"
                   class="button-login">
                   登录
                 </el-button>
@@ -105,35 +107,18 @@ export default {
     return {
       timeInterval: null,
       time: dayjs().format('HH:mm:ss'),
-      users: [
-        {
-          name: 'Admin',
-          username: 'admin',
-          password: 'admin'
-        },
-        {
-          name: 'Editor',
-          username: 'editor',
-          password: 'editor'
-        },
-        {
-          name: 'User1',
-          username: 'user1',
-          password: 'user1'
-        }
-      ],
       // 表单
       formLogin: {
-        username: 'admin',
-        password: 'admin',
-        code: 'v9am'
+        userAccount: '',
+        password: ''
       },
+      loading: false,
       // 表单校验
       rules: {
-        username: [
+        userAccount: [
           {
             required: true,
-            message: '请输入用户名',
+            message: '请输入账号',
             trigger: 'blur'
           }
         ],
@@ -141,13 +126,6 @@ export default {
           {
             required: true,
             message: '请输入密码',
-            trigger: 'blur'
-          }
-        ],
-        code: [
-          {
-            required: true,
-            message: '请输入验证码',
             trigger: 'blur'
           }
         ]
@@ -174,20 +152,20 @@ export default {
      */
     // 提交登录信息
     submit () {
+      this.loading = true
       this.$refs.loginForm.validate((valid) => {
         if (valid) {
           // 登录
           // 注意 这里的演示没有传验证码
           // 具体需要传递的数据请自行修改代码
-          this.login({
-            username: this.formLogin.username,
-            password: this.formLogin.password
-          })
+          this.login(this.formLogin)
             .then(() => {
               // 重定向对象不存在则返回顶层路径
               this.$router.replace(this.$route.query.redirect || '/')
             })
+            .finally(() => { this.loading = false })
         } else {
+          this.loading = false
           // 登录表单校验失败
           this.$message.error('表单校验失败，请检查')
         }

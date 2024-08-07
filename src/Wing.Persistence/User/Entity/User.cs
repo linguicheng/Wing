@@ -61,5 +61,11 @@ namespace Wing.Persistence.User
         /// 锁定时间
         /// </summary>
         public DateTime? LockedTime { get; set; }
+
+        /// <summary>
+        /// 主题名称
+        /// </summary>
+        [Column(StringLength = 100)]
+        public string ThemeName { get; set; }
     }
 }

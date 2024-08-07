@@ -8,10 +8,10 @@ namespace Wing.Persistence.User
 
         public string UserName { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "账号必填")]
         public string UserAccount { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "密码必填")]
         public string Password { get; set; }
 
         public string Dept { get; set; }
@@ -28,5 +28,7 @@ namespace Wing.Persistence.User
         public string Enabled { get; set; } = "Y";
 
         public string Token { get; set; }
+
+        public string ThemeName { get; set; }
     }
 }
