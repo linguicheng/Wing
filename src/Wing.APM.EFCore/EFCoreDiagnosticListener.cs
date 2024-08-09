@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
 using Wing.APM.Persistence;
-using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.EFCore
@@ -119,6 +118,11 @@ namespace Wing.APM.EFCore
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             traceDetail.EndTime = DateTime.Now;
             traceDetail.UsedMillSeconds = Convert.ToInt64(data.Duration.TotalMilliseconds);
@@ -145,6 +149,11 @@ namespace Wing.APM.EFCore
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             traceDetail.Exception = data.Exception.ToString();
         }

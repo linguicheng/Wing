@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Wing.APM.Listeners;
 using Wing.APM.Persistence;
-using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.FreeSql
@@ -130,6 +129,11 @@ namespace Wing.APM.FreeSql
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
             {
@@ -214,6 +218,11 @@ namespace Wing.APM.FreeSql
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             if (DoNotDiagnostic != null && DoNotDiagnostic(data.Sql))
             {

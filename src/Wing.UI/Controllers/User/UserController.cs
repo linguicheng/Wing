@@ -37,7 +37,7 @@ namespace Wing.UI.Controllers
         }
 
         [HttpPost]
-        public Task<PageResult<List<UserDto>>> List(PageModel<UserSearchDto> dto)
+        public Task<PageResult<List<UserListDto>>> List(PageModel<UserSearchDto> dto)
         {
             return _userService.List(dto);
         }
@@ -52,6 +52,30 @@ namespace Wing.UI.Controllers
         public Task<int> Update(User dto)
         {
             return _userService.Update(dto);
+        }
+
+        [HttpPost]
+        public Task<int> UpdatePassword(UserUpdatePasswordDto dto)
+        {
+            return _userService.UpdatePassword(dto);
+        }
+
+        [HttpPost]
+        public Task<int> ResetPassword(string id)
+        {
+            return _userService.ResetPassword(id);
+        }
+
+        [HttpPost]
+        public Task<int> Unlocked(string id)
+        {
+            return _userService.Unlocked(id);
+        }
+
+        [HttpPost]
+        public Task<int> UpdateTheme(User dto)
+        {
+            return _userService.UpdateTheme(dto);
         }
 
         [HttpPost]

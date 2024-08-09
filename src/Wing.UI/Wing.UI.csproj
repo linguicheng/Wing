@@ -49,6 +49,8 @@
 		<None Remove="wwwroot\dependencies-cdn.js" />
 		<None Remove="wwwroot\dist\css\app.634fb024.css" />
 		<None Remove="wwwroot\dist\css\app.634fb024.css.gz" />
+		<None Remove="wwwroot\dist\css\app.637fb996.css" />
+		<None Remove="wwwroot\dist\css\app.637fb996.css.gz" />
 		<None Remove="wwwroot\dist\css\app.e8b298b4.css" />
 		<None Remove="wwwroot\dist\css\app.e8b298b4.css.gz" />
 		<None Remove="wwwroot\dist\css\chunk-021e5078.b8e0bbf8.css" />
@@ -57,6 +59,7 @@
 		<None Remove="wwwroot\dist\css\chunk-15af0c58.4dace5d0.css" />
 		<None Remove="wwwroot\dist\css\chunk-1ffb157a.c816c006.css" />
 		<None Remove="wwwroot\dist\css\chunk-20005747.6ce34d49.css" />
+		<None Remove="wwwroot\dist\css\chunk-21e9101c.6ce34d49.css" />
 		<None Remove="wwwroot\dist\css\chunk-27938a61.726ea031.css" />
 		<None Remove="wwwroot\dist\css\chunk-293b217d.d39edb96.css" />
 		<None Remove="wwwroot\dist\css\chunk-2b8361fa.58354137.css" />
@@ -66,6 +69,7 @@
 		<None Remove="wwwroot\dist\css\chunk-47afbc15.d6c499b1.css" />
 		<None Remove="wwwroot\dist\css\chunk-47b0186e.9d6f5b39.css" />
 		<None Remove="wwwroot\dist\css\chunk-47bc9a12.140fff95.css" />
+		<None Remove="wwwroot\dist\css\chunk-4f286795.6ce34d49.css" />
 		<None Remove="wwwroot\dist\css\chunk-5ac53461.036599f2.css" />
 		<None Remove="wwwroot\dist\css\chunk-5e703ca8.89c07d81.css" />
 		<None Remove="wwwroot\dist\css\chunk-62522ff4.fc17237a.css" />
@@ -131,6 +135,8 @@
 		<None Remove="wwwroot\dist\js\app.1dde5a89.js.gz" />
 		<None Remove="wwwroot\dist\js\app.51c77357.js" />
 		<None Remove="wwwroot\dist\js\app.51c77357.js.gz" />
+		<None Remove="wwwroot\dist\js\app.52fd0762.js" />
+		<None Remove="wwwroot\dist\js\app.52fd0762.js.gz" />
 		<None Remove="wwwroot\dist\js\app.5998e4d6.js" />
 		<None Remove="wwwroot\dist\js\app.5998e4d6.js.gz" />
 		<None Remove="wwwroot\dist\js\app.70cbd4c1.js" />
@@ -169,6 +175,7 @@
 		<None Remove="wwwroot\dist\js\chunk-20005747.c6e7a83e.js" />
 		<None Remove="wwwroot\dist\js\chunk-20005747.d10830e2.js" />
 		<None Remove="wwwroot\dist\js\chunk-20005747.f4b790b0.js" />
+		<None Remove="wwwroot\dist\js\chunk-21e9101c.da06a0a6.js" />
 		<None Remove="wwwroot\dist\js\chunk-27938a61.07ed9478.js" />
 		<None Remove="wwwroot\dist\js\chunk-27938a61.c89f2ddf.js" />
 		<None Remove="wwwroot\dist\js\chunk-27938a61.cbefb492.js" />
@@ -191,6 +198,8 @@
 		<None Remove="wwwroot\dist\js\chunk-2d221854.d67118ec.js" />
 		<None Remove="wwwroot\dist\js\chunk-2d221854.eee885a7.js" />
 		<None Remove="wwwroot\dist\js\chunk-2d224ad2.403120fd.js" />
+		<None Remove="wwwroot\dist\js\chunk-2d2250de.2fb23924.js" />
+		<None Remove="wwwroot\dist\js\chunk-2d231577.39320eb1.js" />
 		<None Remove="wwwroot\dist\js\chunk-2d231577.6f79e3ba.js" />
 		<None Remove="wwwroot\dist\js\chunk-2d231577.dc25896c.js" />
 		<None Remove="wwwroot\dist\js\chunk-2d231577.dec64fcd.js" />
@@ -220,6 +229,7 @@
 		<None Remove="wwwroot\dist\js\chunk-47b0186e.15a26f29.js" />
 		<None Remove="wwwroot\dist\js\chunk-47b0186e.aed7d100.js" />
 		<None Remove="wwwroot\dist\js\chunk-47bc9a12.4e5830fd.js" />
+		<None Remove="wwwroot\dist\js\chunk-4f286795.1ff4de86.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.06e709e2.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.20a34051.js" />
 		<None Remove="wwwroot\dist\js\chunk-5ac53461.8c7209a6.js" />
@@ -234,6 +244,7 @@
 		<None Remove="wwwroot\dist\js\chunk-62522ff4.b5a67169.js" />
 		<None Remove="wwwroot\dist\js\chunk-62522ff4.b5a67169.js.gz" />
 		<None Remove="wwwroot\dist\js\chunk-6621fc5f.12d9babd.js" />
+		<None Remove="wwwroot\dist\js\chunk-6621fc5f.c4479bab.js" />
 		<None Remove="wwwroot\dist\js\chunk-66d28b03.0398e353.js" />
 		<None Remove="wwwroot\dist\js\chunk-66d28b03.16840952.js" />
 		<None Remove="wwwroot\dist\js\chunk-66d28b03.8643e6e6.js" />
@@ -259,6 +270,8 @@
 		<None Remove="wwwroot\dist\js\chunk-vendors.5f969044.js.gz" />
 		<None Remove="wwwroot\dist\js\chunk-vendors.6447ba09.js" />
 		<None Remove="wwwroot\dist\js\chunk-vendors.6447ba09.js.gz" />
+		<None Remove="wwwroot\dist\js\chunk-vendors.c2c77df1.js" />
+		<None Remove="wwwroot\dist\js\chunk-vendors.c2c77df1.js.gz" />
 		<None Remove="wwwroot\dist\js\chunk-vendors.e5eb1646.js" />
 		<None Remove="wwwroot\dist\js\chunk-vendors.e5eb1646.js.gz" />
 		<None Remove="wwwroot\dist\wing.png" />
@@ -274,24 +287,26 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="wwwroot\dist\css\app.e8b298b4.css" />
-		<EmbeddedResource Include="wwwroot\dist\css\app.e8b298b4.css.gz" />
+	  <EmbeddedResource Include="wwwroot\dist\js\chunk-21e9101c.da06a0a6.js" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="wwwroot\dist\css\app.637fb996.css" />
+		<EmbeddedResource Include="wwwroot\dist\css\app.637fb996.css.gz" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-021e5078.b8e0bbf8.css" />
-		<EmbeddedResource Include="wwwroot\dist\css\chunk-20005747.6ce34d49.css">
-			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
-		</EmbeddedResource>
+		<EmbeddedResource Include="wwwroot\dist\css\chunk-21e9101c.6ce34d49.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-27938a61.726ea031.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-293b217d.d39edb96.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-2f53076e.9c0492ca.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-44ec1dbd.e5a13fe4.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-47bc9a12.140fff95.css" />
+		<EmbeddedResource Include="wwwroot\dist\css\chunk-4f286795.6ce34d49.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-5ac53461.036599f2.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-5e703ca8.89c07d81.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-62522ff4.fc17237a.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-66d28b03.42dcd055.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-6ead409f.1867762e.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-6ead409f.1867762e.css.gz" />
-		<EmbeddedResource Include="wwwroot\dist\css\chunk-c4358a20.6ce34d49.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-d6bddee0.870b6250.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-vendors.8f69fae8.css" />
 		<EmbeddedResource Include="wwwroot\dist\css\chunk-vendors.8f69fae8.css.gz" />
@@ -330,12 +345,11 @@
 		<EmbeddedResource Include="wwwroot\dist\img\login-code.10fef840.png" />
 		<EmbeddedResource Include="wwwroot\dist\img\logo@2x.47df8ae2.png" />
 		<EmbeddedResource Include="wwwroot\dist\index.html" />
-		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\app.05cc31d7.js.gz" />
+		<EmbeddedResource Include="wwwroot\dist\js\app.52fd0762.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\app.52fd0762.js.gz" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-021e5078.9524426e.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-04ec3c10.79bd7f0c.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-04ec3c10.79bd7f0c.js.gz" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-20005747.f4b790b0.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-27938a61.d2c4ae07.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-293b217d.cf4fc670.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d0a3574.4c00ee39.js" />
@@ -345,24 +359,25 @@
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d209152.bdd680f9.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d20f3bf.00652734.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d221854.eee885a7.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d2250de.2fb23924.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d22c15c.b5f2a320.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d231577.f710df93.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-2d231577.39320eb1.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-2f53076e.5c1cfc64.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-3ef012c2.9a49124a.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-40704c2c.6779d87b.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-44ec1dbd.06546e9d.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-47bc9a12.4e5830fd.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-4f286795.1ff4de86.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-5ac53461.06e709e2.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-5e703ca8.29c99687.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-62522ff4.b5a67169.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-62522ff4.b5a67169.js.gz" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-6621fc5f.c4479bab.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-66d28b03.16840952.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-6ead409f.b738ac53.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-c4358a20.cf14626c.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-d6bddee0.ebb8c363.js" />
 		<EmbeddedResource Include="wwwroot\dist\js\chunk-d6bddee0.ebb8c363.js.gz" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.6447ba09.js" />
-		<EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.6447ba09.js.gz" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.c2c77df1.js" />
+		<EmbeddedResource Include="wwwroot\dist\js\chunk-vendors.c2c77df1.js.gz" />
 		<EmbeddedResource Include="wwwroot\dist\wing.png" />
 	</ItemGroup>
 

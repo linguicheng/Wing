@@ -43,23 +43,13 @@
                 </el-form-item>
                 <el-form-item prop="password">
                   <el-input
-                    type="password"
+                    show-password
                     v-model="formLogin.password"
-                    @change="submit"
+                    @keyup.enter.native="submit"
                     placeholder="密码">
                     <i slot="prepend" class="fa fa-keyboard-o"></i>
                   </el-input>
                 </el-form-item>
-                <!-- <el-form-item prop="code">
-                  <el-input
-                    type="text"
-                    v-model="formLogin.code"
-                    placeholder="验证码">
-                    <template slot="append">
-                      <img class="login-code" src="./image/login-code.png">
-                    </template>
-                  </el-input>
-                </el-form-item> -->
                 <el-button
                   size="default"
                   @click="submit"
@@ -69,6 +59,7 @@
                   登录
                 </el-button>
               </el-form>
+               <el-checkbox style="float:right;margin-top:20px;" v-model="rememberPwd">记住密码</el-checkbox>
             </el-card>
           </div>
         </div>
@@ -99,6 +90,7 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import localeMixin from '@/locales/mixin.js'
+import util from '@/libs/util.js'
 export default {
   mixins: [
     localeMixin
@@ -113,6 +105,7 @@ export default {
         password: ''
       },
       loading: false,
+      rememberPwd: false,
       // 表单校验
       rules: {
         userAccount: [
@@ -136,6 +129,8 @@ export default {
     this.timeInterval = setInterval(() => {
       this.refreshTime()
     }, 1000)
+    this.formLogin.userAccount = util.cookies.get('userAccount')
+    this.formLogin.password = util.cookies.get('password')
   },
   beforeDestroy () {
     clearInterval(this.timeInterval)
@@ -160,6 +155,10 @@ export default {
           // 具体需要传递的数据请自行修改代码
           this.login(this.formLogin)
             .then(() => {
+              if (this.rememberPwd) {
+                util.cookies.set('userAccount', this.formLogin.userAccount)
+                util.cookies.set('password', this.formLogin.password)
+              }
               // 重定向对象不存在则返回顶层路径
               this.$router.replace(this.$route.query.redirect || '/')
             })

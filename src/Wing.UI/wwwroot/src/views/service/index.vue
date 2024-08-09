@@ -73,7 +73,7 @@
           align="center"
           fixed="right">
             <template #default="{ row }">
-              <el-button type="primary" @click.prevent="toDetail(row)">查看明细</el-button>
+              <el-button type="primary" size="small" @click.prevent="toDetail(row)">查看明细</el-button>
             </template>
         </vxe-column>
       </vxe-table>

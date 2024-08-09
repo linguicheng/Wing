@@ -39,5 +39,6 @@ export const menuAside = supplementPath([
       { path: '/apm/sql', title: '作业Sql追踪' }
     ]
   },
-  { path: '/saga', title: 'Saga分布式事务', icon: 'folder-o' }
+  { path: '/saga', title: 'Saga分布式事务', icon: 'folder-o' },
+  { path: '/user', title: '用户管理', icon: 'folder-o' }
 ])

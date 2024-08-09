@@ -14,6 +14,8 @@ namespace Wing.Persistence.User
         [Required(ErrorMessage = "密码必填")]
         public string Password { get; set; }
 
+        public string NewPassword { get; set; }
+
         public string Dept { get; set; }
 
         public string Station { get; set; }

@@ -47,7 +47,8 @@ namespace Wing
                     CreatedAccount = account,
                     CreatedName = account,
                     UserAccount = account,
-                    Password = password
+                    Password = password,
+                    Enabled = "Y"
                 }).GetAwaiter().GetResult();
             }
             catch (AccountExistsException)

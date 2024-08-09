@@ -5,7 +5,6 @@ using SqlSugar;
 using Wing.APM.FreeSql;
 using Wing.APM.Listeners;
 using Wing.APM.Persistence;
-using Wing.APM.Persistence;
 using Wing.ServiceProvider.Config;
 
 namespace Wing.APM.SqlSugar
@@ -118,6 +117,11 @@ namespace Wing.APM.SqlSugar
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             traceDetail.EndTime = data.EndTime;
             traceDetail.UsedMillSeconds = Convert.ToInt64(data.ExecutionTime.TotalMilliseconds);
@@ -144,6 +148,11 @@ namespace Wing.APM.SqlSugar
             }
 
             tracerDto = ListenerTracer.Data[context.Items[ApmTools.TraceId].ToString()];
+            if (!tracerDto.SqlTracerDetails.ContainsKey(id))
+            {
+                return;
+            }
+
             var traceDetail = tracerDto.SqlTracerDetails[id];
             traceDetail.Exception = data.Exception.ToString();
         }

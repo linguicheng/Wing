@@ -15,6 +15,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import util from '@/libs/util.js'
 export default {
   name: 'd2-theme-list',
   data () {
@@ -35,8 +36,10 @@ export default {
     ...mapActions('d2admin/theme', [
       'set'
     ]),
-    handleSelectTheme (name) {
+    async handleSelectTheme (name) {
       this.set(name)
+      const id = util.cookies.get('uuid')
+      await this.$api.SYS_USER_UpdateTheme({ id: id, themeName: name })
     }
   }
 }

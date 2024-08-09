@@ -93,6 +93,15 @@ const frameIn = [
         },
         component: _import('saga')
       },
+      {
+        path: 'user',
+        name: 'user',
+        meta: {
+          title: '用户管理',
+          auth: true
+        },
+        component: _import('user')
+      },
       // 系统 前端日志
       {
         path: 'log',
