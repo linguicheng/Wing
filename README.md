@@ -10,7 +10,7 @@ gitee：https://linguicheng.gitee.io/Wing （暂停访问，请使用github地�
 github：https://linguicheng.github.io/Wing
 
 ### 依赖
-需要用到的第三方中间件：`Consul`(强依赖)、`RabbitMQ`(弱依赖)、`数据库`(强依赖，目前支持SqlServer、Oracle、MySql、PostgreSql、Sqlite)
+需要用到的第三方中间件：`Consul`(强依赖)、`RabbitMQ`(弱依赖)、`数据库`(强依赖)
 
 ### 技术交流群
 `QQ`:`183015352`
