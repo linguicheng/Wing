@@ -116,20 +116,20 @@ app.Run();
 
 ### 创建一个Web Api项目
 
-* 提前准备：安装并启动Consul、数据库支持(SqlServer、Oracle、MySql、PostgreSql、Sqlite)
+* 提前准备：安装并启动Consul
 
 * 打开 Visual Studio 2022 并创建Web Api项目([点击查看完整示例代码1.3](https://gitee.com/linguicheng/wing-demo/tree/master/1.3))
 
 ### 安装依赖包
 
-安装服务注册nuget包`Wing.Consul`，UI可视化界面管理nuget包`Wing.UI`，选择对应的数据库包，以SqlServer为例，安装`Wing.SqlServer`。
+安装服务注册nuget包`Wing.Consul`，UI可视化界面管理nuget包`Wing.UI`，选择对应的数据库驱动（[参考FreeSql官网](https://freesql.net/guide/#%E5%AE%89%E8%A3%85%E5%8C%85)），以SqlServer为例，安装`FreeSql.Provider.SqlServer`。
 
 ```bash
 dotnet add package Wing.Consul
 
 dotnet add package Wing.UI
 
-dotnet add package Wing.SqlServer(可选Wing.MySql/Wing.Oracle/Wing.PostgreSQL)
+dotnet add package FreeSql.Provider.SqlServer
 ```
 
 ### Program代码
@@ -145,7 +145,7 @@ builder.Host.AddWing(builder => builder.AddConsul());
 
 builder.Services.AddControllers();
 
-builder.Services.AddWing().AddWingUI().AddPersistence();
+builder.Services.AddWing().AddWingUI(FreeSql.DataType.SqlServer);
 
 var app = builder.Build();
 
