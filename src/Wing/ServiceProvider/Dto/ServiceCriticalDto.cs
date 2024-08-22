@@ -1,4 +1,4 @@
-﻿namespace Wing.UI.Model
+﻿namespace Wing.ServiceProvider.Dto
 {
     /// <summary>
     /// 服务死亡率排行

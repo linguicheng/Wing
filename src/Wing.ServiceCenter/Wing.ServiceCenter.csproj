@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<PackageId>Wing.ServiceCenter</PackageId>
+		<Title>Wing.ServiceCenter</Title>
+		<Product>Wing.ServiceCenter</Product>
+		<Description>Wing微服务框架-服务中心</Description>
+		<PackageTags>Wing;Wing.ServiceCenter;微服务;服务发现;服务注册;配置管理</PackageTags>
+	</PropertyGroup>
+	<Import Project="..\..\build\common.props" />
+	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net6.0' ">
+		<PackageReference Include="Microsoft.Extensions.Http" Version="6.0.0" />
+	</ItemGroup>
+	<ItemGroup Condition=" '$(TargetFramework)' == 'net8.0' ">
+		<PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Wing.Persistence\Wing.Persistence.csproj" />
+		<ProjectReference Include="..\Wing\Wing.csproj" />
+	</ItemGroup>
+</Project>

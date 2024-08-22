@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<PackageId>Wing.ServiceCenter.Client</PackageId>
+		<Title>Wing.ServiceCenter.Client</Title>
+		<Product>Wing.ServiceCenter.Client</Product>
+		<Description>Wing微服务框架-服务中心客户端</Description>
+		<PackageTags>Wing;Wing.ServiceCenter;微服务;服务发现;服务注册;配置管理</PackageTags>
+	</PropertyGroup>
+	<Import Project="..\..\build\common.props" />
+	<ItemGroup>
+		<None Include="..\..\icon.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+</Project>

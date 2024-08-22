@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Wing.UI.Model
+namespace Wing.ServiceProvider.Dto
 {
     public class ConfigDto
     {

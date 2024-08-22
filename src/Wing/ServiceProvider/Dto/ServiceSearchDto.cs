@@ -1,7 +1,6 @@
-﻿using Wing.ServiceProvider;
-using Wing.ServiceProvider.Config;
+﻿using Wing.ServiceProvider.Config;
 
-namespace Wing.UI.Model
+namespace Wing.ServiceProvider.Dto
 {
     public class ServiceSearchDto
     {

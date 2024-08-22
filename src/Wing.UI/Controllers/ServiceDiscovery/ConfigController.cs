@@ -3,8 +3,8 @@ using Wing.Converter;
 using Wing.Model;
 using Wing.Result;
 using Wing.ServiceProvider;
+using Wing.ServiceProvider.Dto;
 using Wing.UI.Helper;
-using Wing.UI.Model;
 
 namespace Wing.UI.Controllers
 {

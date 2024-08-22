@@ -1,13 +1,18 @@
-﻿using Wing.ServiceProvider;
-using Wing.ServiceProvider.Config;
+﻿using Wing.ServiceProvider.Config;
 
-namespace Wing.UI.Model
+namespace Wing.ServiceProvider.Dto
 {
     public class ServiceDetailDto
     {
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Scheme { get; set; }
+
+        public string Host { get; set; }
+
+        public int Port { get; set; }
 
         public string Address { get; set; }
 
