@@ -1,7 +1,7 @@
 ﻿using Wing.Model;
 using Wing.Result;
 
-namespace Wing.UI.Helper
+namespace Wing.Consul
 {
     public static class Paged
     {

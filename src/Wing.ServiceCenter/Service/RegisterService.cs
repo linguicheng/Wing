@@ -47,5 +47,39 @@ namespace Wing.ServiceCenter.Service
                 Items = result
             };
         }
+
+        public async Task<PageResult<List<ServiceDto>>> List(PageModel<string> dto)
+        {
+            var result = await _fsql.Select<Entity.Service>()
+                    .WhereIf(!string.IsNullOrWhiteSpace(dto.Data), u => u.Name.Contains(dto.Data))
+                    .GroupBy(x => new { x.Name })
+                    .Count(out var total)
+                    .Page(dto.PageIndex, dto.PageSize)
+                    .ToListAsync(x => new ServiceDto
+                    {
+                        Name = x.Key.Name,
+                        Total = x.Count(),
+                        CriticalTotal = x.Count(x.Value.Status == ServiceProvider.HealthStatus.Critical),
+                        HealthyTotal = x.Count(x.Value.Status == ServiceProvider.HealthStatus.Healthy),
+                        MaintenanceTotal = x.Count(x.Value.Status == ServiceProvider.HealthStatus.Maintenance),
+                        WarningTotal = x.Count(x.Value.Status == ServiceProvider.HealthStatus.Warning)
+                    });
+            if (result != null && result.Count > 0)
+            {
+                foreach (var s in result)
+                {
+                    s.CriticalLv = Math.Round(s.CriticalTotal * 100.0 / s.Total, 2);
+                    s.HealthyLv = Math.Round(s.HealthyTotal * 100.0 / s.Total, 2);
+                    s.MaintenanceLv = Math.Round(s.MaintenanceTotal * 100.0 / s.Total, 2);
+                    s.WarningLv = Math.Round(s.WarningTotal * 100.0 / s.Total, 2);
+                }
+            }
+
+            return new PageResult<List<ServiceDto>>
+            {
+                TotalCount = total,
+                Items = result
+            };
+        }
     }
 }

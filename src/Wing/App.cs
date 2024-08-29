@@ -11,6 +11,8 @@ namespace Wing
 
         public static IDiscoveryServiceProvider DiscoveryService { get; set; }
 
+        public static IServiceViewProvider ServiceViewProvider { get; set; }
+
         public static IConfiguration Configuration { get; set; }
 
         public static ServiceData CurrentService { get; set; }
