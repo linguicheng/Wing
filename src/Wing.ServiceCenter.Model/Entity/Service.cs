@@ -2,7 +2,7 @@
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
 
-namespace Wing.ServiceCenter.Entity
+namespace Wing.ServiceCenter.Model
 {
     [Table(Name = "SC_Service")]
     [Index("IX_Name", "Name", false)]

@@ -1,10 +1,10 @@
 ﻿using Wing.Model;
 using Wing.Result;
-using Wing.ServiceCenter.Service;
+using Wing.ServiceCenter.Client.Service;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Dto;
 
-namespace Wing.ServiceCenter
+namespace Wing.ServiceCenter.Client
 {
     public class ServiceViewProvider : IServiceViewProvider
     {
@@ -17,24 +17,12 @@ namespace Wing.ServiceCenter
 
         public async Task<List<ServiceCriticalDto>> CritiCalLvRanking()
         {
-            var serviceDetail = await _discoveryService.Get();
-
-            return serviceDetail.GroupBy(u => new { u.Name })
-                                        .Select(x => new ServiceCriticalDto
-                                        {
-                                            ServiceName = x.Key.Name,
-                                            Total = x.Count(),
-                                            CriticalTotal = x.Count(y => y.Status == HealthStatus.Critical),
-                                            CriticalLv = Math.Round(x.Count(y => y.Status == HealthStatus.Critical) * 100.0 / x.Count(), 2)
-                                        })
-                                        .Where(x => x.CriticalLv > 0)
-                                        .OrderByDescending(x => x.CriticalLv)
-                                        .ToList();
+            return await _registerService.CritiCalLvRanking();
         }
 
         public async Task<bool> Delete(string serviceId)
         {
-            var service = await _discoveryService.Detail(serviceId);
+            var service = await _registerService.Detail(serviceId);
             if (service == null)
             {
                 throw new Exception("该服务节点不存在");
@@ -45,7 +33,7 @@ namespace Wing.ServiceCenter
                 throw new Exception("仅能删除状态为“已死亡”的服务节点");
             }
 
-            return await _discoveryService.Deregister(serviceId);
+            return await _registerService.Delete(serviceId);
         }
 
         public async Task<PageResult<List<ServiceDetailDto>>> Detail(PageModel<ServiceSearchDto> dto)

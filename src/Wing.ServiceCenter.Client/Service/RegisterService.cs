@@ -2,7 +2,7 @@
 using Wing.Result;
 using Wing.ServiceProvider.Dto;
 
-namespace Wing.ServiceCenter.Service
+namespace Wing.ServiceCenter.Client.Service
 {
     public class RegisterService
     {
@@ -13,12 +13,12 @@ namespace Wing.ServiceCenter.Service
             _fsql = fsql;
         }
 
-        public async Task<int> Add(Entity.Service service)
+        public async Task<int> Add(Model.Service service)
         {
-            var exists = await _fsql.Select<Entity.Service>().AnyAsync(x => x.Host == service.Host && x.Port == service.Port);
+            var exists = await _fsql.Select<Model.Service>().AnyAsync(x => x.Host == service.Host && x.Port == service.Port);
             if (exists)
             {
-                await _fsql.Delete<Entity.Service>()
+                await _fsql.Delete<Model.Service>()
                     .Where(x => x.Host == service.Host && x.Port == service.Port)
                     .ExecuteAffrowsAsync();
             }
@@ -26,9 +26,21 @@ namespace Wing.ServiceCenter.Service
             return await _fsql.Insert(service).ExecuteAffrowsAsync();
         }
 
+        public async Task<Model.Service> Detail(string serviceId)
+        {
+            return await _fsql.Select<Model.Service>(serviceId).FirstAsync();
+        }
+
+        public async Task<bool> Delete(string serviceId)
+        {
+            var result = await _fsql.Delete<Model.Service>(serviceId)
+                     .ExecuteAffrowsAsync();
+            return result > 0;
+        }
+
         public async Task<PageResult<List<ServiceDetailDto>>> Detail(PageModel<ServiceSearchDto> dto)
         {
-            var result = await _fsql.Select<Entity.Service>()
+            var result = await _fsql.Select<Model.Service>()
                     .WhereIf(dto.Data.Status != null, u => u.Status == dto.Data.Status)
                     .WhereIf(!string.IsNullOrWhiteSpace(dto.Data.Name), u => u.Name.Contains(dto.Data.Name))
                     .WhereIf(dto.Data.ServiceType != null, u => u.ServiceType == dto.Data.ServiceType)
@@ -50,7 +62,7 @@ namespace Wing.ServiceCenter.Service
 
         public async Task<PageResult<List<ServiceDto>>> List(PageModel<string> dto)
         {
-            var result = await _fsql.Select<Entity.Service>()
+            var result = await _fsql.Select<Model.Service>()
                     .WhereIf(!string.IsNullOrWhiteSpace(dto.Data), u => u.Name.Contains(dto.Data))
                     .GroupBy(x => new { x.Name })
                     .Count(out var total)
@@ -80,6 +92,21 @@ namespace Wing.ServiceCenter.Service
                 TotalCount = total,
                 Items = result
             };
+        }
+
+        public async Task<List<ServiceCriticalDto>> CritiCalLvRanking()
+        {
+            return await _fsql.Select<Model.Service>()
+                    .GroupBy(x => new { x.Name })
+                    .Having(x => Math.Round(x.Count(x.Value.Status == ServiceProvider.HealthStatus.Critical) * 100.0 / x.Count(), 2) > 0)
+                    .OrderByDescending(x => Math.Round(x.Count(x.Value.Status == ServiceProvider.HealthStatus.Critical) * 100.0 / x.Count(), 2))
+                    .ToListAsync(x => new ServiceCriticalDto
+                    {
+                        ServiceName = x.Key.Name,
+                        Total = x.Count(),
+                        CriticalTotal = x.Count(x.Value.Status == ServiceProvider.HealthStatus.Critical),
+                        CriticalLv = Math.Round(x.Count(x.Value.Status == ServiceProvider.HealthStatus.Critical) * 100.0 / x.Count(), 2)
+                    });
         }
     }
 }

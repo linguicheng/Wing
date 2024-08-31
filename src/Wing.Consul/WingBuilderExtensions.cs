@@ -1,7 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using Wing.Configuration;
-using Wing.Configuration.ServiceBuilder;
 using Wing.Consul;
 using Wing.ServiceProvider;
 using Wing.ServiceProvider.Config;
@@ -63,6 +61,7 @@ namespace Wing
 
             App.DiscoveryService = consulProvider;
             App.ServiceViewProvider = new ServiceViewProvider();
+            App.ConfigViewProvider = new ConfigViewProvider();
             var configCenterEnabled = configration["ConfigCenterEnabled"];
             if (configCenterEnabled != "False")
             {
